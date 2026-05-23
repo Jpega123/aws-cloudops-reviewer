@@ -2065,7 +2065,7 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html#solid-
 
 ### Amazon EFS – Elastic File System
 
-- Managed NFS (network file system) that can be mounted on many EC2
+- Managed NFS **(network file system)** that can be mounted on many EC2
 - EFS works with EC2 instances in multi-AZ
 - Highly available, scalable, expensive (3x gp2), pay per use us-east-1a us-east-1b us-east-1c
 
@@ -2081,16 +2081,17 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html#solid-
 
 ### EFS – Performance & Storage Classes
 
-- EFS Scale
+- **EFS Scale**
   - 1000s of concurrent NFS clients, 10 GB+ /s throughput
   -   Grow to Petabyte-scale network file system, automatically
-- Performance Mode (set at EFS creation time)
-  - General Purpose (default) – latency-sensitive use cases (web server, CMS, etc…)
-  - Max I/O – higher latency, throughput, highly parallel (big data, media processing)
-- Throughput Mode
-  - Bursting – 1 TB = 50MiB/s + burst of up to 100MiB/s
-  - Provisioned – set your throughput regardless of storage size, ex: 1 GiB/s for 1 TB storage
-  - Elastic – automatically scales throughput up or down based on your workloads
+- **Performance Mode (set at EFS creation time)**
+  - **General Purpose (default**) – latency-sensitive use cases (web server, CMS, etc…)
+  - **Max I/O** – higher latency, throughput, highly parallel (big data, media processing)
+- **Throughput Mode**
+  - **Bursting** – 1 TB = 50MiB/s + burst of up to 100MiB/s
+  - **Provisioned** – set your throughput regardless of storage size, ex: 1 GiB/s for 1 TB storage
+     - You know in advance the throughput you gonna be needing
+  - **Elastic** – automatically scales throughput up or down based on your workloads
    - Up to 3GiB/s for reads and 1GiB/s for writes
    - Used for unpredictable workloads
 
@@ -2109,15 +2110,15 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html#solid-
 ### EBS vs EFS – Elastic Block Storage
 
 - EBS volumes…
-- one instance (except multi-attach io1/io2)
-- are locked at the Availability Zone (AZ) level
-- gp2: IO increases if the disk size increases
-- gp3 & io1: can increase IO independently
+  - one instance (except multi-attach io1/io2)
+  - are locked at the Availability Zone (AZ) level
+  - gp2: IO increases if the disk size increases
+  - gp3 & io1: can increase IO independently
 - To migrate an EBS volume across AZ
-- Take a snapshot
-- Restore the snapshot to another AZ
-- EBS backups use IO and you shouldn’t run them while your application is handling a lot of traffic
-- Root EBS Volumes of instances get terminated by default if the EC2 instance gets terminated. (you can disable that) restore
+  - Take a snapshot
+  - Restore the snapshot to another AZ
+  - EBS backups use IO and you shouldn’t run them while your application is handling a lot of traffic
+- Root EBS Volumes of instances get terminated by default if the EC2 instance gets terminated. (you can disable that)
 
 ### EBS vs EFS – Elastic File System
 
@@ -2125,13 +2126,17 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html#solid-
 - EFS share website files (WordPress)
 - Only for Linux Instances (POSIX)
 - EFS has a higher price point than EBS
-- Can leverage Storage Tiers for cost savings Linux
+- Can leverage Storage Tiers for cost savings
 - Remember: EFS vs EBS vs Instance Store
+
+---
+
+## 8. Amazon S3
 
 ### Section introduction
 
 - Amazon S3 is one of the main building blocks of AWS
-- It’s advertised as ”infinitely scaling” storage
+- It’s advertised as **”infinitely scaling”** storage
 - Many websites use Amazon S3 as a backbone
 - Many AWS services use Amazon S3 as an integration as well
 - We’ll have a step-by-step approach to S3
@@ -2146,26 +2151,28 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html#solid-
 - Media hosting
 - Data lakes & big data analytics
 - Software delivery
-- Static website Nasdaq stores 7 years of data into S3 Glacier its data and gain business insights
+- Static website 
+Nasdaq stores 7 years of data into S3 Glacier its data and gain business insights
 
 ### Amazon S3 - Buckets
 
 > **🎯 Exam Tip:** Globally unique names, region-specific. Max object size = **5 TB**. Multi-part required for > **5 GB**, recommended for > **100 MB**.
 
 - Amazon S3 allows people to store objects (files) in “buckets” (directories)
-- Buckets must have a globally unique name (across all regions all accounts)
 - Buckets are defined at the region level
 - S3 looks like a global service but buckets are created in a region
-- Naming convention
-- No uppercase, No underscore
-- 3-63 characters long
-- Not an IP
-- Must start with lowercase letter or number
-- Must NOT start with the prefix xn-• Must NOT end with the suffix -s3alias
+- Naming: 
+  - **Shared Global Namespace** - Buckets must have a globally unique name (across all regions all accounts)
+  - **Account Regional Namespace** - allows for reuse of the same bucket name accross regions
 
----
 
-## 8. Amazon S3
+- Naming constraints/convention:
+  - No uppercase, No underscore
+  - 3-63 characters long
+  - Not an IP
+  - Must start with lowercase letter or number
+  - Must NOT start with the prefix xn-
+  - Must NOT end with the suffix -s3alias
 
 ### Amazon S3 - Objects
 
@@ -2175,14 +2182,14 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html#solid-
   - s3://my-bucket/my_folder1/another_folder/my_file.txt
   - The key is composed of prefix + object name Object
   - s3://my-bucket/my_folder1/another_folder/my_file.txt
-  - There’s no concept of “directories” within buckets (although the UI will trick you to think otherwise)
-  - Just keys with very long names that contain slashes (“/”) with Objects
+- There’s no concept of “directories” within buckets (although the UI will trick you to think otherwise)
+- Just keys with very long names that contain slashes (“/”) with Objects
 
 ### Amazon S3 – Objects (cont.)
 
 - Object values are the content of the body:
   - Max. Object Size is 5TB (5000GB)
-  - If uploading more than 5GB, must use “multi-part upload”
+  - If uploading more than 5GB, must use **“multi-part upload”**
   - Metadata (list of text key / value pairs – system or user metadata)
   - Tags (Unicode key / value pair – up to 10) – useful for security / lifecycle
   - Version ID (if versioning is enabled)
