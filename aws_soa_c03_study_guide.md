@@ -2196,24 +2196,24 @@ Nasdaq stores 7 years of data into S3 Glacier its data and gain business insight
 
 ### Amazon S3 – Security
 
-- User-Based
-- IAM Policies – which API calls should be allowed for a specific user from IAM
-- Resource-Based
-- Bucket Policies – bucket wide rules from the S3 console - allows cross account
-- Object Access Control List (ACL) – finer grain (can be disabled)
-- Bucket Access Control List (ACL) – less common (can be disabled)
+- **User-Based**
+  - IAM Policies – which API calls should be allowed for a specific user from IAM
+- **Resource-Based**
+ - **Bucket Policies** – bucket wide rules from the S3 console - allows cross account
+  - **Object Access Control List (ACL)** – finer grain (can be disabled)
+  - **Bucket Access Control List (ACL)** – less common (can be disabled)
 - Note: an IAM principal can access an S3 object if
 - The user IAM permissions ALLOW it OR the resource policy ALLOWS it
 - AND there’s no explicit DENY
-- Encryption: encrypt objects in Amazon S3 using encryption keys
+- **Encryption**: encrypt objects in Amazon S3 using encryption keys
 
 ### S3 Bucket Policies
 
 - JSON based policies
-- Resources: buckets and objects
-- Effect: Allow / Deny
-- Actions: Set of API to Allow or Deny
-- Principal: The account or user to apply the policy to
+  - Resources: buckets and objects
+  - Effect: Allow / Deny
+  - Actions: Set of API to Allow or Deny
+  - Principal: The account or user to apply the policy to
 - Use S3 bucket for policy to:
   - Grant public access to the bucket
   - Force objects to be encrypted at upload
@@ -2228,7 +2228,7 @@ Nasdaq stores 7 years of data into S3 Glacier its data and gain business insight
 ### Example: EC2 instance access - Use IAM Roles
 
 
-### Use Bucket Policy
+### Advanced: Cross-Account Access - Use Bucket Policy
 
 
 ### Bucket settings for Block Public Access
@@ -2249,11 +2249,13 @@ Nasdaq stores 7 years of data into S3 Glacier its data and gain business insight
   - CloudFront Origin Identity
   - MFA
 - Examples here:
+  - https://docs.aws.amazon.com/AmazonS3/latest/dev/example
+bucket-policies.html
 
 ### Bucket Policies – Advanced Examples
 
-- Restrict access to only principals from AWS accounts inside an AWS Organization using aws:PrincipalOrgID condition key
-- Prevent uploads of unencrypted objects to an S3 bucket using s3:x-amz-server-side-encryption condition key
+- Restrict access to only principals from AWS accounts inside an AWS Organization using **aws:PrincipalOrgID** condition key
+- Prevent uploads of unencrypted objects to an S3 bucket using **s3:x-amz-server-side-encryption** condition key
 
 ### Bucket Policies – Advanced Examples
 
@@ -2270,8 +2272,8 @@ Nasdaq stores 7 years of data into S3 Glacier its data and gain business insight
 - It is enabled at the bucket level
 - Same key overwrite will change the “version”: 1, 2, 3….
 - It is best practice to version your buckets
-- Protect against unintended deletes (ability to restore a version)
-- Easy roll back to previous version
+  - Protect against unintended deletes (ability to restore a version)
+  - Easy roll back to previous version
 - Notes:
   - Any file that is not versioned prior to enabling versioning will have version “null”
   - Suspending versioning does not delete the previous versions upload (my-bucket) s3://my-bucket/my-file.docx
@@ -2280,18 +2282,20 @@ Nasdaq stores 7 years of data into S3 Glacier its data and gain business insight
 
 > **🎯 Exam Tip:** Deleting a versioned object creates a **delete marker**. To permanently delete, specify the version ID.
 
-- When you enable Versioning for the first time, you have to wait at least
-- After enable Versioning, HTTP 404 NoSuchKey error when trying to get
-- Wait 15 minutes after enable Versioning before issuing write operations
+- When you enable Versioning for the first time, you have to wait at least 15 minutes to be fully propagated
+- After enable Versioning, **HTTP 404 NoSuchKey** error when trying to get Objects created or updated
+  - Wait 15 minutes after enable Versioning before issuing write operations
+- https://docs.aws.amazon.com/AmazonS3/latest/userguide/versioning
+workflows.html
 
 ### Amazon S3 – Replication (CRR & SRR)
 
-- Must enable Versioning in source and destination buckets
-- Cross-Region Replication (CRR)
-- Same-Region Replication (SRR)
+- **Must enable Versioning** in source and destination buckets
+- **Cross-Region Replication (CRR)**
+- **Same-Region Replication (SRR)**
 - Buckets can be in different AWS accounts
 - Copying is asynchronous
-- Must give proper IAM permissions to S3 (eu-west-1) asynchronous replication
+- Must give proper IAM permissions to S3 (eu-west-1)
 - Use cases:
   - CRR – compliance, lower latency access, replication across accounts
   - SRR – log aggregation, live replication between production and test accounts (us-east-2)
@@ -2299,14 +2303,14 @@ Nasdaq stores 7 years of data into S3 Glacier its data and gain business insight
 ### Amazon S3 – Replication (Notes)
 
 - After you enable Replication, only new objects are replicated
-- Optionally, you can replicate existing objects using S3 Batch Replication
-- Replicates existing objects and objects that failed replication
+- Optionally, you can replicate existing objects using **S3 Batch Replication**
+   - Replicates existing objects and objects that failed replication
 - For DELETE operations
-- Can replicate delete markers from source to target (optional setting)
-- Deletions with a version ID are not replicated (to avoid malicious deletes)
-- There is no “chaining” of replication
-- If bucket 1 has replication into bucket 2, which has replication into bucket 3
-- Then objects created in bucket 1 are not replicated to bucket 3
+  - Can **replicate delete markers** from source to target (optional setting)
+  - Deletions with a version ID are not replicated (to avoid malicious deletes)
+- **There is no “chaining” of replication**
+  - If bucket 1 has replication into bucket 2, which has replication into bucket 3
+  - Then objects created in bucket 1 are not replicated to bucket 3
 
 ### Amazon S3 – Cross-account S3 Replication
 
@@ -2315,9 +2319,9 @@ Nasdaq stores 7 years of data into S3 Glacier its data and gain business insight
 
 - By default, the owner of the source object (source bucket) is the owner of the replica object (destination bucket)
 - To change the replica object owner to the destination account:
-  - Add the owner override option to the replication rule config
-  - In source account, grant Amazon S3 permission to change replica ownership (s3:ObjectOwnerOverrideToBucketOwner in the IAM role)
-  - In destination account, update the destination bucket policy to add the permission to allow change replica ownership (s3:ObjectOwnerOverrideToBucketOwner)
+  - Add the **owner override** option to the replication rule config
+  - In source account, grant Amazon S3 permission to change replica ownership **(s3:ObjectOwnerOverrideToBucketOwner in the IAM role)**
+  - In destination account, update the destination bucket policy to add the permission to allow change replica ownership **(s3:ObjectOwnerOverrideToBucketOwner)**
 
 ### Amazon S3 – Replication Time Control (RTC)
 
@@ -2330,27 +2334,29 @@ Nasdaq stores 7 years of data into S3 Glacier its data and gain business insight
 - Helps you meet compliance or business requirements
 - Extra cost per GB for the replication
 
+## 9. Amazon S3 – Advanced & Security
+
 ### Amazon S3 – Advanced
 
 
 ### Amazon S3 – Moving between Storage Classes
 
 - You can transition objects between storage classes
-- For infrequently accessed object, move them to Standard IA
-- For archive objects that you don’t need fast access to, move them to Glacier or Glacier Deep Archive
-- Moving objects can be automated using a Lifecycle Rules
+- For infrequently accessed object, move them to **Standard IA**
+- For archive objects that you don’t need fast access to, move them to **Glacier** or **Glacier Deep Archive**
+- Moving objects can be automated using a **Lifecycle Rules**
 
 ### Amazon S3 – Lifecycle Rules
 
 > **🎯 Exam Tip:** 30-day minimum in Standard before moving to Standard-IA. No minimum for Glacier.
 
-- Transition Actions – configure objects to transition to another storage class
-- Move objects to Standard IA class **60 days** after creation
-- Move to Glacier for archiving after 6 months
-- Expiration actions – configure objects to expire (delete) after some time
-- Access log files can be set to delete after a 365 days
-- Can be used to delete old versions of files (if versioning is enabled)
-- Can be used to delete incomplete Multi-Part uploads
+- **Transition Actions** – configure objects to transition to another storage class
+  - Move objects to Standard IA class **60 days** after creation
+  - Move to Glacier for archiving after 6 months
+- **Expiration actions** – configure objects to expire (delete) after some time
+  - Access log files can be set to delete after a 365 days
+  - Can be used to delete old versions of files (if versioning is enabled)
+  - **Can be used to delete incomplete Multi-Part uploads**
 - Rules can be created for a certain prefix (example: s3://mybucket/mp3/*)
 - Rules can be created for certain objects Tags (example: Department: Finance)
 
@@ -2363,7 +2369,7 @@ Nasdaq stores 7 years of data into S3 Glacier its data and gain business insight
 ### Amazon S3 – Lifecycle Rules (Scenario 2)
 
 - A rule in your company states that you should be able to recover your deleted S3 objects immediately for 30 days, although this may happen rarely. After this time, and for up to 365 days, deleted objects should be recoverable within 48 hours.
-- Enable S3 Versioning in order to have object versions, so that “deleted objects” are in fact hidden by a “delete marker” and can be recovered
+- **Enable S3 Versioning** in order to have object versions, so that “deleted objects” are in fact hidden by a “delete marker” and can be recovered
 - Transition the “noncurrent versions” of the object to Standard IA
 - Transition afterwards the “noncurrent versions” to Glacier Deep Archive
 
@@ -2371,7 +2377,7 @@ Nasdaq stores 7 years of data into S3 Glacier its data and gain business insight
 
 - Help you decide when to transition objects to the right storage class
 - Recommendations for Standard and Standard IA
-- Does NOT work for One-Zone IA or Glacier
+  - Does NOT work for One-Zone IA or Glacier
 - Report is updated daily
 - 24 to 48 hours to start seeing data analysis S3 Analytics
 - Good first step to put together Lifecycle Rules (or improve them)!
@@ -2381,17 +2387,18 @@ Nasdaq stores 7 years of data into S3 Glacier its data and gain business insight
 - S3:ObjectCreated, S3:ObjectRemoved, S3:ObjectRestore, S3:Replication…
 - Object name filtering possible (*.jpg)
 - Use case: generate thumbnails of images uploaded to S3
-- Can create as many “S3 events” as desired events
 - S3 event notifications typically deliver events in seconds but can sometimes take a minute or longer
+- If two writes are made to a single non-versioned object at the same time, it is possible that only a single event notification will be sent
+- If you want to ensure that an event notification is sent for every successful write, you can enable versioning on your bucket.
 
 ### S3 Event Notifications – IAM Permissions
 
 
 ### with Amazon EventBridge
 
-- Advanced filtering options with JSON rules (metadata, object size, name...)
-- Multiple Destinations – ex Step Functions, Kinesis Streams / Firehose…
-- EventBridge Capabilities – Archive, Replay Events, Reliable delivery
+- **Advanced filtering** options with JSON rules (metadata, object size, name...)
+- **Multiple Destinations** – ex Step Functions, Kinesis Streams / Firehose…
+- **EventBridge Capabilities** – Archive, Replay Events, Reliable delivery
 
 ### S3 – Baseline Performance
 
@@ -2410,16 +2417,22 @@ Nasdaq stores 7 years of data into S3 Glacier its data and gain business insight
 ### S3 Performance
 
 - Multi-Part upload:
-  - S3 Transfer Acceleration
+
   - recommended for files > 100MB, must use for files > 5GB
   - Can help parallelize uploads (speed up transfers)
-  - Increase transfer speed by transferring file to an AWS edge location which will forward the data to the S3 bucket in the target region
-  - Compatible with multi-part upload Parallel uploads (public www) (private AWS)
+  - Parallel uploads
+
+- S3 Transfer Acceleration
+    - Increase transfer speed by transferring file to an AWS edge location which will forward the data to the S3 bucket in the target region
+  - Compatible with multi-part upload 
+   (public www) (private AWS)
 
 ### S3 Performance – S3 Byte-Range Fetches
 
 - Parallelize GETs by requesting specific byte ranges
-- Better resilience in case of failures Can be used to speed up downloads data (for example the head of a file) (first XX bytes) header
+- Better resilience in case of failures 
+- Can be used to speed up downloads 
+- Can be used to retrieve only partial data for example the head of a file)
 
 ### S3 Batch Operations
 
@@ -2430,21 +2443,23 @@ Nasdaq stores 7 years of data into S3 Glacier its data and gain business insight
   - Modify ACLs, tags
   - Restore objects from S3 Glacier
   - Invoke Lambda function to perform custom action on each object
-  - A job consists of a list of objects, the action to perform, and optional parameters
-  - S3 Batch Operations manages retries, tracks progress, sends completion notifications, generate reports …
-  - You can use S3 Inventory to get object list and use operation parameters filter filtered list
+- A job consists of a list of objects, the action to perform, and optional parameters
+- S3 Batch Operations manages retries, tracks progress, sends completion notifications, generate reports …
+- You can use S3 Inventory to get object list and use operation parameters filter filtered list
+
+### S3 Batch Operations Hands ON
 
 ### S3 Inventory
 
 - List objects and their corresponding metadata (alternative to S3 List API operation)
 - Usage examples:
-  - Audit and report on the replication and encryption status of your objects
+  - **Audit and report on the replication and encryption status of your objects**
   - Get the number of objects in an S3 bucket
   - Identify the total storage of previous object versions
-  - Generate daily or weekly reports
-  - Output files: CSV, ORC, or Apache Parquet
-  - You can query all the data using Amazon Athena, Redshift, Presto, Hive,
-  - Use cases: Business, Compliance, Regulatory needs, …
+- Generate daily or weekly reports
+- Output files: CSV, ORC, or Apache Parquet
+- You can query all the data using Amazon Athena, Redshift, Presto, Hive,
+- Use cases: Business, Compliance, Regulatory needs, …
 
 ### S3 Multi Part Upload – Deep Dive
 
@@ -2454,54 +2469,50 @@ Nasdaq stores 7 years of data into S3 Glacier its data and gain business insight
 - Max. parts: **10,000**
 - Failures: restart uploading ONLY failed parts (improves performance)
 - Use Lifecycle Policy to automate old parts deletion of unfinished upload after x days (e.g., network outage)
-- Upload using AWS CLI or AWS SDK … (max. **10,000**) parallel uploads (COMPLETE request)
+- Upload using AWS CLI or AWS SDK
 
 ### Amazon Athena
 
-- Serverless query service to analyze data stored in Amazon S3
+- **Serverless** query service to analyze data stored in Amazon S3
 - Uses standard SQL language to query the files (built on Presto)
 - Supports CSV, JSON, ORC, Avro, and Parquet
 - Pricing: $5.00 per TB of data scanned
 - Commonly used with Amazon Quicksight for reporting/dashboards
-- Use cases: Business intelligence / analytics / reporting, analyze & query VPC Flow Logs, ELB Logs, CloudTrail trails, etc...
-- Exam Tip: analyze data in S3 using serverless SQL, use Athena load data
+- Use cases: Business intelligence / analytics / reporting, analyze & query VPC Flow Logs, ELB Logs, **CloudTrail trails**, etc...
+- Exam Tip: analyze data in S3 using serverless SQL, use Athena
 
 ### Amazon Athena – Performance Improvement
 
-- Use columnar data for cost-savings (less scan)
-- Apache Parquet or ORC is recommended
-- Huge performance improvement
-- Use Glue to convert your data to Parquet or ORC
-- Compress data for smaller retrievals (bzip2, gzip, lz4, snappy, zlip, zstd…)
+- Use **columnar data** for cost-savings (less scan)
+  - Apache Parquet or ORC is recommended
+  - Huge performance improvement
+  - Use Glue to convert your data to Parquet or ORC
+- **Compress data** for smaller retrievals (bzip2, gzip, lz4, snappy, zlip, zstd…)
 - Partition datasets in S3 for easy querying on virtual columns
-- s3://yourBucket/pathToTable /<PARTITION_COLUMN_NAME>=<VALUE>
-- Example: s3://athena-examples/flight/parquet/year=1991/month=1/day=1/
+  - s3://yourBucket/pathToTable /<PARTITION_COLUMN_NAME>=<VALUE>
+  - Example: s3://athena-examples/flight/parquet/year=1991/month=1/day=1/
 - Use larger files (> 128 MB) to minimize overhead
 
 ### Amazon Athena – Federated Query
 
 - Allows you to run SQL queries across data stored in relational, non-relational, object, and custom data sources (AWS or on-premises)
-- Uses Data Source Connectors that run on AWS Lambda to run Federated
-- Store the results back in Amazon S3 Amazon Athena (Data Source (On-Premises)
+- Uses Data Source Connectors that run on AWS Lambda to run Federated Queries (e.g., CloudWatch Logs, DynamoDB, RDS, …)
+- Store the results back in Amazon S3
 
 ### Amazon S3 – Security
 
-
----
-
-## 9. Amazon S3 – Advanced & Security
-
 ### Amazon S3 – MFA Delete
 
-- MFA (Multi-Factor Authentication) – force users to generate a code on a device (usually a mobile phone or hardware) before doing important operations on S3
+- **MFA (Multi-Factor Authentication)** – force users to generate a code on a device (usually a mobile phone or hardware) before doing important operations on S3
 - MFA will be required to:
   - Permanently delete an object version
-  - Suspend Versioning on the bucket Google Authenticator
+  - Suspend Versioning on the bucket
 - MFA won’t be required to:
   - Enable Versioning
   - List deleted versions MFA Hardware Device
-  - To use MFA Delete, Versioning must be enabled on the bucket
-  - Only the bucket owner (root account) can enable/disable MFA Delete
+- To use MFA Delete, **Versioning must be enabled** on the bucket
+- **Only the bucket owner (root account) can enable/disable MFA Delete**
+- **Can only be enabled via AWS CLI**
 
 ### S3 Access Logs
 
@@ -2510,6 +2521,7 @@ Nasdaq stores 7 years of data into S3 Glacier its data and gain business insight
 - That data can be analyzed using data analysis tools…
 - The target logging bucket must be in the same AWS region
 - The log format is at:
+  - https://docs.aws.amazon.com/AmazonS3/latest/dev/LogFormat.html
 
 ### S3 Access Logs: Warning
 
@@ -2518,8 +2530,8 @@ Nasdaq stores 7 years of data into S3 Glacier its data and gain business insight
 
 ### S3 Glacier Vault Lock
 
-- Adopt a WORM (Write Once Read Many) model
-- Create a Vault Lock Policy
+- Adopt a **WORM (Write Once Read Many)** model
+- Create a **Vault Lock Policy**
 - Lock the policy for future edits (can no longer be changed or deleted)
 - Helpful for compliance and data retention Object
 
@@ -2529,14 +2541,14 @@ Nasdaq stores 7 years of data into S3 Glacier its data and gain business insight
 
 - Adopt a WORM (Write Once Read Many) model
 - Block an object version deletion for a specified amount of time
-- Retention mode - Compliance:
+- **Retention mode - Compliance:**
   - Object versions can't be overwritten or deleted by any user, including the root user
   - Objects retention modes can't be changed, and retention periods can't be shortened
-- Retention mode - Governance:
+- **Retention mode - Governance:**
   - Most users can't overwrite or delete an object version or alter its lock settings
   - Some users have special permissions to change the retention or delete the object
-  - Retention Period: protect the object for a fixed period, it can be extended
-- Legal Hold:
+  - **Retention Period:** protect the object for a fixed period, it can be extended
+- **Legal Hold:**
   - protect the object indefinitely, independent from retention period
   - can be freely placed and removed using the s3:PutObjectLegalHold IAM permission
 
@@ -2544,16 +2556,16 @@ Nasdaq stores 7 years of data into S3 Glacier its data and gain business insight
 
 - No cost
 - Only accessed by resources in the VPC where it’s created
-- Make sure “DNS Support” is Enabled
+- Make sure **“DNS Support” is Enabled**
 - Keep on using the public DNS of Amazon S3
 - Make sure Outbound rules of SG of EC2 instance allows traffic to S3 (DNS Support: Enabled) (Allow Outbound)
 
 ### VPC Interface Endpoint for S3
 
 - ENI(s) are deployed in your Subnets (Security Groups can be attached to ENIs)
-- Can access from on-premises (VPN or Direct Connect)
+- **Can access from on-premises (VPN or Direct Connect)**
 - Costs $0.01 per hour per AZ
-- Both VPC settings “Enable DNS hostnames” and “Enable DNS Support” must be 'true’ s3.us-west-1.amazonaws.com (Public DNS Name) (DNS Support: Enabled) (DNS Hostnames: Enabled)
+- Both VPC settings **“Enable DNS hostnames”** and **“Enable DNS Support” **must be 'true’
 
 ### IAM Access Analyzer for S3
 
@@ -2562,72 +2574,86 @@ Nasdaq stores 7 years of data into S3 Glacier its data and gain business insight
 - Evaluates S3 Bucket Policies, S3 ACLs, S3 Access Point Policies
 - Powered by IAM Access Analyzer
 
-### Advanced Storage Solutions
+
+
+---
 
 
 ---
 
 ## 10. Advanced Storage Solutions
 
+### Advanced Storage Solutions
+
 ### Amazon FSx – Overview
 
-- Launch 3rd party high-performance file systems on AWS
-- Fully managed service FSx for Lustre FSx for NetApp ONTAP
+- **Launch 3rd party high-performance file systems on AWS**
+- Fully managed service 
+  - FSx for Lustre 
+  - FSx for NetApp ONTAP
+  - FSx for Windows File Server
+  - FSx for OpenZFS
 
 ### Amazon FSx for Windows (File Server)
 
 > **🎯 Exam Tip:** SMB, Active Directory, NTFS. Linux NFS → EFS. HPC/ML → FSx Lustre. Multi-protocol → FSx NetApp ONTAP.
 
-- FSx for Windows is a fully managed Windows file system share drive
+- **FSx for Windows** is a fully managed Windows file system share drive
 - Supports SMB protocol & Windows NTFS
 - Microsoft Active Directory integration, ACLs, user quotas
-- Can be mounted on Linux EC2 instances
+- **Can be mounted on Linux EC2 instances**
 - Supports Microsoft's Distributed File System (DFS) Namespaces (group files across multiple FS)
 - Scale up to 10s of GB/s, millions of IOPS, 100s PB of data
 - Storage Options:
   - SSD – latency sensitive workloads (databases, media processing, data analytics, …)
   - HDD – broad spectrum of workloads (home directory, CMS, …)
-  - Can be accessed from your on-premises infrastructure (VPN or Direct Connect)
-  - Can be configured to be Multi-AZ (high availability)
-  - Data is backed-up daily to S3
+- Can be accessed from your on-premises infrastructure (VPN or Direct Connect)
+- Can be configured to be Multi-AZ (high availability)
+- Data is backed-up daily to S3
 
 ### Amazon FSx for Lustre
 
-- Lustre is a type of parallel distributed file system, for large-scale computing
+- **Lustre** is a type of parallel distributed file system, for large-scale computing
 - The name Lustre is derived from “Linux” and “cluster
-- Machine Learning, High Performance Computing (HPC)
+- Machine Learning, **High Performance Computing (HPC)**
 - Video Processing, Financial Modeling, Electronic Design Automation
 - Scales up to 100s GB/s, millions of IOPS, sub-ms latencies
 - Storage Options:
   - SSD – low-latency, IOPS intensive workloads, small & random file operations
   - HDD – throughput-intensive workloads, large & sequential file operations
-  - Seamless integration with S3
+- Seamless integration with S3
   - Can “read S3” as a file system (through FSx)
   - Can write the output of the computations back to S3 (through FSx)
-  - Can be used from on-premises servers (VPN or Direct Connect)
+- Can be used from on-premises servers (VPN or Direct Connect)
 
 ### FSx Lustre - File System Deployment Options
 
-- Scratch File System
-- Temporary storage
-- Data is not replicated (doesn’t persist if file server fails)
-- High burst (6x faster, 200MBps per TiB)
-- Usage: short-term processing, optimize costs
-- Persistent File System
-- Long-term storage
-- Data is replicated within same AZ
-- Replace failed files within minutes
-- Usage: long-term processing, sensitive data Compute instances (Scratch file system) instances (optional data repository) instances (Persistent file system) instances (optional data repository)
+- **Scratch File System**
+  - Temporary storage
+  - Data is not replicated (doesn’t persist if file server fails)
+  - High burst (6x faster, 200MBps per TiB)
+  - Usage: short-term processing, optimize costs
+- **Persistent File System**
+  - Long-term storage
+  - Data is replicated within same AZ
+  - Replace failed files within minutes
+  - Usage: long-term processing, sensitive data Compute instances (Scratch file system) instances (optional data repository) instances (Persistent file system) instances (optional data repository)
 
 ### Amazon FSx for NetApp ONTAP
 
 - Managed NetApp ONTAP on AWS
-- File System compatible with NFS, SMB, iSCSI protocol
+- **File System compatible with NFS, SMB, iSCSI protocol**
 - Move workloads running on ONTAP or NAS to AWS
 - Works with:
-  - Storage shrinks or grows automatically
-  - Snapshots, replication, low-cost, compression and data de-duplication
-  - Point-in-time instantaneous cloning (helpful for testing new workloads) on AWS
+  • Linux
+  • Windows
+  • MacOS 
+  • VMware Cloud on AWS
+  • Amazon Workspaces & AppStream 2.0
+  • Amazon EC2, ECS and EKS
+- Storage shrinks or grows automatically
+- Snapshots, replication, low-cost, compression and data de-duplication
+- **Point-in-time instantaneous cloning (helpful for testing new workloads) on AWS**
 
 ### Amazon FSx for OpenZFS
 
@@ -2641,29 +2667,29 @@ Nasdaq stores 7 years of data into S3 Glacier its data and gain business insight
   - VMware Cloud on AWS
   - Amazon Workspaces & AppStream 2.0
   - Amazon EC2, ECS and EKS
-  - Up to 1,000,000 IOPS with < 0.5ms latency
-  - Snapshots, compression and low-cost
-  - Point-in-time instantaneous cloning (helpful for testing new workloads) on AWS
+- Up to 1,000,000 IOPS with < 0.5ms latency
+- Snapshots, compression and low-cost
+- Point-in-time instantaneous cloning (helpful for testing new workloads) on AWS
 
 ### FSx for SysOps
 
-- FSx for Windows – Single-AZ
-- Automatically replicates data within an
-- Two generations: Single-AZ 1 (SSD), Single-AZ 2 (SSD & HDD) us-east-1 us-east-1a
-- FSx for Windows – Multi-AZ
-- Automatically replicates data across AZs (synchronous)
-- Standby file server in a different AZ (automatic failover) us-east-1 us-east-1a us-east-1b synchronous replication failover (standby)
+- **FSx for Windows – Single-AZ**
+  - Automatically replicates data within an AZ
+  - Two generations: Single-AZ 1 (SSD), Single-AZ 2 (SSD & HDD)
+- **FSx for Windows – Multi-AZ**
+  - Automatically replicates data across AZs (synchronous)
+  - Standby file server in a different AZ (automatic failover)
 
 ### Hybrid Cloud for Storage
 
-- AWS is pushing for ”hybrid cloud”
-- Part of your infrastructure is on the cloud
-- Part of your infrastructure is on-premises
+- AWS is pushing for **”hybrid cloud”**
+  - Part of your infrastructure is on the cloud
+  - Part of your infrastructure is on-premises
 - This can be due to
-- Long cloud migrations
-- Security requirements
-- Compliance requirements
-- IT strategy
+  - Long cloud migrations
+  - Security requirements
+  - Compliance requirements
+  - IT strategy
 - S3 is a proprietary storage technology (unlike EFS / NFS), so how do you expose the S3 data on-premises?
 - AWS Storage Gateway!
 
@@ -2681,33 +2707,33 @@ Nasdaq stores 7 years of data into S3 Glacier its data and gain business insight
   - tiered storage
   - on-premises cache & low-latency files access
 - Types of Storage Gateway:
-  - S3 File Gateway
-  - Volume Gateway
-  - Tape Gateway Storage Gateway
+  - **S3 File Gateway**
+  - **Volume Gateway**
+  - **Tape Gateway**
 
 ### Amazon S3 File Gateway
 
 - Configured S3 buckets are accessible using the NFS and SMB protocol
-- Most recently used data is cached in the file gateway
+- **Most recently used data is cached in the file gateway**
 - Supports S3 Standard, S3 Standard IA, S3 One Zone A, S3 Intelligent Tiering
-- Transition to S3 Glacier using a Lifecycle Policy
+- **Transition to S3 Glacier using a Lifecycle Policy**
 - Bucket access using IAM roles for each File Gateway
 - SMB Protocol has integration with Active Directory (AD) for user authentication policy
 
-### Snapshots
+### Volume Gateway
 
-- Block storage using iSCSI protocol backed by S3
-- Backed by EBS snapshots which can help restore on-premises volumes!
-- Cached volumes: low latency access to most recent data
-- Stored volumes: entire dataset is on premise, scheduled backups to S3
+• Block storage using iSCSI protocol backed by S3
+• Backed by EBS snapshots which can help restore on-premises volumes!
+• **Cached volumes**: low latency access to most recent data
+• **Stored volumes**: entire dataset is on premise, scheduled backups to S3
 
-### Amazon Glacier
+### Tape Gateway
 
-- Some companies have backup processes using physical tapes (!)
-- With Tape Gateway, companies use the same processes but, in the cloud
-- Virtual Tape Library (VTL) backed by Amazon S3 and Glacier
-- Back up data using existing tape-based processes (and iSCSI interface)
-- Works with leading backup software vendors Corporate stored in Archived Tapes stored in
+• Some companies have backup processes using physical tapes (!)
+• With Tape Gateway, companies use the same processes but, in the cloud
+• **Virtual Tape Library (VTL)** backed by Amazon S3 and Glacier
+• Back up data using existing tape-based processes (and iSCSI interface)
+• Works with leading backup software vendors
 
 ### AWS Storage Gateway
 
@@ -2717,13 +2743,13 @@ Nasdaq stores 7 years of data into S3 Glacier its data and gain business insight
 ### Storage Gateway – SysOps
 
 - File Gateway is POSIX compliant (Linux file system)
-- POSIX metadata ownership, permissions, and timestamps stored in the object’s metadata in S3
+  - POSIX metadata ownership, permissions, and timestamps stored in the object’s metadata in S3
 - Reboot Storage Gateway VM: (e.g., maintenance)
-- File Gateway: simply restart the Storage Gateway VM
-- Volume and Tape Gateway:
-  - Stop Storage Gateway Service (AWS Console, VM local Console, Storage Gateway API)
-  - Reboot the Storage Gateway VM
-  - Start Storage Gateway Service (AWS Console, VM local Console, Storage Gateway API)
+  - **File Gateway**: simply restart the Storage Gateway VM
+  - Volume and Tape Gateway:
+    - Stop Storage Gateway Service (AWS Console, VM local Console, Storage Gateway API)
+    - Reboot the Storage Gateway VM
+    - Start Storage Gateway Service (AWS Console, VM local Console, Storage Gateway API)
 
 ### Storage Gateway – Activations
 
@@ -2732,17 +2758,17 @@ Nasdaq stores 7 years of data into S3 Glacier its data and gain business insight
   - Make a web request to the Gateway VM (Port 80)
 - Troubleshooting Activation Failures:
   - Make sure the Gateway VM has port 80 opened
-  - Check that the Gateway VM has the correct time and synchronizing its time automatically to a Network Time Protocol (NTP) server activation_region&no_redirect’ sync
+  - Check that the Gateway VM has the correct time and synchronizing its time automatically to a Network Time Protocol (NTP) server
 
 ### Storage Gateway – Volume Gateway Cache
 
 - Cached mode: only the most recent data is stored
 - Looking at cache efficiency
-- Look at the CacheHitPercent metric (you want it to be high)
-- Look at the CachePercentUsed (you don’t want it to be too high)
+  - Look at the CacheHitPercent metric (you want it to be high)
+  - Look at the CachePercentUsed (you don’t want it to be too high)
 - Create a larger cache disk
-- Use the cached volume to clone a new volume of a larger size
-- Select the new disk as the cached volume AWS Cloud
+  - Use the cached volume to clone a new volume of a larger size
+  - Select the new disk as the cached volume AWS Cloud
 
 ---
 
