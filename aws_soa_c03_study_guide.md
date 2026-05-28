@@ -2880,39 +2880,40 @@ workflows.html
 - Resides between Regional Edge Location and your Origin
 - Combine multiple requests for the same object into a single request (reduce origin load)
 
-### Using VPC Origins
+### CloudFront – ALB or EC2 as an origin Using VPC Origins
 
 - Allows you to deliver content from your applications hosted in your VPC private subnets (no need to expose them on the Internet)
-- Deliver traffic to private:
+- Deliver traffic to **private**:
   - Application Load Balancer
   - Network Load Balancer
-  - EC2 Instances Private Subnet Users CloudFront
+  - EC2 Instances
 
-### Using Public Network
+### CloudFront – ALB or EC2 as an origin Using Public Network
 
+Image from AWS Course PDF
 
 ### CloudFront Geo Restriction
 
 - You can restrict who can access your distribution
-- Allowlist: Allow your users to access your content only if they're in one of the countries on a list of approved countries.
-- Blocklist: Prevent your users from accessing your content if they're in one of the countries on a list of banned countries.
+  - **Allowlist**: Allow your users to access your content only if they're in one of the countries on a list of approved countries.
+  - **Blocklist**: Prevent your users from accessing your content if they're in one of the countries on a list of banned countries.
 - The “country” is determined using a 3rd party Geo-IP database
 - Use case: Copyright Laws to control access to content
 
 ### CloudFront Access Logs
 
-- Logs every request made to CloudFront into a logging S3 bucket
-- Can send logs to CloudWatch Logs and Kinesis Data Firehose data about requests (Distribution A) (Distribution B)
+- **Logs every request made to CloudFront into a logging S3 bucket**
+- Can send logs to CloudWatch Logs and Kinesis Data Firehose
 
 ### CloudFront Reports
 
 - It’s possible to generate reports on:
-  - Cache Statistics Report
-  - Popular Objects Report
-  - Top Referrers Report
-  - Usage Reports
-  - Viewers Report
-  - These reports are based on the data from the Access Logs.
+  - **Cache Statistics Report**
+  - **Popular Objects Report**
+  - **Top Referrers Report**
+  - **Usage Reports**
+  - **Viewers Report**
+- These reports are based on the data from the Access Logs.
 
 ### CloudFront troubleshooting
 
@@ -2930,7 +2931,7 @@ workflows.html
 > **🎯 Exam Tip:** Routes TCP/UDP via AWS backbone using **anycast static IPs**. Use for non-HTTP or when static IPs needed.
 
 - Leverage the AWS internal network to route to your application
-- 2 Anycast IP are created for your application
+- **2 Anycast IP** are created for your application
 - The Anycast IP send traffic directly to Edge Locations
 - The Edge locations send the traffic to your application
 
@@ -2940,31 +2941,31 @@ workflows.html
 
 - Works with Elastic IP, EC2 instances, ALB, NLB, public or private
 - Consistent Performance
-- Intelligent routing to lowest latency and fast regional failover
-- No issue with client cache (because the IP doesn’t change)
-- Internal AWS network
+  - Intelligent routing to lowest latency and fast regional failover
+  - No issue with client cache (because the IP doesn’t change)
+  - Internal AWS network
 - Health Checks
-- Global Accelerator performs a health check of your applications
-- Helps make your application global (failover less than 1 minute for unhealthy)
-- Great for disaster recovery (thanks to the health checks)
+  - Global Accelerator performs a health check of your applications
+  - Helps make your application global (failover less than 1 minute for unhealthy)
+  - Great for disaster recovery (thanks to the health checks)
 - Security
-- only 2 external IP need to be whitelisted
-- DDoS protection thanks to AWS Shield
+  - only 2 external IP need to be whitelisted
+  - DDoS protection thanks to AWS Shield
 
 ### AWS Global Accelerator vs CloudFront
 
 - They both use the AWS global network and its edge locations around the world
 - Both services integrate with AWS Shield for DDoS protection.
-- CloudFront
-- Improves performance for both cacheable content (such as images and videos)
-- Dynamic content (such as API acceleration and dynamic site delivery)
-- Content is served at the edge
-- Global Accelerator
-- Improves performance for a wide range of applications over TCP or UDP
-- Proxying packets at the edge to applications running in one or more AWS Regions.
-- Good fit for non-HTTP use cases, such as gaming (UDP), IoT (MQTT), or Voice over IP
-- Good for HTTP use cases that require static IP addresses
-- Good for HTTP use cases that required deterministic, fast regional failover
+- **CloudFront**
+  - Improves performance for both cacheable content (such as images and videos)
+  - Dynamic content (such as API acceleration and dynamic site delivery)
+  - Content is served at the edge
+- **Global Accelerator**
+  - Improves performance for a wide range of applications over TCP or UDP
+  - Proxying packets at the edge to applications running in one or more AWS Regions.
+  - Good fit for non-HTTP use cases, such as gaming (UDP), IoT (MQTT), or Voice over IP
+  - Good for HTTP use cases that require static IP addresses
+  - Good for HTTP use cases that required deterministic, fast regional failover
 
 ---
 
@@ -2975,15 +2976,15 @@ workflows.html
 - RDS stands for Relational Database Service
 - It’s a managed DB service for DB use SQL as a query language.
 - It allows you to create databases in the cloud that are managed by AWS
-- Postgres
-- MySQL
-- MariaDB
-- Oracle
-- Microsoft SQL Server
-- IBM DB2
-- Aurora (AWS Proprietary database)
+  - Postgres
+  - MySQL
+  - MariaDB
+  - Oracle
+  - Microsoft SQL Server
+  - IBM DB2
+  - Aurora (AWS Proprietary database)
 
-### DB on EC2
+### Advantage over using RDS versus deploying DB on EC2
 
 - RDS is a managed service:
   - Automated provisioning, OS patching
@@ -2994,7 +2995,7 @@ workflows.html
   - Maintenance windows for upgrades
   - Scaling capability (vertical and horizontal)
   - Storage backed by EBS
-  - BUT you can’t SSH into your instances Advantage over using RDS versus deploying
+- BUT you can’t SSH into your instances
 
 ### RDS – Storage Auto Scaling
 
@@ -3006,8 +3007,8 @@ workflows.html
   - Free storage is less than 10% of allocated storage
   - Low-storage lasts at least 5 minutes
   - 6 hours have passed since last modification
-  - Useful for applications with unpredictable workloads
-  - Supports all RDS database engines Application
+- Useful for applications with unpredictable workloads
+- Supports all RDS database engines Application
 
 ### RDS Read Replicas for read scalability
 
@@ -3015,9 +3016,9 @@ workflows.html
 
 - Up to 15 Read Replicas
 - Within AZ, Cross AZ or Cross Region
-- Replication is ASYNC, so reads are eventually consistent
+- Replication is **ASYNC**, so reads are eventually consistent
 - Replicas can be promoted to their own
-- Applications must update the connection string to leverage read replicas reads instance read replica writes reads reads replication replication instance read replica
+- Applications must update the connection string to leverage read replicas
 
 ### RDS Read Replicas – Use Cases
 
@@ -3025,29 +3026,29 @@ workflows.html
 - You want to run a reporting application to run some analytics
 - You create a Read Replica to run the new workload there
 - The production application is unaffected
-- Read replicas are used for SELECT (=read) only kind of statements (not INSERT, UPDATE, DELETE) reads reads replication instance read replica
+- Read replicas are used for SELECT (=read) only kind of statements (not INSERT, UPDATE, DELETE)
 
 ### RDS Read Replicas – Network Cost
 
 - In AWS there’s a network cost when data goes from one AZ to another
-- For RDS Read Replicas within the same region, you don’t pay that fee us-east-1a us-east-1b us-east-1a instance read replica eu-west-1b instance read replica
+- **For RDS Read Replicas within the same region, you don’t pay that fee**
 
 ### RDS Multi AZ (Disaster Recovery)
 
 > **🎯 Exam Tip:** Standby is **not readable** — failover only. Automatic ~1–2 min. DNS endpoint unchanged.
 
-- SYNC replication
+- **SYNC** replication
 - One DNS name – automatic app failover to standby
 - Increase availability
 - Failover in case of loss of AZ, loss of network, instance or storage failure
 - No manual intervention in apps
 - Not used for scaling
-- Note: The Read Replicas be setup as Multi AZ for Disaster Recovery (DR) writes reads instance standby (AZ B) replication instance (AZ A)
+- Note: The Read Replicas be setup as Multi AZ for Disaster Recovery (DR) )
 
 ### RDS – From Single-AZ to Multi-AZ
 
 - Zero downtime operation (no need to stop the DB)
-- Just click on “modify” for the database
+- Just click on **“modify”** for the database
 - The following happens internally:
   - A snapshot is taken
   - A new DB is restored from the snapshot in a new AZ
@@ -3056,33 +3057,38 @@ workflows.html
 ### RDS Multi AZ – Failover Conditions
 
 - The primary DB instance
-- Failed
-- OS is undergoing software patches
-- Unreachable due to loss of network connectivity
-- Modified (e.g., DB instance type changed)
-- Busy and unresponsive
-- Underlying storage failure
+  - Failed
+  - OS is undergoing software patches
+  - Unreachable due to loss of network connectivity
+  - Modified (e.g., DB instance type changed)
+  - Busy and unresponsive
+  - Underlying storage failure
 - An Availability Zone outage
-- A manual failover of the DB instance was initiated using Reboot with failover
+- A manual failover of the DB instance was initiated using **Reboot with failover**
 
 ### RDS Backup vs. Snapshots
 
-- Backups are “continuous” and allow point in time recovery
-- Snapshots takes IO operations and can stop the database from seconds to minutes
-- Backups happen during maintenance windows
-- Snapshots taken on Multi AZ DB don’t impact the master – just the standby
-- When you delete a DB instance, you can retain automated backups
-- Backups have a retention period you set between 0 and 35 days
-- To disable backups, set retention period to 0
-- Snapshots are incremental after the first snapshot (which is full)
-- You can copy & share DB Snapshots
-- Manual Snapshots don’t expire
-- You can take a “final snapshot” when you delete your DB
+- **Backups**
+  • Backups are “continuous” and allow point in time recovery
+  • Backups happen during maintenance windows
+  • When you delete a DB instance, you can retain automated backups
+  • Backups have a retention period you set between 0 and 35 days
+  • To disable backups, set retention period to 0
+
+- **Snapshots**
+  • Snapshots takes IO operations and can stop the database from seconds to minutes
+  • Snapshots taken on Multi AZ DB don’t impact the master – just the standby
+  • Snapshots are incremental after the first snapshot (which is full)
+  • You can copy & share DB Snapshots
+  • **Manual** Snapshots don’t expire
+  • You can take a “final snapshot” when you delete your DB
+
+Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 ### RDS Snapshots Sharing
 
-- Manual snapshots: can be shared with AWS accounts
-- Automated snapshots: can’t be shared, copy first
+- **Manual snapshots**: can be shared with AWS accounts
+- **Automated snapshots**: can’t be shared, copy first
 - You can only share unencrypted snapshots and snapshots encrypted with a customer managed key
 - If you share an encrypted snapshots, you must also share any customer managed keys used to encrypt them (Snapshot: mydbsnapshot)
 
@@ -3095,14 +3101,22 @@ workflows.html
   - DB instances
   - Snapshots
   - Parameter groups, security groups …
-  - Example: DB state changed from pending to running
-  - RDS Event Subscriptions
+- Example: DB state changed from pending to running
+- **RDS Event Subscriptions**
   - Subscribe to events to be notified when an event occurs using SNS
   - Specify the Event Source (instances, SGs, …) and the Event Category (creation, failover, …)
-  - RDS delivers events to EventBridge event notification
+- RDS delivers events to EventBridge event notification
 
 ### RDS Database Log Files
 
+**DB Instance (Amazon RDS)** → **CW Logs** → **CW Alarm** → **Amazon SNS** → **DB Admin**
+
+- **Components**
+  - **DB Instance** – Stores logs: General, Audit, Error, Slow Query
+  - **CloudWatch Logs** – Ingests RDS logs; applies a **Metric Filter**for `Error`
+  - **CW Alarm** – Triggers an alert when the error metric threshold is breached
+  - **Amazon SNS** – Receives the alert and sends a notification
+  - **DB Admin** – End recipient of the notification
 
 ### RDS with CloudWatch
 
@@ -3114,9 +3128,9 @@ workflows.html
   - ReadThroughPut / WriteThroughPut
   - DiskQueueDepth
   - FreeStorageSpace
-  - Enhanced Monitoring (gathered from an agent on the DB instance)
-  - Useful when you need to see how different processes or threads use the CPU
-  - Access to over 50 new CPU, memory, file system, and disk I/O metrics
+- Enhanced Monitoring (gathered from an agent on the DB instance)
+- Useful when you need to see how different processes or threads use the CPU
+- Access to over 50 new CPU, memory, file system, and disk I/O metrics
 
 ### RDS Performance Insights
 
@@ -3126,18 +3140,9 @@ workflows.html
   - By SQL statements => find the SQL statement that is the problem
   - By Hosts => find the server that is using the most our DB
   - By Users => find the user that is using the most our DB
-  - DBLoad = the number of active sessions for the DB engine
-  - You can view the SQL queries that are putting load on your database
-  - Generates Proactive Recommendation to help you prevent future database performance impact (Paid Tier)
-
-### From:
-
-
-### From:
-
-
-### From:
-
+- DBLoad = the number of active sessions for the DB engine
+- You can view the SQL queries that are putting load on your database
+- Generates **Proactive Recommendation** to help you prevent future database performance impact (Paid Tier)
 
 ### Amazon Aurora
 
@@ -3156,10 +3161,10 @@ workflows.html
   - 3 copies out of 6 need for reads
   - Self healing with peer-to-peer replication
   - Storage is striped across 100s of volumes
-  - One Aurora Instance takes writes (master)
-  - Automated failover for master in less than 30 seconds
-  - Master + up to 15 Aurora Read Replicas serve reads
-  - Support for Cross Region Replication Shared storage Volume
+- One Aurora Instance takes writes (master)
+- Automated failover for master in less than 30 seconds
+- Master + up to 15 Aurora Read Replicas serve reads
+- Support for Cross Region Replication Shared storage Volume
 
 ### Aurora DB Cluster
 
@@ -3180,18 +3185,30 @@ workflows.html
 
 ### Backups, Backtracking & Restores in Aurora
 
-- Automatic Backups
-- Retention period 1-35 days (can’t be disabled)
-- PITR, restore your DB cluster within 5 minutes of the current time
-- Restore to a new DB cluster
-- Aurora Backtracking
-- Rewind the DB cluster back and forth in time (up to 72 hours)
-- Doesn’t create a new DB cluster (in-place restore)
-- Supports Aurora MySQL only
-- Aurora Database Cloning
-- Creates a new DB cluster that uses the same DB cluster volume as the original cluster
-- Uses copy-on-write protocol (use the original/single copy of the data and allocate storage only when changes made to the data)
-- Example: create a test environment using your production data
+- **Automatic Backups**
+  - Retention period 1-35 days (can’t be disabled)
+  - PITR, restore your DB cluster within 5 minutes of the current time
+  - Restore to a new DB cluster
+- **Aurora Backtracking**
+  - Rewind the DB cluster back and forth in time (up to 72 hours)
+  - Doesn’t create a new DB cluster (in-place restore)
+  - Supports Aurora MySQL only
+- **Aurora Database Cloning**
+  - Creates a new DB cluster that uses the same DB cluster volume as the original cluster
+  - Uses copy-on-write protocol (use the original/single copy of the data and allocate storage only when changes made to the data)
+  - Example: create a test environment using your production data
+
+### RDS & Aurora Security
+ 
+- **At-rest encryption:**
+  - Database master & replicas encryption using AWS KMS – must be defined at launch time
+  - If the master is not encrypted, the read replicas cannot be encrypted
+  - To encrypt an un-encrypted database, go through a DB snapshot & restore as encrypted
+- **In-flight encryption:** TLS-ready by default, use the AWS TLS root certificates client-side
+- **IAM Authentication:** IAM roles to connect to your database (instead of username/pw)
+- **Security Groups:** Control Network access to your RDS / Aurora DB
+- **No SSH available** except on RDS Custom
+- **Audit Logs can be enabled** and sent to CloudWatch Logs for longer retention
 
 ### Aurora Serverless
 
@@ -3207,16 +3224,16 @@ workflows.html
 - Up to 16 Read Replicas per secondary region
 - Helps for decreasing latency
 - Promoting another region (for disaster recovery) has an RTO of < 1 minute
-- Typical cross-region replication takes less than 1 second us-east-1 - PRIMARY region replication eu-west-1 - SECONDARY region
+- **Typical cross-region replication takes less than 1 second**
 
 ### Aurora: CloudWatch metrics
 
-- AuroraReplicaLag: amount of lag when replicating updates from the primary instance
-- AuroraReplicaLagMaximum: max. amount of lag across all DB instances in the cluster
-- AuroraReplicaLagMinimum: min. amount of lag across all DB instances in the cluster
+- **AuroraReplicaLag**: amount of lag when replicating updates from the primary instance
+- **AuroraReplicaLagMaximum**: max. amount of lag across all DB instances in the cluster
+- **AuroraReplicaLagMinimum**: min. amount of lag across all DB instances in the cluster
 - If replica lag is high, that means the users will have a different experience based on which replica they get the data from (eventual consistency)
-- DatabaseConnections: current number of connections to a DB instance
-- InsertLatency: average duration of insert operations write read read
+- **DatabaseConnections**: current number of connections to a DB instance
+- **InsertLatency**: average duration of insert operations write read read
 
 ### Amazon RDS Proxy
 
@@ -3224,13 +3241,13 @@ workflows.html
 
 - Fully managed database proxy for RDS
 - Allows apps to pool and share DB connections established with the database
-- Improving database efficiency by reducing the stress on database resources (e.g., CPU, RAM) and minimize open connections (and timeouts)
+- **Improving database efficiency by reducing the stress on database resources (e.g., CPU, RAM) and minimize open connections (and timeouts)**
 - Serverless, autoscaling, highly available (multi-AZ)
-- Reduced RDS & Aurora failover time by up 66%
+- **Reduced RDS & Aurora failover time by up 66%**
 - Supports RDS (MySQL, PostgreSQL, MariaDB, MS SQL Server) and Aurora (MySQL, PostgreSQL)
 - No code changes required for most apps
-- Enforce IAM Authentication for DB, and securely store credentials in AWS Secrets Manager
-- RDS Proxy is never publicly accessible (must be accessed from VPC)
+- **Enforce IAM Authentication for DB, and securely store credentials in AWS Secrets Manager**
+- **RDS Proxy is never publicly accessible (must be accessed from VPC)**
 
 ### Amazon ElastiCache Overview
 
@@ -3240,15 +3257,15 @@ workflows.html
 - Helps reduce load off of databases for read intensive workloads
 - Helps make your application stateless
 - AWS takes care of OS maintenance / patching, optimizations, setup, configuration, monitoring, failure recovery and backups
-- Using ElastiCache involves heavy application code changes
+- **Using ElastiCache involves heavy application code changes**
 
-### Solution Architecture - DB Cache
+### ElastiCache Solution Architecture - DB Cache
 
 - Applications queries ElastiCache, if not available, get from RDS and store in ElastiCache.
 - Helps relieve load in RDS
 - Cache must have an invalidation strategy to make sure only the most current data is used in there.
 
-### Solution Architecture – User Session Store
+### ElastiCache Solution Architecture – User Session Store
 
 - User logs into any of the application
 - The application writes the session data into ElastiCache
@@ -3257,22 +3274,25 @@ workflows.html
 
 ### ElastiCache – Redis vs Memcached
 
-- Multi AZ with Auto-Failover
-- Read Replicas to scale reads and have high availability
-- Data Durability using AOF persistence
-- Backup and restore features
-- Supports Sets and Sorted Sets Replication
-- Multi-node for partitioning of data (sharding)
-- No high availability (replication)
-- Non persistent
-- Backup and restore (Serverless)
-- Multi-threaded architecture + sharding
+- **REDIS**
+  • **Multi** AZ with Auto-Failover
+  • **Read Replicas** to scale reads and have **high availability**
+  • Data Durability using AOF persistence
+  • **Backup and restore features**
+  • Supports Sets and Sorted Sets
+
+- **MEMCACHED**
+  • Multi-node for partitioning of data (sharding)
+  • **No high availability (replication)**
+  • **Non persistent**
+  • **Backup and restore (Serverless)**
+  • Multi-threaded architecture
 
 ### Redis Scaling – Cluster Mode Disabled
 
-- Horizontal:
+- **Horizontal**:
   - Scale out/in by adding/removing read replicas (max. 5 replicas)
-- Vertical:
+- **Vertical**:
   - Scale up/down to larger/smaller node type
   - ElastiCache will internally create a new node group, then data replication and DNS update
 
@@ -3281,46 +3301,46 @@ workflows.html
 - Two Modes:
   - Online Scaling: continue serving requests during the scaling process (no downtime, some degradation in performance)
   - Offline Scaling: unable to serve requests during the scaling process (backup and restore).
-  - Horizontal: (Resharding and Shard Rebalancing)
-  - Resharding: scale out/in by adding/removing shards
-  - Shard Rebalancing: equally distribute the keyspaces among the shards as possible
+- **Horizontal**: (Resharding and Shard Rebalancing)
+  - **Resharding**: scale out/in by adding/removing shards
+  - **Shard Rebalancing**: equally distribute the keyspaces among the shards as possible
   - Supports Online and Offline Scaling
-  - Vertical: (change read/write capacity)
+- **Vertical**: (change read/write capacity)
   - Scale up/down to larger/smaller node type
   - Supports Online Scaling
 
 ### Redis Metrics to Monitor
 
-- Evictions: the number of non-expired items the cache evicted to allow space for new writes (memory is overfilled). Solution:
+- **Evictions**: the number of non-expired items the cache evicted to allow space for new writes (memory is overfilled). Solution:
   - Choose an eviction policy to evict expired items (e.g., evict least recently used (LRU) items)
   - Scale up to larger node type (more memory) or scale out by adding more nodes
-  - CPUUtilization: monitor CPU utilization for the entire host
+- **CPUUtilization**: monitor CPU utilization for the entire host
   - Solution: scale up to larger node type (more memory) or scale out by adding more nodes
-  - SwapUsage: should not exceed 50 MB
+- **SwapUsage**: should not exceed 50 MB
   - Solution: verify that you have configured enough reserved memory
 
 ### Redis Metrics to Monitor
 
-- CurrConnections: the number of concurrent and active connections
-- Solution: investigate application behavior to address the issue
-- DatabaseMemoryUsagePercentage: the percentage of memory utilization
-- NetworkBytesIn/Out & NetworkPacketsIn/Out
-- ReplicationBytes: the volume of data being replicated
-- ReplicationLag: how far behind the replica is from the primary node
+- **CurrConnections**: the number of concurrent and active connections
+  - Solution: investigate application behavior to address the issue
+- **DatabaseMemoryUsagePercentage**: the percentage of memory utilization
+- **NetworkBytesIn/Out & NetworkPacketsIn/Out**
+- **ReplicationBytes**: the volume of data being replicated
+- **ReplicationLag**: how far behind the replica is from the primary node
 
-### Horizontal Scaling
+### Memcached Scaling
 
 - Memcached Clusters can have 1-40 nodes (soft limit)
-- Horizontal:
-  - Scale up/down to larger/smaller node type
-- Scale up process:
-- Vertical:
-  - Memcached clusters/nodes start out empty Cache auto-discovery
+- **Horizontal**:
   - Add/remove nodes from the cluster
   - Auto-discovery allow your app to find nodes
-  - Create a new cluster with the new node type
-  - Update your application to use the new cluster’s endpoints
-  - Delete the old cluster Cache Node update endpoints populate data
+• **Vertical**:
+  • Scale up/down to larger/smaller node type
+  • Scale up process:
+    • Create a new cluster with the new node type
+    • Update your application to use the new cluster’s endpoints
+    • Delete the old cluster
+• Memcached clusters/nodes start out empty
 
 ### Memcached Auto Discovery
 
@@ -3331,18 +3351,15 @@ workflows.html
 
 ### Memcached Metrics to Monitor
 
-- Evictions: the number of non-expired items the cache evicted to allow space for new writes (memory is overfilled). Solution:
+- **Evictions**: the number of non-expired items the cache evicted to allow space for new writes (memory is overfilled). Solution:
   - Choose an eviction policy to evict expired items (e.g., LRU items)
   - Scale up to larger node type (more memory) or scale out by adding more nodes
-  - CPUUtilization
+- **CPUUtilization**
   - Solution: scale up to larger node type or scale out by adding more nodes
-  - SwapUsage: should not exceed 50 MB
-  - CurrConnections: the number of concurrent and active connections
+- **SwapUsage**: should not exceed 50 MB
+- **CurrConnections**: the number of concurrent and active connections
   - Solution: investigate application behavior to address the issue
-  - FreeableMemory: amount of free memory on the host
-
-### Performance
-
+- **FreeableMemory**: amount of free memory on the host
 
 ---
 
