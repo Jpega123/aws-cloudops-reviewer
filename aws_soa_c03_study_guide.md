@@ -71,7 +71,7 @@ The content below is organized by section. Each `###` heading is a topic/slide t
   - Spread—spreads instances across underlying hardware (max 7 instances per group per AZ) – critical applications
   - Partition—spreads instances across many different partitions (which rely on different sets of racks) within an AZ. Scales to 100s of EC2 instances per group
 
-### Cluster
+### Placement Groups Cluster
 
 - Pros: Great network (10 Gbps bandwidth between instances with Enhanced
 - Cons: If the AZ fails, all instances fails at the same time
@@ -79,7 +79,7 @@ The content below is organized by section. Each `###` heading is a topic/slide t
   - Big Data job that needs to complete fast
   - Application that needs extremely low latency and high network throughput
 
-### Spread
+### Placement Groups Spread
 
 - Pros:
   - Can span across Availability Zones (AZ)
@@ -91,7 +91,7 @@ The content below is organized by section. Each `###` heading is a topic/slide t
   - Application that needs to maximize high availability
   - Critical Applications where each instance must be isolated from failure from each other
 
-### Partition
+### Placement Groups Partition
 
 - Up to 7 partitions per AZ
 - Can span across multiple AZs in the same region
@@ -116,6 +116,7 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 
 ### SSH vs. EC2 Instance Connect
 
+Image from AWS Course PDF
 
 ### EC2 Instance Connect (EIC) Endpoint
 
@@ -123,8 +124,8 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 
 - Allows you to connect securely to your private EC2 instances
 - No Internet Gateway, no NAT Gateway, No Internet required
-- EIC Endpoint Security Group: must allow outbound SSH traffic to target instances
-- EC2 Instance Security Group: must allow inbound SSH traffic from EIC
+- **EIC Endpoint Security Group:** must allow outbound SSH traffic to target instances
+- **EC2 Instance Security Group:** must allow inbound SSH traffic from EIC
 
 ### CloudWatch Metrics for EC2
 
@@ -150,18 +151,18 @@ The content below is organized by section. Each `###` heading is a topic/slide t
   - Instance status = check the EC2 VM
   - System status = check the underlying hardware
   - Attached EBS status = check attached EBS volumes
-  - Disk: Read / Write for Ops / Bytes (only for instance store)
-  - **RAM is NOT included** in the AWS EC2 metrics
+- Disk: Read / Write for Ops / Bytes (only for instance store)
+- **RAM is NOT included** in the AWS EC2 metrics
 
 ### Unified CloudWatch Agent
 
 - For virtual servers (EC2 instances, on-premises servers,
 - Collect additional system-level metrics such as RAM, processes, used disk space, etc.
 - Collect logs to send to CloudWatch Logs
-- No logs from inside your EC2 instance will be sent to CloudWatch Logs without using an agent
+  - No logs from inside your EC2 instance will be sent to CloudWatch Logs without using an agent
 - Centralized configuration using SSM Parameter Store
 - Make sure IAM permissions are correct
-- Default namespace for metrics collected by the Unified configured/changed)
+- Default namespace for metrics collected by the Unified CloudWatch agent is **CWAgent** configured/changed)
 
 ### Unified CloudWatch Agent – procstat Plugin
 
@@ -169,47 +170,47 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 - Supports both Linux and Windows servers
 - Example: amount of time the process uses CPU, amount of memory the process uses, …
 - Select which processes to monitor by
-- pid_file: name of process identification number (PID) files they create
-- exe: process name that match string you specify (RegEx)
-- pattern: command lines used to start the processes (RegEx)
-- Metrics collected by procstat plugin begins with “procstat” prefix (e.g., procstat_cpu_time, procstat_cpu_usage, …)
+  - **pid_file**: name of process identification number (PID) files they create
+  - **exe**: process name that match string you specify (RegEx)
+  - **pattern**: command lines used to start the processes (RegEx)
+- Metrics collected by procstat plugin begins with **“procstat”** prefix (e.g., procstat_cpu_time, procstat_cpu_usage, …)
 
 ### Status Checks
 
 - Automated checks to identify hardware and software issues
-- System Status Checks
-- Monitors problems with AWS systems (software/hardware issues on the physical host, loss of system power, …)
-- Check Personal Health Dashboard for any scheduled critical maintenance by AWS to your instance’s host
-- Resolution: stop and start the instance (instance migrated to a new host)
-- Instance Status Checks
-- Monitors software/network configuration of your instance (invalid network configuration, exhausted memory, …)
-- Resolution: reboot the instance or change instance configuration
-- Attached EBS Status Checks
-- Monitors EBS volumes attached to your instance (reachable & complete I/O Operations)
-- Resolution: reboot the instance or replace affected EBS volumes
+- **System Status Checks**
+  - Monitors problems with AWS systems (software/hardware issues on the physical host, loss of system power, …)
+  - Check Personal Health Dashboard for any scheduled critical maintenance by AWS to your instance’s host
+  - Resolution: stop and start the instance (instance migrated to a new host)
+- **Instance Status Checks**
+  - Monitors software/network configuration of your instance (invalid network configuration, exhausted memory, …)
+  - Resolution: reboot the instance or change instance configuration
+- **Attached EBS Status Checks**
+  - Monitors EBS volumes attached to your instance (reachable & complete I/O Operations)
+  - Resolution: reboot the instance or replace affected EBS volumes
 
 ### Status Checks - CW Metrics & Recovery
 
 > **🎯 Exam Tip:** **CloudWatch Alarm Recovery** preserves same private/public IP, EIP, placement group. **ASG recovery** = new IP.
 
 - CloudWatch Metrics (1 minute interval)
-- StatusCheckFailed_System
-- StatusCheckFailed_Instance
-- StatusCheckFailed_AttachedEBS
-- StatusCheckFailed (for any)
-- Option 1: CloudWatch Alarm (StatusCheckFailed_System)
-- Recover EC2 instance with the same private/public IP, EIP, metadata, and Placement Group
-- Send notifications using SNS
-- Option 2: Auto Scaling Group
-- Set min/max/desired 1 to recover an instance but won't keep the same private and elastic IP
+  - StatusCheckFailed_System
+  - StatusCheckFailed_Instance
+  - StatusCheckFailed_AttachedEBS
+  - StatusCheckFailed (for any)
+- Option 1: **CloudWatch Alarm**
+  - Recover EC2 instance with the same private/public IP, EIP, metadata, and Placement Group
+  - Send notifications using SNS
+- Option 2: **Auto Scaling Group**
+  - Set min/max/desired 1 to recover an instance but won't keep the same private and elastic IP
 
 ### EC2 Hibernate
 
 > **🎯 Exam Tip:** Preserves RAM state to encrypted EBS. Max = **60 days**. RAM < **150 GB**. Root EBS must be **encrypted**.
 
 - We know we can stop, terminate instances
-- Stop – s the data on disk (EBS) is kept intact in the next start
-- Terminate – any EBS volumes (root) also set-up to be destroyed is lost
+  - **Stop** – s the data on disk (EBS) is kept intact in the next start
+  - **Terminate** – any EBS volumes (root) also set-up to be destroyed is lost
 - On start, the following happens:
   - First start: the OS boots & the EC2 User Data script is run
   - Following starts: the OS boots up
@@ -231,24 +232,25 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 
 ### EC2 Hibernate – Good to know
 
-- Supported Instance Families – C3, C4, C5, I3, M3, M4, R3, R4, T2, T3, …
-- Instance RAM Size – must be less than **150 GB**.
-- Instance Size – not supported for bare metal instances.
-- AMI – Amazon Linux 2, Linux AMI, Ubuntu, RHEL, CentOS & Windows…
-- Root Volume – must be EBS, encrypted, not instance store, and large
-- Available for On-Demand, Reserved and Spot Instances
-- An instance can NOT be hibernated more than **60 days**
+- **Supported Instance Families** – C3, C4, C5, I3, M3, M4, R3, R4, T2, T3, …
+- **Instance RAM Size** – must be less than **150 GB**.
+- **Instance Size** – not supported for bare metal instances.
+- **AMI** – Amazon Linux 2, Linux AMI, Ubuntu, RHEL, CentOS & Windows…
+- **Root Volume** – must be EBS, encrypted, not instance store, and large
+- Available for **On-Demand, Reserved** and **Spot** Instances
+- An instance can **NOT** be hibernated more than **60 days**
 
 ### Instance Scheduler on AWS
 
 - AWS solution deployed through CloudFormation (not a service)
-- Automatically start/stop your AWS services to reduce costs (up to 70%)
+- **Automatically start/stop your AWS services to reduce costs (up to 70%)**
 - Example: stop company’s EC2 instances outside business hours
-- Supports EC2 instances, EC2 Auto Scaling Groups, and RDS instances
+- **Supports EC2 instances, EC2 Auto Scaling Groups, and RDS instances**
 - Schedules are managed in a DynamoDB table
 - Uses resources’ tags and Lambda to stop/start instances
 - Supports cross-account and cross-region resources
-- tance-scheduler-on-aws/
+- https://aws.amazon.com/solutions/implementations/ins
+tance-scheduler-on-aws/
 
 ---
 
@@ -261,13 +263,13 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 
 - AMI = Amazon Machine Image
 - AMI are a customization of an EC2 instance
-- You add your own software, configuration, operating system, monitoring…
-- Faster boot / configuration time because all your software is pre-packaged
-- AMI are built for a specific region (and can be copied across regions)
+  - You add your own software, configuration, operating system, monitoring…
+  - Faster boot / configuration time because all your software is pre-packaged
+- AMI are built for a **specific region** (and can be copied across regions)
 - You can launch EC2 instances from:
-  - A Public AMI: AWS provided
-  - Your own AMI: you make and maintain them yourself
-  - An AWS Marketplace AMI: an AMI someone else made (and potentially sells)
+  - **A Public AMI**: AWS provided
+  - **Your own AMI**: you make and maintain them yourself
+  - **An AWS Marketplace AMI**: an AMI someone else made (and potentially sells)
 
 ### AMI Process (from an EC2 instance)
 
@@ -281,13 +283,13 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 > **🎯 Exam Tip:** By default AWS **shuts down** the instance for file system integrity. AWS Backup uses no-reboot by default — use EventBridge + Lambda + CreateImage with reboot for guaranteed integrity.
 
 - Enables you to create an AMI without shutting down your instance
-- By default, it’s not selected (AWS will shut down the instance before creating an AMI to maintain the file system integrity) shut down create image disk before the snapshot is created create image
+- By default, it’s not selected (AWS will shut down the instance before creating an AMI to maintain the file system integrity)
 
 ### AWS Backup Plans to create AMI
 
 - AWS Backup doesn't reboot the instances while taking EBS snapshots (no-reboot behavior)
-- This won't help you to create an AMI that guarantees file system integrity since you need to reboot the instance
-- To maintain integrity you need to provide the reboot parameter while taking images (EventBridge with reboot)
+  - This won't help you to create an AMI that guarantees file system integrity since you need to reboot the instance
+  - To maintain integrity you need to provide the reboot parameter while taking images (EventBridge with reboot)
 
 ### EC2 Instance Migration between AZ
 
@@ -342,7 +344,7 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 - Helps you manage your EC2 and On-Premises systems at scale
 - Get operational insights about the state of your infrastructure
 - Easily detect problems
-- Patching automation for enhanced compliance
+- **Patching automation for enhanced compliance**
 - Works for both Windows and Linux OS
 - Integrated with CloudWatch metrics / dashboards
 - Integrated with AWS Config
@@ -350,31 +352,31 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 
 ### AWS Systems Manager Features
 
-- Node Tools
-- Fleet Manager
-- Compliance
-- Inventory
-- Hybrid Activations
-- Session Manager
-- Run Command
-- State Manager
-- Patch Manager
-- Distributer
-- Change Management
-- Automation
-- Change Calendar
-- Maintenance Windows
-- Documents
-- Quick Setup
-- Application Tools
-- Application Manager
-- AppConfig
-- Parameter Store
-- Resource Groups
-- Operations Tools
-- Explorer
-- OpsCenter
-- CloudWatch Dashboard
+- **Node Tools**
+  - Fleet Manager
+  - Compliance
+  - Inventory
+  - Hybrid Activations
+  - Session Manager
+  - Run Command
+  - State Manager
+  - Patch Manager
+  - Distributer
+- **Change Management**
+  - Automation
+  - Change Calendar
+  - Maintenance Windows
+  - Documents
+  - Quick Setup
+- **Application Tools**
+  - Application Manager
+  - AppConfig
+  - Parameter Store
+- **Resource Groups**
+- **Operations Tools**
+  - Explorer
+  - OpsCenter
+  - CloudWatch Dashboard
 
 ### How Systems Manager works
 
@@ -389,18 +391,18 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 - Commonly used in EC2
 - Free naming, common tags are Name, Environment, Team …
 - They’re used for
-- Resource grouping
-- Automation
-- Cost allocation
+  - Resource grouping
+  - Automation
+  - Cost allocation
 - Better to have too many tags than too few!
 
 ### Resource Groups
 
-- Create, view or manage logical group of resources thanks to tags
+- Create, view or manage logical group of resources thanks to **tags**
 - Allows creation of logical groups of resources such as
-- Applications
-- Different layers of an application stack
-- Production versus development environments
+  - Applications
+  - Different layers of an application stack
+  - Production versus development environments
 - Regional service
 - Works with EC2, S3, DynamoDB, Lambda, etc… Resource Group
 
@@ -428,20 +430,21 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 
 - Simplifies common maintenance and deployment tasks of EC2 instances and other AWS resources
 - Example: restart instances, create an AMI, EBS
-- Automation Runbook
-- SSM Documents of type Automation
-- Defines actions performed on your EC2 instances or AWS resources
-- Pre-defined runbooks (AWS) or create custom runbooks
+- **Automation Runbook**
+  - SSM Documents of type Automation
+  - Defines actions performed on your EC2 instances or AWS resources
+  - Pre-defined runbooks (AWS) or create custom runbooks
 - Can be triggered
-- Manually using AWS Console, AWS CLI or SDK
-- By Amazon EventBridge
-- On a schedule using Maintenance Windows
-- By AWS Config for rules remediations AWS SDK Maintenance Amazon execute automation (AWS-RestartEC2Instance) (automation documents)
+  - Manually using AWS Console, AWS CLI or SDK
+  - By Amazon EventBridge
+  - On a schedule using Maintenance Windows
+  - By AWS Config for rules remediations
 
 ### SSM – Automation – Patch AMIs & Update ASG
 
+Image from AWS Course PDF
 
-### Service
+### SSM Parameter Store
 
 - Secure storage for configuration and secrets
 - Optional Seamless Encryption using KMS
@@ -457,13 +460,13 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 
 - /my-department/
 - my-app/
-- dev/
-- db-url
-- db-password
-- prod/
-- db-url
-- db-password
-- other-app/ GetParameters or GetParametersByPath API
+  - dev/
+   - db-url
+   - db-password
+  - prod/
+   - db-url
+   - db-password
+- other-app/ 
 - /other-department/
 - /aws/reference/secretsmanager/secret_ID_in_Secrets_Manager
 - /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2 (public)
@@ -481,7 +484,7 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 - Centrally & remotely manage your nodes running on AWS or on-premises
 - Including EC2 instances, on-premises servers / VMs, edge devices, IoT devices
 - Supports different OS (Windows, Linux)
-- All nodes must be have the SSM agent installed
+- All nodes **must be have the SSM agent installed**
 - AmazonSSMManagedInstanceCore permissions necessary for the EC2 instance role, or use Default
 - Use cases:
   - Track node’s status, health, performance
@@ -490,7 +493,7 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 
 ### SSM IAM Permissions
 
-- AmazonSSMManagedInstanceCore policy provides the necessary permissions for:
+- **AmazonSSMManagedInstanceCore** policy provides the necessary permissions for:
   - Registering the instance with Systems Manager
   - Accessing Session Manager, SSM Documents, SSM Parameters
   - Receiving commands (Run Command)
@@ -500,9 +503,9 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 
 ### Default Host Management Configuration
 
-- When enabled, it automatically configure your EC2 instances as managed instances without the use of EC2
-- Instance Identity Role – a type of IAM Role with no permissions beyond identifying the EC2 instance to AWS Services (e.g., Systems Manager)
-- EC2 instances must have IMDSv2 enabled and SSM
+- When enabled, it automatically configure your EC2 instances as managed instances **without the use of EC2 Instance Profile**
+- **Instance Identity Role** – a type of IAM Role **with no permissions** beyond identifying the EC2 instance to AWS Services (e.g., Systems Manager)
+- EC2 instances must have **IMDSv2** enabled and **SSM Agent installed (doesn’t support IMDSv1)**
 - Automatically enables Session Manager, Patch Manager, and Inventory
 - Automatically keeps the SSM Agent up to date
 - Must be enabled per AWS Region (DHMC enabled) pass IAM Role
@@ -520,11 +523,11 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 
 - Automate the process of keeping your managed instances (EC2/Onpremises) in a state that you define
 - Use cases: bootstrap instances with software, patch OS/software updates on a schedule …
-- State Manager Association:
+- **State Manager Association:**
   - Defines the state that you want to maintain to your managed instances
   - Example: port 22 must be closed, antivirus must be installed …
   - Specify a schedule when this configuration is applied
-  - Uses SSM Documents to create an Association (e.g., SSM Document to configure CW Agent)
+- Uses SSM Documents to create an Association (e.g., SSM Document to configure CW Agent)
 
 ### SSM – Patch Manager
 
@@ -534,7 +537,7 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 - OS updates, applications updates, security updates, …
 - Supports both EC2 instances and on-premises servers
 - Supports Linux, macOS, and Windows
-- Patch on-demand or on a schedule using Maintenance Windows
+- Patch on-demand or on a schedule using **Maintenance Windows**
 - Scan instances and generate patch compliance report (missing patches)
 - Patch compliance report can be sent to S3
 
@@ -543,29 +546,26 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 > **🎯 Exam Tip:** Patch Baseline = which patches to install. Patch Group tag → one baseline. Pre-defined baselines **cannot be modified**.
 
 - Patch Baseline
-- Defines which patches should and shouldn’t be installed on your instances
-- Ability to create custom Patch Baselines (specify approved/rejected patches)
-- Patches can be auto-approved within days of their release
-- By default, install only critical patches and patches related to security
+  - Defines which patches should and shouldn’t be installed on your instances
+  - Ability to create custom Patch Baselines (specify approved/rejected patches)
+  - Patches can be auto-approved within days of their release
+  - By default, install only critical patches and patches related to security
 - Patch Group
-- Associate a set of instances with a specific Patch Baseline
-- Example: create Patch Groups for different environments (dev, test, prod)
-- Instances should be defined with the tag key Patch Group
-- An instance can only be in one Patch Group
-- Patch Group can be registered with only one Patch Baseline
+  - Associate a set of instances with a specific Patch Baseline
+  - Example: create Patch Groups for different environments (dev, test, prod)
+  - Instances should be defined with the tag key Patch Group
+  - An instance can only be in one Patch Group
+  - Patch Group can be registered with only one Patch Baseline
 
 ### SSM – Patch Manager Patch Baselines
 
-- Pre-Defined Patch Baseline
-- Managed by AWS for different Operating Systems (can’t be modified)
-- AWS-RunPatchBaseline (SSM Document) – apply both operating system and application patches (Linux, macOS, Windows Server)
-- Custom Patch Baseline
-- Create your own Patch Baseline and choose which patches to auto-approve
-- Operating System, allowed patches, rejected patches, …
-- Ability to specify custom and alternative patch repositories
-
-### Default
-
+- **Pre-Defined Patch Baseline**
+  - Managed by AWS for different Operating Systems (can’t be modified)
+  - **AWS-RunPatchBaseline (SSM Document)** – apply both operating system and application patches (Linux, macOS, Windows Server)
+- **Custom Patch Baseline**
+  - Create your own Patch Baseline and choose which patches to auto-approve
+  - Operating System, allowed patches, rejected patches, …
+  - Ability to specify custom and alternative patch repositories
 
 ### SSM – Maintenance Windows
 
@@ -583,7 +583,7 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 
 - Allows you to start a secure shell on your EC2 and onpremises servers
 - Access through AWS Console, AWS CLI, or Session
-- Does not need SSH access, bastion hosts, or SSH keys
+- **Does not need SSH access, bastion hosts, or SSH keys**
 - Supports Linux, macOS, and Windows
 - Log connections to your instances and executed commands
 - Session log data can be sent to S3 or CloudWatch Logs
@@ -594,46 +594,42 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 > **🎯 Exam Tip:** No SSH port 22, no bastion, no SSH keys. Logs → S3 or CloudWatch. CloudTrail captures `StartSession`.
 
 - IAM Permissions
-- Control which users/groups can access Session Manager and which instances
-- Use tags to restrict access to only specific EC2 instances
-- Access SSM + write to S3 + write to
+  - Control which users/groups can access Session Manager and which instances
+  - Use tags to restrict access to only specific EC2 instances
+  - Access SSM + write to S3 + write to
 - Optionally, you can restrict commands a user can run in a session
-
-### Permissions
-
 
 ### SSM – Distributor
 
 - Package and deploy software to your managed instances
-- You create a Distributor Package (SSM Document) and deploy to different platforms (Windows, Linux)
-- Distributor Package
-- Contents stored in S3
-- Zip file per target OS platform (install script, uninstall script, executable file)
-- JSON manifest file that describes the package content
+- You create a **Distributor Package** (SSM Document) and deploy to different platforms (Windows, Linux)
+- **Distributor Package**
+  - Contents stored in S3
+  - Zip file per target OS platform (install script, uninstall script, executable file)
+  - JSON manifest file that describes the package content
 - Use AWS-provided packages, 3rd party packages, or create your own package
 - Install the package:
-  - One-time – using Run Command
-  - On a schedule – using State Manager (Document: AWSConfigureAWSPackage) install
+  - **One-time** – using Run Command
+  - **On a schedule** – using State Manager (Document: **AWSConfigureAWSPackage**)
 
 ### Systems Manager – OpsCenter
 
 - Allows you to view, investigate, and remediate issues in one place (no need to navigate across different AWS services)
 - Security issues (Security Hub), performance issues (DynamoDB throttle), failures (ASG failed launch instance)...
 - Reduce meantime to resolve issues
-- OpsItems
-- Operational issue or interruption that needs investigation and remediation
-- Event, resource, AWS Config changes, CloudTrail logs, EventBridge...
-- Provides recommended Runbooks to resolve the issue
+- **OpsItems**
+  - Operational issue or interruption that needs investigation and remediation
+  - Event, resource, AWS Config changes, CloudTrail logs, EventBridge...
+  - Provides recommended Runbooks to resolve the issue
 - Supports both EC2 instances and on-premises managed nodes
 
 ### Systems Manager – OpsCenter
 
+Image from AWS Course PDF
 
 ### Costs by Deleting Orphaned EBS Volumes
 
-
-### High Availability & Scalability
-
+Image from AWS Course PDF
 
 ---
 
@@ -645,7 +641,7 @@ The content below is organized by section. Each `###` heading is a topic/slide t
   - Troubleshooting
   - Advanced options and logging
   - CloudWatch integrations
-  - Auto Scaling
+- Auto Scaling
   - Troubleshooting
   - Advanced options and logging
   - CloudWatch integrations
@@ -656,8 +652,8 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 - There are two kinds of scalability:
   - Vertical Scalability
   - Horizontal Scalability (= elasticity)
-  - Scalability is linked but different to High Availability
-  - Let’s deep dive into the distinction, using a call center as an example
+- **Scalability is linked but different to High Availability**
+- Let’s deep dive into the distinction, using a call center as an example
 
 ### Vertical Scalability
 
@@ -686,14 +682,14 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 ### High Availability & Scalability For EC2
 
 - Vertical Scaling: Increase instance size (= scale up / down)
-- From: t2.nano - 0.5G of RAM, 1 vCPU
-- To: u-12tb1.metal – 12.3 TB of RAM, 448 vCPUs
+  - From: t2.nano - 0.5G of RAM, 1 vCPU
+  - To: u-12tb1.metal – 12.3 TB of RAM, 448 vCPUs
 - Horizontal Scaling: Increase number of instances (= scale out / in)
-- Auto Scaling Group
-- Load Balancer
+  - Auto Scaling Group
+  - Load Balancer
 - High Availability: Run instances for the same application across multi-AZ
-- Auto Scaling Group multi-AZ
-- Load Balancer multi-AZ
+  - Auto Scaling Group multi-AZ
+  - Load Balancer multi-AZ
 
 ### What is load balancing?
 
@@ -701,7 +697,7 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 
 ### Why use a load balancer?
 
-- Spread load across multiple downstream instances
+- **Spread** load across multiple downstream instances
 - Expose a single point of access (DNS) to your application
 - Seamlessly handle failures of downstream instances
 - Do regular health checks to your instances
@@ -713,14 +709,14 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 ### Why use an Elastic Load Balancer?
 
 - An Elastic Load Balancer is a managed load balancer
-- AWS guarantees that it will be working
-- AWS takes care of upgrades, maintenance, high availability
-- AWS provides only a few configuration knobs
+  - AWS guarantees that it will be working
+  - AWS takes care of upgrades, maintenance, high availability
+  - AWS provides only a few configuration knobs
 - It costs less to setup your own load balancer but it will be a lot more effort on your end
 - It is integrated with many AWS offerings / services
-- EC2, EC2 Auto Scaling Groups, Amazon ECS
-- AWS Certificate Manager (ACM), CloudWatch
-- Route 53, AWS WAF, AWS Global Accelerator
+  - EC2, EC2 Auto Scaling Groups, Amazon ECS
+  - AWS Certificate Manager (ACM), CloudWatch
+  - Route 53, AWS WAF, AWS Global Accelerator
 
 ### Health Checks
 
@@ -734,19 +730,20 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 ### Types of load balancer on AWS
 
 - AWS has 4 kinds of managed Load Balancers
-- Classic Load Balancer (v1 - old generation) – 2009 – CLB
-- HTTP, HTTPS, TCP, SSL (secure TCP)
-- Application Load Balancer (v2 - new generation) – 2016 – ALB
-- HTTP, HTTPS, WebSocket
-- Network Load Balancer (v2 - new generation) – 2017 – NLB
-- TCP, TLS (secure TCP), UDP
-- Gateway Load Balancer – 2020 – GWLB
-- Operates at layer 3 (Network layer) – IP Protocol
+- **Classic Load Balancer** (v1 - old generation) – 2009 – CLB
+  - HTTP, HTTPS, TCP, SSL (secure TCP)
+- **Application Load Balancer** (v2 - new generation) – 2016 – ALB
+  - HTTP, HTTPS, WebSocket
+- **Network Load Balancer** (v2 - new generation) – 2017 – NLB
+  - TCP, TLS (secure TCP), UDP
+- **Gateway Load Balancer** – 2020 – GWLB
+  - Operates at layer 3 (Network layer) – IP Protocol
 - Overall, it is recommended to use the newer generation load balancers as they provide more features
 - Some load balancers can be setup as internal (private) or external (public) ELBs
 
 ### Load Balancer Security Groups
 
+Image from AWS Course PDF
 
 ### Classic Load Balancers (v1)
 
@@ -768,14 +765,15 @@ The content below is organized by section. Each `###` heading is a topic/slide t
   - Routing based on path in URL (example.com/users & example.com/posts)
   - Routing based on hostname in URL (one.example.com & other.example.com)
   - Routing based on Query String, Headers (example.com/users?id=123&order=false)
-  - ALB are a great fit for micro services & container-based application (example: Docker & Amazon ECS)
-  - Has a port mapping feature to redirect to a dynamic port in ECS
-  - In comparison, we’d need multiple Classic Load Balancer per application
+- ALB are a great fit for micro services & container-based application (example: Docker & Amazon ECS)
+- Has a port mapping feature to redirect to a dynamic port in ECS
+- In comparison, we’d need multiple Classic Load Balancer per application
 
 ### HTTP Based Traffic
 
+Image from AWS Course PDF
 
-### Target Groups
+### Application Load Balancer (v2) Target Groups
 
 - EC2 instances (can be managed by an Auto Scaling Group) – HTTP
 - ECS tasks (managed by ECS itself) – HTTP
@@ -784,15 +782,16 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 - ALB can route to multiple target groups
 - Health checks are at the target group level Application Load Balancer (v2)
 
-### Query Strings/Parameters Routing
+### Application Load Balancer (v2) Query Strings/Parameters Routing
 
+Image from AWS Course PDF
 
-### Good to Know
+### Application Load Balancer (v2) Good to Know
 
 - Fixed hostname (XXX.region.elb.amazonaws.com)
 - The application servers don’t see the IP of the client directly
-- The true IP of the client is inserted in the header X-Forwarded-For
-- We can also get Port (X-Forwarded-Port) and proto (X-Forwarded-Proto) (Private IP)
+  - The true IP of the client is inserted in the header X-Forwarded-For
+  - We can also get Port (X-Forwarded-Port) and proto (X-Forwarded-Proto) (Private IP)
 
 ### Network Load Balancer (v2)
 
@@ -800,18 +799,18 @@ The content below is organized by section. Each `###` heading is a topic/slide t
   - Forward TCP & UDP traffic to your instances
   - Handle millions of request per seconds
   - Ultra-low latency
-  - NLB has one static IP per AZ, and supports assigning Elastic IP (helpful for whitelisting specific IP)
-  - NLB are used for extreme performance, TCP or UDP traffic
+- **NLB has one static IP per AZ, and supports assigning Elastic IP** (helpful for whitelisting specific IP)
+- NLB are used for extreme performance, TCP or UDP traffic
 
 ### TCP (Layer 4) Based Traffic
 
 
 ### Network Load Balancer – Target Groups
 
-- EC2 instances
-- IP Addresses – must be private IPs
-- Application Load Balancer
-- Health Checks support the TCP, HTTP and HTTPS Protocols i-1234567890abcdef0 i-1234567890abcdef0 (EC2 Instances) (IP Addresses) (Application Load Balancer)
+- **EC2 instances**
+- **IP Addresses** – must be private IPs
+- **Application Load Balancer**
+- Health Checks support the TCP, HTTP and HTTPS Protocols
 
 ### Gateway Load Balancer
 
@@ -819,9 +818,9 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 - Example: Firewalls, Intrusion Detection and Prevention Systems, Deep Packet Inspection
 - Operates at Layer 3 (Network Layer) – IP Packets
 - Combines the following functions:
-  - Transparent Network Gateway – single entry/exit for all traffic
-  - Load Balancer – distributes traffic to your virtual appliances (destination) (source) traffic traffic
-  - Uses the GENEVE protocol on port 6081 3rd Party Security
+  - **Transparent Network Gateway** – single entry/exit for all traffic
+  - **Load Balancer** – distributes traffic to your virtual appliances (destination) (source) traffic traffic
+- Uses the **GENEVE** protocol on port 6081
 
 ### Gateway Load Balancer – Target Groups
 
@@ -831,47 +830,47 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 ### Sticky Sessions (Session Affinity)
 
 - It is possible to implement stickiness so that the same client is always redirected to the same instance behind a load balancer
-- This works for Classic Load Balancer, Application
+- This works for **Classic Load Balancer, Application Load Balancer, and Network Load Balancer**
 - For both CLB & ALB, the “cookie” used for stickiness has an expiration date you control
 - Use case: make sure the user doesn’t lose his session data
 - Enabling stickiness may bring imbalance to the load over the backend EC2 instances
 
 ### Sticky Sessions – Cookie Names
 
-- Application-based Cookies
-- Custom cookie
-- Generated by the target
-- Can include any custom attributes required by the application
-- Cookie name must be specified individually for each target group
-- Don’t use AWSALB, AWSALBAPP, or AWSALBTG (reserved for use by the ELB)
-- Application cookie
-- Generated by the load balancer
-- Cookie name is AWSALBAPP
-- Duration-based Cookies
-- Cookie generated by the load balancer
-- Cookie name is AWSALB for ALB, AWSELB for CLB
+- **Application-based Cookies**
+  - Custom cookie
+    - Generated by the target
+    - Can include any custom attributes required by the application
+    - Cookie name must be specified individually for each target group
+    - Don’t use **AWSALB, AWSALBAPP, or AWSALBTG** (reserved for use by the ELB)
+  - Application cookie
+    - Generated by the load balancer
+    - Cookie name is AWSALBAPP
+- **Duration-based Cookies**
+  - Cookie generated by the load balancer
+  - Cookie name is **AWSALB** for ALB, **AWSELB** for CLB
 
 ### Cross-Zone Load Balancing
 
 
 ### Cross-Zone Load Balancing
 
-- Application Load Balancer
-- Enabled by default (can be disabled at the Target Group level)
-- No charges for inter AZ data
-- Network Load Balancer & Gateway Load Balancer
-- Disabled by default
-- You pay charges ($) for inter AZ data if enabled
-- Classic Load Balancer
-- Disabled by default
-- No charges for inter AZ data if enabled
+- **Application Load Balancer**
+  - Enabled by default (can be disabled at the Target Group level)
+  - No charges for inter AZ data
+- **Network Load Balancer & Gateway Load Balancer**
+  - Disabled by default
+  - You pay charges ($) for inter AZ data if enabled
+- **Classic Load Balancer**
+  - Disabled by default
+  - No charges for inter AZ data if enabled
 
 ### SSL/TLS - Basics
 
 - An SSL Certificate allows traffic between your clients and your load balancer to be encrypted in transit (in-flight encryption)
-- SSL refers to Secure Sockets Layer, used to encrypt connections
-- TLS refers to Transport Layer Security, which is a newer version
-- Nowadays, TLS certificates are mainly used, but people still refer as SSL
+- **SSL** refers to Secure Sockets Layer, used to encrypt connections
+- **TLS** refers to Transport Layer Security, which is a newer version
+- Nowadays, **TLS certificates are mainly used**, but people still refer as SSL
 - Public SSL certificates are issued by Certificate Authorities (CA)
 - Comodo, Symantec, GoDaddy, GlobalSign, Digicert, Letsencrypt, etc…
 - SSL certificates have an expiration date (you set) and must be renewed
@@ -889,29 +888,30 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 
 ### SSL – Server Name Indication (SNI)
 
-- SNI solves the problem of loading multiple SSL certificates onto one web server (to serve multiple websites)
-- It’s a “newer” protocol, and requires the client to indicate the hostname of the target server in the initial SSL handshake
+- SNI solves the problem of loading **multiple SSL certificates onto one web server** (to serve multiple websites)
+- It’s a “newer” protocol, and requires the client to **indicate** the hostname of the target server in the initial SSL handshake
 - The server will then find the correct certificate, or return the default one
-- Only works for ALB & NLB (newer generation), CloudFront
-- Does not work for CLB (older gen) Target group for www.mycorp.com www.mycorp.com www.mycorp.com
+- Note:
+  - Only works for ALB & NLB (newer generation), CloudFront
+  - Does not work for CLB (older gen) Target group for www.mycorp.com www.mycorp.com www.mycorp.com
 
 ### Elastic Load Balancers – SSL Certificates
 
-- Classic Load Balancer (v1)
-- Support only one SSL certificate
-- Must use multiple CLB for multiple hostname with multiple SSL certificates
-- Application Load Balancer (v2)
-- Supports multiple listeners with multiple SSL certificates
-- Uses Server Name Indication (SNI) to make it work
-- Network Load Balancer (v2)
-- Supports multiple listeners with multiple SSL certificates
-- Uses Server Name Indication (SNI) to make it work
+- **Classic Load Balancer (v1)**
+  - Support only one SSL certificate
+  - Must use multiple CLB for multiple hostname with multiple SSL certificates
+- **Application Load Balancer (v2)**
+  - Supports multiple listeners with multiple SSL certificates
+  - Uses Server Name Indication (SNI) to make it work
+- **Network Load Balancer (v2)**
+  - Supports multiple listeners with multiple SSL certificates
+  - Uses Server Name Indication (SNI) to make it work
 
 ### Connection Draining
 
-- Feature naming
-- Connection Draining – for CLB
-- Deregistration Delay – for ALB & NLB
+- **Feature naming**
+  - Connection Draining – for CLB
+  - Deregistration Delay – for ALB & NLB
 - Time to complete “in-flight requests” while the instance is de-registering or unhealthy
 - Stops sending new requests to the EC2 instance which is de-registering
 - Between 1 to 3600 seconds (default: **300 seconds**)
@@ -921,49 +921,55 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 ### ELB Health Checks
 
 - Target Health Status
-- Initial: registering the target
-- Healthy
-- Unhealthy
-- Unused: target is not registered
-- Draining: de-registering the target
-- Unavailable: health checks disabled
+  - Initial: registering the target
+  - Healthy
+  - Unhealthy
+  - Unused: target is not registered
+  - Draining: de-registering the target
+  - Unavailable: health checks disabled
 - If a target group contains only unhealthy targets, ELB routes requests across its unhealthy targets response after 5 seconds successful health checks failed health checks
 
 ### Load Balancer Error codes
 
 - Successful request : Code 200.
 - Unsuccessful at client side : 4XX code.
-- Error 400 : Bad Request
-- Error 401 : Unauthorized
-- Error 403 : Forbidden
-- Error 460 : Client closed connection.
-- Error 463 : X-Forwarded For header with >30 IP (Similar to malformed request).
+  - Error 400 : Bad Request
+  - Error 401 : Unauthorized
+  - Error 403 : Forbidden
+  - Error 460 : Client closed connection.
+  - Error 463 : X-Forwarded For header with >30 IP (Similar to malformed request).
 - Unsuccessful at server side : 5xx code.
-- An error 500 / Internal server error would mean some error on the ELB itself.
-- Error 502 : Bad Gateway
-- An error 503 / Service Unavailable
-- Error 504 / Gateway timeout : probably an issue within the server.
-- Error 561 : Unauthorized
+  - An error 500 / Internal server error would mean some error on the ELB itself.
+  - Error 502 : Bad Gateway
+  - An error 503 / Service Unavailable
+  - Error 504 / Gateway timeout : probably an issue within the server.
+  - Error 561 : Unauthorized
 
 ### Load Balancers Monitoring
 
 - All Load Balancer metrics are directly pushed to CloudWatch metrics
-- BackendConnectionErrors
-- Latency
-- HealthyHostCount /
-- RequestCount UnHealthyHostCount
-- RequestCountPerTarget
-- HTTPCode_Backend_2XX: • SurgeQueueLength: The total number of requests (HTTP
-- HTTPCode_Backend_3XX, listener) or connections (TCP redirected request listener) that are pending to a healthy instance.
-- HTTPCode_ELB_4XX: Client routing Help to scale out ASG. Max error codes value is 1024
-- HTTPCode_ELB_5XX: Server• SpilloverCount: The total error codes generated by the number of requests that were load balancer.
+  - BackendConnectionErrors
+  • HealthyHostCount / UnHealthyHostCount
+  • HTTPCode_Backend_2XX: Successful request.
+  • HTTPCode_Backend_3XX, redirected request
+  • HTTPCode_ELB_4XX: Client error codes 
+  • HTTPCode_ELB_5XX: Server error codes generated by the load balancer.
+  • Latency
+  • RequestCount
+  • RequestCountPerTarget
+  • **SurgeQueueLength**: The total number of requests (HTTP listener) or  connections (TCP listener) that are pending routing to a healthy instance. Help to scale out ASG. Max value is 1024
+  • **SpilloverCount**: The total 
+number of requests that were 
+rejected because the surge 
+queue is full.
 
 ### Load Balancer troubleshooting using metrics
 
-- HTTP 400: BAD_REQUEST => The client sent a malformed request that does not meet HTTP specifications.
-- HTTP 503: Service Unavailable => Ensure that you have healthy instances in every Availability Zone that your load balancer is configured to respond in.
-- HTTP 504: Gateway Timeout => Check if keep-alive settings on your EC2 instances are enabled and make sure that the keep-alive timeout is greater than the idle timeout settings of load balancer.
-- Set alarms & look at the documentation for troubleshooting:
+- **HTTP 400: BAD_REQUEST **=> The client sent a malformed request that does not meet HTTP specifications.
+- **HTTP 503: Service Unavailable** => Ensure that you have healthy instances in every Availability Zone that your load balancer is configured to respond in.
+- **HTTP 504: Gateway Timeout** => Check if keep-alive settings on your EC2 instances are enabled and make sure that the keep-alive timeout is greater than the idle timeout settings of load balancer.
+• Set alarms & look at the documentation for troubleshooting: 
+  - https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/ts-elb-error-message.html
 
 ### Load Balancers Access Logs
 
@@ -974,43 +980,45 @@ The content below is organized by section. Each `###` heading is a topic/slide t
   - Request paths
   - Server response
   - Trace Id
-  - Only pay for the S3 storage
-  - Helpful for compliance reason
-  - Helpful for keeping access data even after ELB or EC2 instances are terminated
-  - Access Logs are already encrypted
+- Only pay for the S3 storage
+- Helpful for compliance reason
+- Helpful for keeping access data even after ELB or EC2 instances are terminated
+- Access Logs are already encrypted
 
 ### Application Load Balancer Request Tracing
 
-- Request tracing – Each HTTP request has an added custom header
-- Example:
-  - This is useful in logs / distributed tracing platform to track a single request
-  - Application Load Balancer is not (yet) integrated with X-Ray
+• Request tracing – Each HTTP request has an added custom header 
+**‘X-Amzn-Trace-Id’**
+• Example: 
+  - X-Amzn-Trace-Id: Root=1-67891233-abcdef012345678912345678
+• This is useful in logs / distributed tracing platform to track a single request
+• Application Load Balancer is not (yet) integrated with X-Ray
 
 ### Target Groups Settings
 
-- deregisteration_delay.timeout_seconds: time the load balancer waits before deregistering a target
-- slow_start.duration_seconds: (see next slide)
-- load_balancing.algorithm.type: how the load balancer selects targets when routing requests (Round Robin, Least Outstanding Requests)
-- stickiness.enabled
-- stickiness.type: application-based or duration-based cookie
-- stickiness.app_cookie.cookie_name: name of the application cookie
-- stickiness.app_cookie.duration_seconds: application-based cookie expiration period
-- stickiness.lb_cookie.duration_seconds: duration-based cookie expiration period
+- **deregisteration_delay.timeout_seconds**: time the load balancer waits before deregistering a target
+- **slow_start.duration_seconds**: (see next slide)
+- **load_balancing.algorithm.type**: how the load balancer selects targets when routing requests (Round Robin, Least Outstanding Requests)
+- **stickiness.enabled**
+- **stickiness.type**: application-based or duration-based cookie
+- **stickiness.app_cookie.cookie_name**: name of the application cookie
+- **stickiness.app_cookie.duration_seconds**: application-based cookie expiration period
+- **stickiness.lb_cookie.duration_seconds**: duration-based cookie expiration period
 
 ### Slow Start Mode
 
 - By default, a target receives its full share of requests once it’s registered with the target group
-- Slow Start Mode gives healthy targets time to warm-up before the load balancer sends them a full share of requests
+- **Slow Start Mode** gives healthy targets time to warm-up before the load balancer sends them a full share of requests
 - The load balancer linearly increases the number of requests that it sends to the target
 - A target exits Slow Start Mode when:
   - The duration period elapses
   - The target becomes unhealthy Client Slow Start duration without Slow with Slow
-  - To disable, set Slow start duration value to 0
+- To disable, set **Slow start duration** value to 0
 
-### Outstanding Requests
+### Request Routing Algorithms - Least Outstanding Requests
 
 - The next instance to receive the request is the instance that has the lowest number of pending/unfinished requests
-- Works with Application Load Balancer and Classic Load Balancer (HTTP/HTTPS) (HTTP/HTTPS Listener)
+- Works with **Application Load Balancer** and **Classic Load Balancer (HTTP/HTTPS) (HTTP/HTTPS Listener)**
 
 ### Request Routing Algorithms – Round Robin
 
@@ -1021,7 +1029,7 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 
 - Selects a target based on the protocol, source/destination IP address, source/destination port, and TCP sequence number
 - Each TCP/UDP connection is routed to a single target for the life of the connection
-- Works with Network Load Balancer Protocol Source & destination IP
+- Works with **Network Load Balancer**
 
 ### ALB – Listener Rules
 
@@ -1051,32 +1059,34 @@ The content below is organized by section. Each `###` heading is a topic/slide t
   - Ensure we have a minimum and a maximum number of EC2 instances running
   - Automatically register new instances to a load balancer
   - Re-create an EC2 instance in case a previous one is terminated (ex: if unhealthy)
-  - ASG are free (you only pay for the underlying EC2 instances)
+- ASG are free (you only pay for the underlying EC2 instances)
 
 ### Auto Scaling Group in AWS
 
+Image from AWS Course PDF
 
 ### Auto Scaling Group in AWS With Load Balancer
 
+Image from AWS Course PDF
 
 ### Auto Scaling Group Attributes
 
 - A Launch Template (older “Launch Configurations” are deprecated)
-- AMI + Instance Type
-- EC2 User Data
-- EBS Volumes
-- Security Groups
-- SSH Key Pair
-- IAM Roles for your EC2 Instances
-- Network + Subnets Information
-- Load Balancer Information
+  - AMI + Instance Type
+  - EC2 User Data
+  - EBS Volumes
+  - Security Groups
+  - SSH Key Pair
+  - IAM Roles for your EC2 Instances
+  - Network + Subnets Information
+  - Load Balancer Information
 - Min Size / Max Size / Initial Capacity
 - Scaling Policies ASG Launch Template Security
 
 ### Auto Scaling - CloudWatch Alarms & Scaling
 
 - It is possible to scale an ASG based on CloudWatch alarms
-- An alarm monitors a metric (such as Average CPU, or a custom metric)
+- An alarm monitors a metric (such as **Average CPU**, or a **custom metric**)
 - Metrics such as Average CPU are computed for the overall ASG instances
 - Based on the alarm:
   - We can create scale-out policies (increase the number of instances)
@@ -1086,35 +1096,35 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 
 > **🎯 Exam Tip:** **Target Tracking** = keep metric at target. **Step** = alarm + add N instances. **Scheduled** = known patterns. **Predictive** = ML pre-scaling for cyclical load.
 
-- Dynamic Scaling
-- Target Tracking Scaling
-- Simple to set-up
-- Example: I want the average ASG CPU to stay at around 40%
-- Simple / Step Scaling
-- When a CloudWatch alarm is triggered (example CPU > 70%), then add 2 units
-- When a CloudWatch alarm is triggered (example CPU < 30%), then remove 1
-- Scheduled Scaling
-- Anticipate a scaling based on known usage patterns
-- Example: increase the min capacity to 10 at 5 pm on Fridays
+- **Dynamic Scaling**
+  - **Target Tracking Scaling**
+    - Simple to set-up
+    - Example: I want the average ASG CPU to stay at around 40%
+- **Simple / Step Scaling**
+  - When a CloudWatch alarm is triggered (example CPU > 70%), then add 2 units
+  - When a CloudWatch alarm is triggered (example CPU < 30%), then remove 1
+- **Scheduled Scaling**
+  - Anticipate a scaling based on known usage patterns
+  - Example: increase the min capacity to 10 at 5 pm on Fridays
 
 ### Auto Scaling Groups – Scaling Policies
 
 > **🎯 Exam Tip:** **Target Tracking** = keep metric at target. **Step** = alarm + add N instances. **Scheduled** = known patterns. **Predictive** = ML pre-scaling for cyclical load.
 
-- Predictive scaling: continuously forecast load and schedule scaling ahead
+- **Predictive scaling**: continuously forecast load and schedule scaling ahead
 
 ### Good metrics to scale on
 
-- CPUUtilization: Average CPU utilization across your instances
-- RequestCountPerTarget: to make sure the number of requests per EC2 instances is stable
-- Average Network In / Out (if you’re application is network bound)
-- Any custom metric (that you push using CloudWatch)
+- **CPUUtilization**: Average CPU utilization across your instances
+- **RequestCountPerTarget**: to make sure the number of requests per EC2 instances is stable
+- **Average Network In / Out** (if you’re application is network bound)
+- **Any custom metric** (that you push using CloudWatch)
 
 ### Auto Scaling Groups - Scaling Cooldowns
 
 > **🎯 Exam Tip:** Default cooldown = **300 seconds**. Use a **pre-baked AMI** to reduce it.
 
-- After a scaling activity happens, you are in the cooldown period (default **300 seconds**)
+- After a scaling activity happens, you are in the **cooldown period (default **300 seconds**)**
 - During the cooldown period, the ASG will not launch or terminate additional instances (to allow for metrics to stabilize)
 - Advice: Use a ready-to-use AMI to reduce configuration time in order to be serving request fasters and reduce the cooldown period in effect?
 
@@ -1133,26 +1143,33 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 - Solution was to over-provision compute resources to absorb unexpected demand increases (increased cost) or use Golden Images to try to reduce boot time
 - New solution: ASG Warm Pools !!
 
-### (Pre-initialized)
+### ASG – Warm Pools
 
-- Reduces scale-out latency by maintaining a pool of preinitialized instances
-- In a scale-out event, ASG uses the pre-initialized instances from the Warm Pool instead of launching new instances
-- Warm Pool Size Settings Max. Capacity = 6 Desired Capacity = 3
-- Minimum warm pool size (always in the warm pool)
-- Max prepared capacity = Max capacity of ASG (default)
-- OR Max prepared capacity = Set number of instances
-- Warm Pool Instance State – what state to keep your Warm Pool instances in after initialization (Running, Stopped, Hibernated)
-- Warm Pools instances don’t contribute to ASG metrics that affect Scaling Policies (Size = 3)
+• Reduces scale-out latency by maintaining a pool of pre
+initialized instances
+• In a scale-out event, ASG uses the pre-initialized instances 
+from the Warm Pool instead of launching new instances
+• **Warm Pool Size Settings**
+  • **Minimum warm pool size** (always in the warm pool)
+  • **Max prepared capacity** = Max capacity of ASG (default)
+  • **OR Max prepared capacity** = Set number of instances
+• **Warm Pool Instance State** – what state to keep your 
+Warm Pool instances in after initialization
+(Running, Stopped, Hibernated)
+• Warm Pools instances don’t contribute to ASG metrics 
+that affect Scaling Policies
 
-### Lambda
+### ASG – Lifecycle Hooks
 
-- By default, as soon as an instance is launched in an ASG it’s in service
-- You can perform extra steps before the instance goes in service (Pending state)
-- Define a script to run on the instances as they start
-- You can perform some actions before the instance is terminated (Terminating state) (EC2_Instance_Terminating)
-- Pause the instances before they’re terminated for troubleshooting
-- Use cases: cleanup, log extraction, special health checks
-- Integration with EventBridge, SNS, and Lifecycle Hook (EC2_Instance_Launching) lifecycle event
+• By default, as soon as an instance is launched in an ASG it’s in service 
+• You can perform extra steps before the instance goes in service (Pending state)
+  • Define a script to run on the instances as 
+they start
+• You can perform some actions before the instance is terminated (Terminating state)
+  • Pause the instances before they’re 
+terminated for troubleshooting
+• Use cases: cleanup, log extraction, special health checks
+• Integration with EventBridge, SNS, and SQS
 
 ### Launch Configuration vs. Launch Template
 
@@ -1173,16 +1190,17 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 
 ### SQS with Auto Scaling Group (ASG)
 
+Image from AWS Course PDF
 
 ### ASG Health Checks
 
 - To make sure you have high availability, means you have least 2 instances running across 2 AZ in your ASG (must configure multi-AZ ASG)
 - Health checks available:
-  - EC2 Status Checks
-  - ELB Health Checks
-  - Custom Health Checks: send instance’s health to ASG using AWS CLI or AWS SDK
-  - ASG will launch a new instance after terminating an unhealthy one
-  - ASG will not reboot unhealthy hosts for you
+  - **EC2 Status Checks**
+  - **ELB Health Checks**
+  - **Custom Health Checks**: send instance’s health to ASG using AWS CLI or AWS SDK
+- ASG will launch a new instance after terminating an unhealthy one
+- ASG will not reboot unhealthy hosts for you
 - Good to know CLI:
   - set-instance-health (use with Custom Health Checks)
   - terminate-instance-in-auto-scaling-group
@@ -1192,42 +1210,42 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 > **🎯 Exam Tip:** Fails to launch for **24 hours** → auto-suspends processes. Causes: deleted SG/key pair, exceeded MaxCapacity.
 
 - <number of instances> instance(s) are already running. Launching EC2 instance failed.
-- The Auto Scaling group has reached the limit set by the MaximumCapacity parameter. Update your Auto Scaling group by providing a new value for the maximum capacity.
+  - The Auto Scaling group has reached the limit set by the MaximumCapacity parameter. Update your Auto Scaling group by providing a new value for the maximum capacity.
 - Launching EC2 instances is failing:
   - The security group does not exist. SG might have been deleted
   - The key pair does not exist. The key pair might have been deleted
-  - If the ASG fails to launch an instance for over **24 hours**, it will automatically suspend the processes (administration suspension)
+- If the ASG fails to launch an instance for over **24 hours**, it will automatically suspend the processes (administration suspension)
 
 ### CloudWatch Metrics for ASG
 
 - Metrics are collected every 1 minute
 - ASG-level metrics: (opt-in)
-- GroupMinSize, GroupMaxSize, GroupDesiredCapacity
-- GroupInServiceInstances, GroupPendingInstances, GroupStandbyInstances
-- GroupTerminatingInstances, GroupTotalInstances
-- You should enable metric collection to see these metrics
+  - GroupMinSize, GroupMaxSize, GroupDesiredCapacity
+  - GroupInServiceInstances, GroupPendingInstances, GroupStandbyInstances
+  - GroupTerminatingInstances, GroupTotalInstances
+  - You should enable metric collection to see these metrics
 - EC2-level metrics (enabled): CPU Utilization, etc…
-- Basic monitoring: 5 minutes granularity
-- Detailed monitoring: 1 minute granularity
+  - Basic monitoring: 5 minutes granularity
+  - Detailed monitoring: 1 minute granularity
 
 ### AWS Auto Scaling
 
 - Backbone service of auto scaling for scalable resources in AWS:
-  - Amazon EC2 Auto Scaling groups: Launch or terminate EC2 instances
-  - Amazon EC2 Spot Fleet requests: Launch or terminate instances from a Spot Fleet request, or automatically replace instances that get interrupted for price or capacity reasons.
-  - Amazon ECS: Adjust the ECS service desired count up or down
-  - Amazon DynamoDB (table or global secondary index): WCU & RCU
-  - Amazon Aurora: Dynamic Read Replicas Auto Scaling
+- **Amazon EC2 Auto Scaling groups**: Launch or terminate EC2 instances
+- **Amazon EC2 Spot Fleet requests**: Launch or terminate instances from a Spot Fleet request, or automatically replace instances that get interrupted for price or capacity reasons.
+- **Amazon ECS**: Adjust the ECS service desired count up or down
+- **Amazon DynamoDB (table or global secondary index)**: WCU & RCU
+- **Amazon Aurora**: Dynamic Read Replicas Auto Scaling
 
 ### AWS Auto Scaling – Scaling Plans
 
 - Dynamic scaling: creates a target tracking scaling policy
-- Optimize for availability => 40% of resource utilization
-- Balance availability and cost => 50% of resource utilization
-- Optimize for cost => 70% of resource utilization
-- Custom => choose own metric and target value
-- Options: Disable scale-in, cooldown period, warmup time (for ASG)
-- Predictive scaling: continuously forecast load and schedule scaling ahead
+  - Optimize for availability => 40% of resource utilization
+  - Balance availability and cost => 50% of resource utilization
+  - Optimize for cost => 70% of resource utilization
+  - Custom => choose own metric and target value
+  - Options: Disable scale-in, cooldown period, warmup time (for ASG)
+- **Predictive scaling**: continuously forecast load and schedule scaling ahead
 
 ---
 
@@ -1242,7 +1260,7 @@ The content below is organized by section. Each `###` heading is a topic/slide t
   - I want two Elastic IPs for these EC2 instances
   - I want an S3 bucket
   - I want a load balancer (ELB) in front of these EC2 instances
-  - Then CloudFormation creates those for you, in the right order, with the exact configuration that you specify
+- Then CloudFormation creates those for you, in the right order, with the exact configuration that you specify
 
 ### CloudFormation – Template Example
 
@@ -1250,25 +1268,25 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 ### Benefits of AWS CloudFormation (1/2)
 
 - Infrastructure as code
-- No resources are manually created, which is excellent for control
-- The code can be version controlled for example using Git
-- Changes to the infrastructure are reviewed through code
+  - No resources are manually created, which is excellent for control
+  - The code can be version controlled for example using Git
+  - Changes to the infrastructure are reviewed through code
 - Cost
-- Each resources within the stack is tagged with an identifier so you can easily see how much a stack costs you
-- You can estimate the costs of your resources using the CloudFormation template
-- Savings strategy: In Dev, you could automation deletion of templates at 5 PM and recreated at 8 AM, safely
+  - Each resources within the stack is tagged with an identifier so you can easily see how much a stack costs you
+  - You can estimate the costs of your resources using the CloudFormation template
+  - Savings strategy: In Dev, you could automation deletion of templates at 5 PM and recreated at 8 AM, safely
 
 ### Benefits of AWS CloudFormation (2/2)
 
 - Productivity
-- Ability to destroy and re-create an infrastructure on the cloud on the fly
-- Automated generation of Diagram for your templates!
-- Declarative programming (no need to figure out ordering and orchestration)
+  - Ability to destroy and re-create an infrastructure on the cloud on the fly
+  - Automated generation of Diagram for your templates!
+  - Declarative programming (no need to figure out ordering and orchestration)
 - Separation of concern: create many stacks for many apps, and many layers. Ex:
   - VPC stacks
   - Network stacks
   - App stacks
-  - Don’t re-invent the wheel
+- Don’t re-invent the wheel
   - Leverage existing templates on the web!
   - Leverage the documentation
 
@@ -1281,28 +1299,28 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 
 ### Deploying CloudFormation Templates
 
-- Manual way
-- Editing templates in Infrastructure Composer or code editor
-- Using the console to input parameters, etc…
-- We’ll mostly do this way in the course for learning purposes
-- Automated way
-- Editing templates in a YAML file
-- Using the AWS CLI (Command Line Interface) to deploy the templates, or using a Continuous Delivery (CD) tool
-- Recommended way when you fully want to automate your flow create-stack create
+- **Manual way**
+  - Editing templates in Infrastructure Composer or code editor
+  - Using the console to input parameters, etc…
+  - We’ll mostly do this way in the course for learning purposes
+- **Automated way**
+  - Editing templates in a YAML file
+  - Using the AWS CLI (Command Line Interface) to deploy the templates, or using a Continuous Delivery (CD) tool
+  - Recommended way when you fully want to automate your flow create-stack create
 
 ### CloudFormation – Building Blocks
 
-- Template’s Components
-- AWSTemplateFormatVersion – identifies the capabilities of the template “2010-09-09”
-- Description – comments about the template
-- Resources (MANDATORY) – your AWS resources declared in the template
-- Parameters – the dynamic inputs for your template
-- Mappings – the static variables for your template
-- Outputs – references to what has been created
-- Conditionals – list of conditions to perform resource creation
-- Template’s Helpers
-- References
-- Functions
+- **Template’s Components**
+  - **AWSTemplateFormatVersion** – identifies the capabilities of the template “2010-09-09”
+  - **Description** – comments about the template
+  - **Resources (MANDATORY)** – your AWS resources declared in the template
+  - **Parameters** – the dynamic inputs for your template
+  - **Mappings** – the static variables for your template
+  - **Outputs** – references to what has been created
+  - **Conditionals** – list of conditions to perform resource creation
+- **Template’s Helpers**
+  - **References**
+  - **Functions**
 
 ### Introductory Example
 
@@ -1326,29 +1344,39 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 
 ### CloudFormation – Resources
 
-- Resources are the core of your CloudFormation template (MANDATORY)
+- Resources are the core of your CloudFormation template **(MANDATORY)**
 - They represent the different AWS Components that will be created and configured
 - Resources are declared and can reference each other
 - AWS figures out creation, updates and deletes of resources for us
 - There are over 700 types of resources (!)
 - Resource types identifiers are of the form:
+   ```service-provider::service-name::data-type-name```
 
-### Resources documentation?
+### How do I find Resources documentation?
 
 - I can’t teach you all the 700+ resources, but I can teach you how to learn how to use them
 - All the resources can be found here:
-  - Then, we just read the docs J
+  -  https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html
+- Then, we just read the docs J
 - Example here (for an EC2 instance):
+  - https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-ec2-instance.html
 
 ### Analysis of CloudFormation Template
 
 - Going back to the example of the introductory lecture, let’s learn why it was written this way.
 - Relevant documentation can be found here:
+  - https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-instance.html
+  - https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-securitygroup.html
+  - http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-eip.html
 
 ### CloudFormation – Resources FAQ
 
 - Can I create a dynamic number of resources?
+  - Yes, you can by using CloudFormation Macros and Transform
+  - It is not in the scope of this course
 - Is every AWS Service supported?
+  - Almost. Only a select few niches are not there yet
+  - You can work around that using CloudFormation Custom Resources
 
 ### CloudFormation – Parameters
 
@@ -1356,14 +1384,14 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 - They’re important to know about if:
   - You want to reuse your templates across the company
   - Some inputs can not be determined ahead of time
-  - Parameters are extremely powerful, controlled, and can prevent errors from happening in your templates, thanks to types upload template provide parameter values create stack
+- Parameters are extremely powerful, controlled, and can prevent errors from happening in your templates, thanks to types upload template provide parameter values create stack
 
 ### When should you use a Parameter?
 
 - Ask yourself this:
   - Is this CloudFormation resource configuration likely to change in the future?
   - If so, make it a parameter
-  - You won’t have to re-upload a template to change its content J
+- You won’t have to re-upload a template to change its content
 
 ### CloudFormation – Parameters Settings
 
@@ -1390,9 +1418,9 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 
 ### How to Reference a Parameter?
 
-- The Fn::Ref function can be leveraged to reference parameters
+- The **Fn::Ref** function can be leveraged to reference parameters
 - Parameters can be used anywhere in a template
-- The shorthand for this in YAML is !Ref
+- The shorthand for this in YAML is **!Ref**
 - The function can also reference other elements within the template
 
 ### CloudFormation – Pseudo Parameters
@@ -1400,12 +1428,14 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 - AWS offers us Pseudo Parameters in any CloudFormation template
 - These can be used at any time and are enabled by default
 - Important pseudo parameters:
-AWS::AccountId
-AWS::Region
-AWS::StackId
-AWS::StackName
-AWS::NotificationARNS
-AWS::NoValue
+| Reference Value         | Example Returned Value                                                                 |
+|-------------------------|-----------------------------------------------------------------------------------------|
+| AWS::AccountId          | 123456789012                                                                           |
+| AWS::Region             | us-east-1                                                                              |
+| AWS::StackId            | arn:aws:cloudformation:us-east-1:123456789012:stack/MyStack/1c2fa620-982a11e3-aff7-50e2416294e0 |
+| AWS::StackName          | MyStack                                                                                |
+| AWS::NotificationARNs   | [arn:aws:sns:us-east-1:123456789012:MyTopic]                                           |
+| AWS::NoValue            | Doesn’t return a value                                                                 |
 
 ### CloudFormation – Mappings
 
@@ -1421,11 +1451,11 @@ AWS::NoValue
 ### When would you use Mappings vs. Parameters?
 
 - Mappings are great when you know in advance all the values that can be taken and that they can be deduced from variables such as
-- Region
-- Availability Zone
-- AWS Account
-- Environment (dev vs prod)
-- etc…
+  - Region
+  - Availability Zone
+  - AWS Account
+  - Environment (dev vs prod)
+  - etc…
 - They allow safer control over the template
 - Use parameters when the values are really user specific
 
@@ -1453,8 +1483,8 @@ AWS::NoValue
 - Conditions can be whatever you want them to be, but common ones are:
   - Environment (dev / test / prod)
   - AWS Region
-- Any parameter value Parameters Parameters Environment:
-  - Each condition can reference another condition, parameter value or mapping
+  -  Any parameter value
+- Each condition can reference another condition, parameter value or mapping
 
 ### How to define a Condition
 
@@ -1492,8 +1522,8 @@ AWS::NoValue
 ### Intrinsic Functions – Fn::Ref
 
 - The Fn::Ref function can be leveraged to reference
-- Parameters – returns the value of the parameter
-- Resources – returns the physical ID of the underlying resource (e.g., EC2 ID)
+  - **Parameters** – returns the value of the parameter
+  - **Resources** – returns the physical ID of the underlying resource (e.g., EC2 ID)
 - The shorthand for this in YAML is !Ref
 
 ### Intrinsic Functions – Fn::GetAtt
@@ -1504,13 +1534,13 @@ AWS::NoValue
 
 ### Intrinsic Functions – Fn::FindInMap
 
-- We use Fn::FindInMap to return a named value from a specific key
+- We use **Fn::FindInMap** to return a named value from a specific key
 - !FindInMap [ MapName, TopLevelKey, SecondLevelKey ]
 
 ### Intrinsic Functions – Fn::ImportValue
 
 - Import values that are exported in other stacks
-- For this, we use the Fn::ImportValue function
+- For this, we use the **Fn::ImportValue** function
 
 ### Intrinsic Functions – Fn::Base64
 
@@ -1537,7 +1567,7 @@ AWS::NoValue
 - Stack Update Fails:
   - The stack automatically rolls back to the previous known working state
   - Ability to see in the log what happened and error messages
-  - Rollback Failure? Fix resources manually then issue
+- Rollback Failure? Fix resources manually then issue **ContinueUpdateRollback API** from Console
   - Or from the CLI using continue-update-rollback API call
 
 ### CloudFormation – Service Role
@@ -1547,38 +1577,38 @@ AWS::NoValue
 - Use cases:
   - You want to achieve the least privilege principle
   - But you don’t want to give the user all the required permissions to create the stack resources
-  - User must have iam:PassRole permissions Stack
+- User must have **iam:PassRole** permissions Stack
 
 ### CloudFormation Capabilities
 
-- CAPABILITY_NAMED_IAM and CAPABILITY_IAM
-- Necessary to enable when you CloudFormation template is creating or updating IAM resources (IAM User, Role, Group, Policy, Access Keys, Instance Profile…)
-- Specify CAPABILITY_NAMED_IAM if the resources are named
-- CAPABILITY_AUTO_EXPAND
-- Necessary when your CloudFormation template includes Macros or Nested Stacks (stacks within stacks) to perform dynamic transformations
-- You’re acknowledging that your template may change before deploying
-- InsufficientCapabilitiesException
-- Exception that will be thrown by CloudFormation if the capabilities haven’t been acknowledged when deploying a template (security measure)
+- **CAPABILITY_NAMED_IAM and CAPABILITY_IAM**
+  - Necessary to enable when you CloudFormation template is creating or updating IAM resources (IAM User, Role, Group, Policy, Access Keys, Instance Profile…)
+  - Specify CAPABILITY_NAMED_IAM if the resources are named
+- **CAPABILITY_AUTO_EXPAND**
+  - Necessary when your CloudFormation template includes Macros or Nested Stacks (stacks within stacks) to perform dynamic transformations
+  - You’re acknowledging that your template may change before deploying
+- **InsufficientCapabilitiesException**
+  - Exception that will be thrown by CloudFormation if the capabilities haven’t been acknowledged when deploying a template (security measure)
 
 ### CloudFormation – DeletionPolicy Delete
 
 > **🎯 Exam Tip:** **Retain** = keep on stack delete. **Snapshot** = snapshot before delete. **Delete** = default. S3 Delete fails if bucket non-empty.
 
-- DeletionPolicy:
+- **DeletionPolicy**:
   - Control what happens when the CloudFormation template is deleted or when a resource is removed from a CloudFormation template
   - Extra safety measure to preserve and backup resources
-  - Default DeletionPolicy=Delete
-  - ⚠ Delete won’t work on an S3 bucket if the bucket is not empty
+- Default **DeletionPolicy=Delete**
+  - ⚠ **Delete** won’t work on an S3 bucket if the bucket is not empty
 
 ### CloudFormation – DeletionPolicy Retain
 
-- DeletionPolicy=Retain:
+- **DeletionPolicy=Retain**:
   - Specify on resources to preserve in case of CloudFormation deletes
-  - Works with any resources
+- Works with any resources
 
 ### CloudFormation – DeletionPolicy Snapshot
 
-- DeletionPolicy=Snapshot
+- **DeletionPolicy=Snapshot**
 - Create one final snapshot before deleting the resource
 - Examples of supported resources:
   - EBS Volume, ElastiCache Cluster, ElastiCache ReplicationGroup
@@ -1588,26 +1618,26 @@ AWS::NoValue
 
 - Controls what happens to a resource if you update a property whose update behavior is Replacement
 - For example, updating RDS DBInstance’s AvailabilityZone property
-- UpdateReplacePolicy=Delete (default)
-- CloudFormation deletes the old resource and creates a new one with a new physical ID
-- UpdateReplacePolicy=Retain
-- Keeps the resource (it is removed from CloudFormation’s scope)
-- UpdateReplacePolicy=Snapshot
-- EBS Volume, ElastiCache Cluster, ElastiCache ReplicationGroup
-- RDS DBInstance, RDS DBCluster, Redshift Cluster, Neptune DBCluster
-- The snapshot doesn’t exist in CloudFormation’s scope
+- **UpdateReplacePolicy=Delete (default)**
+  - CloudFormation deletes the old resource and creates a new one with a new physical ID
+- **UpdateReplacePolicy=Retain**
+  - Keeps the resource (it is removed from CloudFormation’s scope)
+- **UpdateReplacePolicy=Snapshot**
+  - EBS Volume, ElastiCache Cluster, ElastiCache ReplicationGroup
+  - RDS DBInstance, RDS DBCluster, Redshift Cluster, Neptune DBCluster
+  - The snapshot doesn’t exist in CloudFormation’s scope
 
 ### UpdateReplacePolicy vs. DeletionPolicy
 
 - UpdateReplacePolicy only applies to resources replaced during stack updates
-- DeletionPolicy
-- Applies to resources deleted when a stack is deleted
-- Applies when a resource definition deleted from the template as part of stack update
+- **DeletionPolicy**
+  - Applies to resources deleted when a stack is deleted
+  - Applies when a resource definition deleted from the template as part of stack update
 
 ### CloudFormation – Stack Policies
 
 - During a CloudFormation Stack update, all update actions are allowed on all resources (default)
-- A Stack Policy is a JSON document that defines the update actions that are allowed on specific resources during Stack updates
+- **A Stack Policy is a JSON document that defines the update actions that are allowed on specific resources during Stack updates**
 - Protect resources from unintentional updates
 - When you set a Stack Policy, all resources in the Stack are protected by default
 - Specify an explicit ALLOW for the resources you want to be allowed to be updated except the ProducKonDatabase
@@ -1632,26 +1662,26 @@ AWS::NoValue
 
 ### Use Case – Delete content from an S3 bucket
 
-- You can’t delete a non-empty S3 bucket
+- **You can’t delete a non-empty S3 bucket**
 - To delete a non-empty S3 bucket, you must first delete all the objects inside it
 - We can use a **custom resource** to empty an S3 bucket before it gets deleted by delete stack empty bucket
 
 ### CloudFormation – Dynamic References
 
-- Reference external values stored in Systems Manager create/update
-- CloudFormation retrieves the value of the specified reference during create/update/delete operations result
+- Reference external values stored in **Systems Manager Parameter Store** and **Secrets Manager** within CloudFormation templates
+- CloudFormation retrieves the value of the specified reference during **create/update/delete** operations result
 - For example: retrieve RDS DB Instance master password from Secrets Manager
 - Supports
-  - ssm – for plaintext values stored in SSM Parameter Store
-  - ssm-secure – for secure strings stored in SSM Parameter Store
-  - secretsmanager – for secret values stored in Secrets Manager get value (reference-key)
+  - **ssm** – for plaintext values stored in SSM Parameter Store
+  - **ssm-secure** – for secure strings stored in SSM Parameter Store
+  - **secretsmanager** – for secret values stored in Secrets Manager get value (reference-key)
 
 ### CloudFormation – Dynamic References
 
 
 ### Option 1 – ManageMasterUserPassword
 
-- ManageMasterUserPassword – creates admin secret implicitly
+- **ManageMasterUserPassword** – creates admin secret implicitly
 - RDS, Aurora will manage the secret in Secrets Manager and its rotation
 
 ### Option 2 – Dynamic Reference
@@ -1678,13 +1708,13 @@ AWS::NoValue
 ### AWS::CloudFormation::Init
 
 - A config contains the following and is executed in that order
-  - Packages: used to download and install pre-packaged apps and components on Linux/Windows (ex. MySQL,
-  - Groups: define user groups
-  - Users: define users, and which group they belong to
-  - Sources: download files and archives and place them on the EC2 instance
-  - Files: create files on the EC2 instance, using inline or can be pulled from a URL
-  - Commands: run a series of commands
-  - Services: launch a list of sysvinit
+  - **Packages**: used to download and install pre-packaged apps and components on Linux/Windows (ex. MySQL,
+  - **Groups**: define user groups
+  - **Users**: define users, and which group they belong to
+  - **Sources**: download files and archives and place them on the EC2 instance
+  - **Files**: create files on the EC2 instance, using inline or can be pulled from a URL
+  - **Commands**: run a series of commands
+  - **Services**: launch a list of sysvinit
 
 ### CloudFormation – cfn-init
 
@@ -1714,7 +1744,7 @@ AWS::NoValue
 - Verify that the cfn-init & cfn-signal command was successfully run on the instance.
 - You can retrieve the logs by logging in to your instance, but you must disable rollback on failure or else AWS CloudFormation deletes the instance after your stack fails to create
 - Verify that the instance has a connection to the Internet. If the instance is in a VPC, the instance should be able to connect to the Internet through a NAT device if it's is in a private subnet or through an Internet gateway if it's in a public subnet
-- For example, run: curl -I Wait Condition Didn't Receive the Required
+- For example, run: curl -I https://aws.amazon.com
 
 ### CloudFormation – Nested Stacks
 
@@ -1768,9 +1798,9 @@ AWS::NoValue
 
 ### StackSets with AWS Organizations
 
-- Ability to automatically deploy Stack instances to new Accounts in an Organization
+- Ability to **automatically** deploy Stack instances to new Accounts in an Organization
 - Can delegate StackSets administration to member accounts in AWS
-- Trusted access with AWS Organizations must be enabled before delegated administrators can deploy to accounts managed by Organizations
+- **Trusted access with AWS Organizations must be enabled** before delegated administrators can deploy to accounts managed by Organizations
 
 ### StackSets with AWS Organizations
 
@@ -2777,23 +2807,23 @@ workflows.html
 ### Amazon CloudFront
 
 - Content Delivery Network (CDN)
-- Improves read performance, content is cached at the edge
+- **Improves read performance, content is cached at the edge**
 - Improves users experience
 - Hundreds of Points of Presence globally (edge locations, caches)
 - DDoS protection (because worldwide), integration with Shield, Source: AWS Web Application Firewall
 
 ### CloudFront – Origins
 
-- S3 bucket
-- For distributing files and caching them at the edge
-- For uploading files to S3 through CloudFront
-- Secured using Origin Access Control (OAC)
-- VPC Origin
-- For applications hosted in VPC private subnets
-- Private Application Load Balancer / Network Load Balancer / EC2 Instances
-- Custom Origin (HTTP)
-- S3 website (must first enable the bucket as a static S3 website)
-- Any public HTTP backend you want (example: Public ALB)
+- **S3 bucket**
+  - For distributing files and caching them at the edge
+  - For uploading files to S3 through CloudFront
+  - Secured using **Origin Access Control (OAC)**
+- **VPC Origin**
+  - For applications hosted in VPC private subnets
+  - Private Application Load Balancer / Network Load Balancer / EC2 Instances
+- **Custom Origin (HTTP)**
+  - S3 website (must first enable the bucket as a static S3 website)
+  - Any public HTTP backend you want (example: Public ALB)
 
 ### CloudFront at a high level
 
@@ -2803,25 +2833,25 @@ workflows.html
 
 ### CloudFront vs S3 Cross Region Replication
 
-- CloudFront:
+- **CloudFront:**
   - Global Edge network
   - Files are cached for a TTL (maybe a day)
-  - Great for static content that must be available everywhere
-- S3 Cross Region Replication:
+  - **Great for static content that must be available everywhere**
+- **S3 Cross Region Replication:**
   - Must be setup for each region you want replication to happen
   - Files are updated in near real-time
   - Read only
-  - Great for dynamic content that needs to be available at low-latency in few
+  - **Great for dynamic content that needs to be available at low-latency in few regions**
 
 ### CloudFront Caching
 
 > **🎯 Exam Tip:** Default TTL = **24 hours**. Cache Invalidation forces refresh (costs after 1,000 paths/month).
 
-- The cache lives at each CloudFront Edge Location
-- CloudFront identifies each object in the cache using the Cache Key request
-- A unique identifier for each object in the cache
+- The cache lives at each CloudFront **Edge Location**
+- CloudFront identifies each object in the cache using the **Cache Key** 
+  - A unique identifier for each object in the cache
 - You want to maximize the Cache Hit ratio to minimize requests to the origin
-- You can invalidate part of the cache using the CreateInvalidation API forward check/update cached objects expires based on TTL
+- You can invalidate part of the cache using the **CreateInvalidation** API
 
 ### CloudFront Caching – Cache Policy
 
@@ -2829,14 +2859,14 @@ workflows.html
   - HTTP Headers: None – Whitelist
   - Cookies: None – Whitelist – Include All Except – All
   - Query Strings: None – Whitelist – Include All-Except – All
-  - Control the TTL (0 seconds to 1 year), can be set by the origin using the CacheControl header, Expires header…
-  - Create your own policy or use Predefined Managed Policies request
+- Control the TTL (0 seconds to 1 year), can be set by the origin using the CacheControl header, Expires header…
+- Create your own policy or use Predefined Managed Policies request
 
 ### CloudFront – Cache Invalidations
 
 - In case you update the back-end origin, CloudFront doesn’t know about it and will only get the refreshed content after the TTL has expired
-- However, you can force an entire or partial cache refresh (thus bypassing the TTL) by performing a CloudFront
-- You can invalidate all files (*) or a special path (/images/*) invalidate index.html update files (origin) index.html
+- However, you can force an entire or partial cache refresh (thus bypassing the TTL) by performing a **CloudFrontInvalidation**
+- You can invalidate all files (*) or a special path (/images/*)
 
 ### CloudFront – without Origin Shield
 
@@ -2846,7 +2876,7 @@ workflows.html
 
 ### CloudFront – with Origin Shield
 
-- Origin Shield – extra caching layer that helps minimize your origin’s load and improve its availability
+- **Origin Shield** – extra caching layer that helps minimize your origin’s load and improve its availability
 - Resides between Regional Edge Location and your Origin
 - Combine multiple requests for the same object into a single request (reduce origin load)
 
