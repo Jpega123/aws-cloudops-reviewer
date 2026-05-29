@@ -3012,7 +3012,7 @@ Image from AWS Course PDF
 
 ### RDS Read Replicas for read scalability
 
-> **🎯 Exam Tip:** **Async** replication. Up to 5 replicas (15 for Aurora). Cross-region = network cost. Can be promoted.
+> **🎯 Exam Tip:** **Async** replication. Up to 5 replicas (15 for Aurora). Cross-region = network cost. Can be promoted. **Alleviates the load on your main production database by distributing read queries across multiple replicas, thus enhancing performance and improving user experience.**
 
 - Up to 15 Read Replicas
 - Within AZ, Cross AZ or Cross Region
@@ -3299,8 +3299,8 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 ### Redis Scaling – Cluster Mode Enabled
 
 - Two Modes:
-  - Online Scaling: continue serving requests during the scaling process (no downtime, some degradation in performance)
-  - Offline Scaling: unable to serve requests during the scaling process (backup and restore).
+  - **Online Scaling**: continue serving requests during the scaling process (no downtime, some degradation in performance)
+  - **Offline Scaling**: unable to serve requests during the scaling process (backup and restore).
 - **Horizontal**: (Resharding and Shard Rebalancing)
   - **Resharding**: scale out/in by adding/removing shards
   - **Shard Rebalancing**: equally distribute the keyspaces among the shards as possible
@@ -3347,7 +3347,7 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 - Typically you need to manually connect to individual cache nodes in the cluster using its DNS endpoints
 - Auto Discovery automatically identifies all of the nodes
 - All the cache nodes in the cluster maintain a list of metadata about all other nodes
-- This is seamless from a client perspective Client connect (IP address) connect to configuration endpoint
+- This is seamless from a client perspective
 
 ### Memcached Metrics to Monitor
 
@@ -3368,9 +3368,9 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 ### AWS CloudWatch Metrics
 
 - CloudWatch provides metrics for every services in AWS
-- Metric is a variable to monitor (CPUUtilization, NetworkIn…)
-- Metrics belong to namespaces
-- Dimension is an attribute of a metric (instance id, environment, etc…).
+- **Metric** is a variable to monitor (CPUUtilization, NetworkIn…)
+- Metrics belong to **namespaces**
+- **Dimension** is an attribute of a metric (instance id, environment, etc…).
 - Up to 30 dimensions per metric
 - Metrics have timestamps
 - Can create CloudWatch dashboards of metrics
@@ -3389,14 +3389,14 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 - Possibility to define and send your own custom metrics to CloudWatch
 - Example: memory (RAM) usage, disk space, number of logged in users …
-- Use API call PutMetricData
+- Use API call **PutMetricData**
 - Ability to use dimensions (attributes) to segment metrics
-- Instance.id
-- Environment.name
-- Metric resolution (StorageResolution API parameter – two possible value):
+  - Instance.id
+  - Environment.name
+- Metric resolution (**StorageResolution** API parameter – two possible value):
   - Standard: 1 minute (60 seconds)
   - High Resolution: 1/5/10/30 second(s) – Higher cost
-  - Important: Accepts metric data points two weeks in the past and two hours in the future (make sure to configure your EC2 instance time correctly)
+- Important: Accepts metric data points two weeks in the past and two hours in the future (make sure to configure your EC2 instance time correctly)
 
 ### CloudWatch Anomaly Detection
 
@@ -3404,17 +3404,17 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 - Continuously analyze metrics to determine normal baselines and surface anomalies using ML algorithms
 - It creates a model of the metric’s expected values (based on metric’s past data)
 - Shows you which values in the graph are out of the normal range
-- Allows you to create Alarms based on metric’s expected value (instead of Static Threshold)
+- **Allows you to create Alarms based on metric’s expected value (instead of Static Threshold)**
 - Ability to exclude specified time periods or events from being trained monitoring/CloudWatch_Anomaly_Detection.html
 
 ### CloudWatch Dashboards
 
 - Great way to setup custom dashboards for quick access to key metrics and alarms
-- Dashboards are global
-- Dashboards can include graphs from different AWS accounts and regions
+- **Dashboards are global**
+- **Dashboards can include graphs from different AWS accounts and regions**
 - You can change the time zone & time range of the dashboards
 - You can setup automatic refresh (10s, 1m, 2m, 5m, 15m)
-- Dashboards can be shared with people who don’t have an AWS account (public, email address, 3rd party SSO provider through Amazon Cognito)
+- Dashboards can be shared with people who don’t have an AWS account (public, email address, 3rd party SSO provider through **Amazon Cognito**)
 - Pricing:
   - 3 dashboards (up to 50 metrics) for free
   - $3/dashboard/month afterwards
@@ -3423,17 +3423,17 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 > **🎯 Exam Tip:** Default retention = **never expire** (set a policy!). Export to S3 = up to **12-hour delay**.
 
-- Log groups: arbitrary name, usually representing an application
-- Log stream: instances within application / log files / containers
+- **Log groups**: arbitrary name, usually representing an application
+- **Log stream**: instances within application / log files / containers
 - Can define log expiration policies (never expire, 1 day to 10 years…)
-- CloudWatch Logs can send logs to:
+- **CloudWatch Logs can send logs to**:
   - Amazon S3 (exports)
   - Kinesis Data Streams
   - Kinesis Data Firehose
   - AWS Lambda
   - OpenSearch
-  - Logs are encrypted by default
-  - Can setup KMS-based encryption with your own keys
+- Logs are encrypted by default
+- Can setup KMS-based encryption with your own keys
 
 ### CloudWatch Logs - Sources
 
@@ -3454,49 +3454,50 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 - Search and analyze log data stored in CloudWatch Logs
 - Example: find a specific IP inside a log, count occurrences of “ERROR” in your logs…
 - Provides a purpose-built query language
-- Automatically discovers fields from AWS services and JSON log events
-- Fetch desired event fields, filter based on conditions, calculate aggregate statistics, sort events, limit number of events…
-- Can save queries and add them to CloudWatch Dashboards
+  - Automatically discovers fields from AWS services and JSON log events
+  - Fetch desired event fields, filter based on conditions, calculate aggregate statistics, sort events, limit number of events…
+  - Can save queries and add them to CloudWatch Dashboards
 - Can query multiple Log Groups in different AWS accounts
-- It’s a query engine, not a real-time engine
+- Note: **It’s a query engine, not a real-time engine**
 
 ### CloudWatch Logs – S3 Export
 
 - Log data can take up to 12 hours to become available for export
-- The API call is CreateExportTask CloudWatch Logs
+- The API call is **CreateExportTask** CloudWatch Logs
 - Not near-real time or real-time… use Logs Subscriptions instead
 
 ### CloudWatch Logs Subscriptions
 
 - Get a real-time log events from CloudWatch Logs for processing and analysis
 - Send to Kinesis Data Streams, Kinesis Data Firehose, or Lambda
-- Subscription Filter – filter which logs are events delivered to your destination real-time logs near real-time
+- **Subscription Filter** – filter which logs are events delivered to your destination real-time logs near real-time
 
 ### Multi-Account & Multi Region
 
+Image
 
 ### CloudWatch Logs Subscriptions
 
-- Cross-Account Subscription – send log events to resources in a different AWS account (KDS, KDF) (Cross-Account) (111111111111) logs logs (999999999999) (RecipientStream) allow PutRecord
+- **Cross-Account Subscription** – send log events to resources in a different AWS account (KDS, KDF)
 
 ### CloudWatch Logs Data Protection
 
 - Detect and mask sensitive log data ingested into CloudWatch Logs (at-rest and in transit)
 - Uses ML to detect and protect sensitive log
-- Data Protection Policy
-- Specify the Data Identifier(s) (e.g., email address)
-- 100+ Data Identifiers of common sensitive data patterns (e.g., emails, passwords, credit card details, social security number…)
-- Can create a Custom Data Identifier
+- **Data Protection Policy**
+  - Specify the Data Identifier(s) (e.g., email address)
+  - 100+ Data Identifiers of common sensitive data patterns (e.g., emails, passwords, credit card details, social security number…)
+  - Can create a Custom Data Identifier
 - Can send Data Protection audit reports to another send logs email address: foobar@example.com email address: ********************
 
 ### CloudWatch Logs Data Protection
 
-- You can get notified when sensitive data is detected using metric LogEventsWithFindings
+- You can get notified when sensitive data is detected using metric **LogEventsWithFindings**
 - Sensitive data is masked at:
   - CloudWatch Logs Insights
   - Metric Filters
   - CloudWatch Logs Subscription Filters
-  - Only users with logs:Unmask permissions can view unmasked data
+- Only users with **logs:Unmask** permissions can view unmasked data
 
 ### CloudWatch Alarms
 
@@ -3512,16 +3513,16 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 ### CloudWatch Alarm Targets
 
-- Stop, Terminate, Reboot, or Recover an EC2 Instance
-- Trigger Auto Scaling Action
-- Send notification to SNS (from which you can do pretty much anything)
+- **Stop, Terminate, Reboot, or Recover an EC2 Instance**
+- Trigger **Auto Scaling** Action
+- **Send notification to SNS** (from which you can do pretty much anything)
 
 ### CloudWatch Alarms – Composite Alarms
 
 > **🎯 Exam Tip:** AND/OR logic across alarms — reduces noise. Three states: OK, ALARM, INSUFFICIENT_DATA.
 
 - CloudWatch Alarms are on a single metric
-- Composite Alarms are monitoring the states of multiple other alarms
+- **Composite Alarms are monitoring the states of multiple other alarms**
 - AND and OR conditions
 - Helpful to reduce “alarm noise” by creating complex composite alarms monitor CPU monitor IOPS
 
@@ -3531,12 +3532,13 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
   - Instance status = check the EC2 VM
   - System status = check the underlying hardware
   - Attached EBS status = check attached EBS volumes alert
-  - Recovery: Same Private, Public, Elastic IP, metadata, placement group
+  - **Recovery**: Same Private, Public, Elastic IP, metadata, placement group
 
 ### CloudWatch Alarm: good to know
 
 - Alarms can be created based on CloudWatch Logs Metrics Filters
-- To test alarms and notifications, set the alarm state to Alarm using CLI aws cloudwatch set-alarm-state --alarm-name "myalarm" --state-value
+- To test alarms and notifications, set the alarm state to Alarm using CLI 
+`aws cloudwatch set-alarm-state --alarm-name "myalarm" --state-value ALARM --state-reason "testing purposes"`
 
 ### CloudWatch Synthetics Canary
 
@@ -3550,17 +3552,17 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 ### CloudWatch Synthetics Canary Blueprints
 
-- Heartbeat Monitor – load URL, store screenshot and an HTTP archive file
-- API Canary – test basic read and write functions of REST APIs
-- Broken Link Checker – check all links inside the URL that you are testing
-- Visual Monitoring – compare a screenshot taken during a canary run with a baseline screenshot
-- Canary Recorder – used with CloudWatch Synthetics Recorder (record your actions on a website and automatically generates a script for that)
-- GUI Workflow Builder – verifies that actions can be taken on your webpage (e.g., test a webpage with a login form)
+- **Heartbeat Monitor** – load URL, store screenshot and an HTTP archive file
+- **API Canary** – test basic read and write functions of REST APIs
+- **Broken Link Checker** – check all links inside the URL that you are testing
+- **Visual Monitoring** – compare a screenshot taken during a canary run with a baseline screenshot
+- **Canary Recorder** – used with CloudWatch Synthetics Recorder (record your actions on a website and automatically generates a script for that)
+- **GUI Workflow Builder** – verifies that actions can be taken on your webpage (e.g., test a webpage with a login form)
 
 ### CloudWatch Synthetics Canary in a VPC
 
 - You can setup canaries on endpoints in a VPC
-- Must have DNS Resolution and DNS Hostnames enabled in the VPC send metrics send metrics (CloudWatch) (S3)
+- Must have **DNS Resolution** and **DNS Hostnames** enabled in the VPC
 
 ### CloudWatch Container Insights
 
@@ -3573,7 +3575,7 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 ### CloudWatch Container Insights
 
 - By default, Container Insights provide metrics at cluster and service level
-- Enhanced Visibility – provides metrics at task and container level
+- **Enhanced Visibility** – provides metrics at task and container level
 - Use cases: high resource usage, throttling issues, performance issues…
 
 ### CloudWatch Internet Monitor
@@ -3583,17 +3585,17 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 - Global view of traffic patterns and health events
 - Suggests recommendations to improve endusers experience (e.g., latency)
 - Publishes data to CloudWatch Logs & Metrics
-- Sends global health events to EventBridge introducing-amazon-cloudwatch-internet-monitor/
+- Sends global health events to EventBridge
 
 ### CloudWatch Network Synthetic Monitor
 
 - Monitor and detects network issues between your apps hosted on AWS and your onpremises data center
 - Identify any network performance degradation (e.g., packet loss, latency, jitter…)
 - No agents required to be installed
-- Tests ICMP or TCP traffic to IPv4/IPv4 onpremises destinations through Direct
+- Tests ICMP or TCP traffic to IPv4/IPv4 on-premises destinations through **Direct Connect** or **S2S** VPN connections
 - Publishes data to CloudWatch Metrics AWS Cloud or VPN Connection
 
-### (formerly CloudWatch Events)
+### Amazon EventBridge (formerly CloudWatch Events)
 
 - Schedule: Cron jobs (scheduled scripts) Schedule Every hour
 - Event Pattern: Event rules to react to a service doing something
@@ -3601,34 +3603,35 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 ### Amazon EventBridge Rules
 
+Image
 
 ### Amazon EventBridge
 
 - Event buses can be accessed by other AWS accounts using Resource-based Policies
-- You can archive events (all/filter) sent to an event bus (indefinitely or set period)
-- Ability to replay archived events
+- You can **archive events** (all/filter) sent to an event bus (indefinitely or set period)
+- Ability to **replay archived events**
 
 ### Amazon EventBridge – Schema Registry
 
-- EventBridge can analyze the events in your bus and infer the schema
-- The Schema Registry allows you to generate code for your application, that will know in advance how data is structured in the event bus
+- EventBridge can analyze the events in your bus and infer the **schema**
+- The **Schema Registry** allows you to generate code for your application, that will know in advance how data is structured in the event bus
 - Schema can be versioned
 
 ### Amazon EventBridge – Resource-based Policy
 
 - Manage permissions for a specific Event Bus
 - Example: allow/deny events from another AWS account or AWS region
-- Use case: aggregate all events from your AWS Organization in a single AWS account or AWS region (123456789012) (111122223333) (central-event-bus)
+- Use case: aggregate all events from your AWS Organization in a single AWS account or AWS region
 
 ### Amazon EventBridge – Pipes
 
 
 ### Amazon EventBridge – Pipes
 
-- Out-of-the box integration between data sources and targets in AWS
+- **Out-of-the box integration** between data sources and targets in AWS
 - No-code solution
-- Filtering – filter selected subset of events
-- Enrichment – process & enhance data before sending events to the target
+- **Filtering** – filter selected subset of events
+- **Enrichment** – process & enhance data before sending events to the target
 - You can process events using:
   - Lambda
   - Step Functions
@@ -3640,21 +3643,23 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 - Sometimes events can’t be delivered to a target due to:
   - Target not being available
   - Network issues undelivered event
-- You define a Retry Policy by configuring:
+- You define a **Retry Policy** by configuring:
   - Length of Time (default: **24 hours**)
   - Retry Attempts (default: 185)
-  - You can send undelivered events to Dead Letter Queue (DLQ) using SQS for later processing retry 185 times network issues
+  - You can send undelivered events to **Dead Letter Queue (DLQ)** using SQS for later processing
 
 ### Amazon EventBridge – Trigger SSM Automation
 
 - You can specify SSM Automations as a target of EventBridge event
-- Use on a schedule or when a specific event occurs event install software (BootstrapInstance)
+- Use on a schedule or when a specific event occurs
 
 ### Amazon EventBridge – Cross-account Targets
 
+Image
 
 ### Amazon EventBridge – Cross-account Targets
 
+Image
 
 ### Service Quotas CloudWatch Alarms
 
@@ -3673,46 +3678,47 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 > **🎯 Exam Tip:** Logs every API call. **90 days** free. Data events off by default — extra cost. Insights detects unusual write patterns.
 
-- Provides governance, compliance and audit for your AWS Account
+- **Provides governance, compliance and audit for your AWS Account**
 - CloudTrail is enabled by default!
-- Get an history of events / API calls made within your AWS Account by:
+- Get **an history of events / API calls made within your AWS Account** by:
   - Console
   - SDK
   - CLI
   - AWS Services
-  - Can put logs from CloudTrail into CloudWatch Logs or S3
-  - A trail can be applied to All Regions (default) or a single Region.
-  - If a resource is deleted in AWS, investigate CloudTrail first!
+- Can put logs from CloudTrail into CloudWatch Logs or S3
+- **A trail can be applied to All Regions (default) or a single Region.**
+- If a resource is deleted in AWS, investigate CloudTrail first!
 
 ### CloudTrail Diagram
 
+Image
 
 ### CloudTrail Events
 
-- Management Events:
+- **Management Events**:
   - Operations that are performed on resources in your AWS account
-- Examples:
-  - Configuring security (IAM AttachRolePolicy)
-  - Configuring rules for routing data (Amazon EC2 CreateSubnet)
-  - Setting up logging (AWS CloudTrail CreateTrail)
-  - By default, trails are configured to log management events.
-  - Can separate Read Events (that don’t modify resources) from Write Events (that may modify resources)
-- Data Events:
-  - By default, data events are not logged (because high volume operations)
-  - Amazon S3 object-level activity (ex: GetObject, DeleteObject, PutObject): can separate Read and Write Events
+  - Examples:
+    - Configuring security (IAM AttachRolePolicy)
+    - Configuring rules for routing data (Amazon EC2 CreateSubnet)
+    - Setting up logging (AWS CloudTrail CreateTrail)
+  - **By default, trails are configured to log management events**.
+  - Can separate **Read Events** (that don’t modify resources) from **Write Event**s (that may modify resources)
+- **Data Events**:
+  - **By default, data events are not logged (because high volume operations)**
+  - Amazon S3 object-level activity (ex: **GetObject, DeleteObject, PutObject**): can separate Read and Write Events
   - AWS Lambda function execution activity (the Invoke API)
-- CloudTrail Insights Events:
-  - See next slide J
+- **CloudTrail Insights Events**:
+  - See next slide
 
 ### CloudTrail Insights
 
-- Enable CloudTrail Insights to detect unusual activity in your account:
+- Enable **CloudTrail Insights to detect unusual activity** in your account:
   - inaccurate resource provisioning
   - hitting service limits
   - Bursts of AWS IAM actions
   - Gaps in periodic maintenance activity
-  - CloudTrail Insights analyzes normal management events to create a baseline
-  - And then continuously analyzes write events to detect unusual patterns
+- CloudTrail Insights analyzes normal management events to create a baseline
+- And then **continuously analyzes write events to detect unusual patterns**
   - Anomalies appear in the CloudTrail console
   - Event is sent to Amazon S3
   - An EventBridge event is generated (for automation needs) generate
@@ -3724,19 +3730,21 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 ### Amazon EventBridge – Intercept API Calls
 
+Image
 
 ### Amazon EventBridge + CloudTrail
 
+Image
 
 ### CloudTrail – Log File Integrity Validation
 
-- Digest Files:
+- **Digest Files**:
   - References the log files for the last hour and contains a hash of each
   - Stored in the same S3 bucket as log files (different folder)
-  - Helps you determine whether a log file was modified/deleted after CloudTrail delivered it
-  - Hashing using SHA-256, Digital Signing using SHA256 with RSA
-  - Protect the S3 bucket using bucket policy, versioning,
-  - Protect CloudTrail using IAM API calls CloudTrail logs reference contains a hash of each log file
+- Helps you determine whether a log file was modified/deleted after CloudTrail delivered it
+- Hashing using SHA-256, Digital Signing using SHA256 with RSA
+- Protect the S3 bucket using bucket policy, versioning,
+- Protect CloudTrail using IAM API calls CloudTrail logs reference contains a hash of each log file
 
 ### CloudTrail – Integration with EventBridge
 
@@ -3750,32 +3758,32 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 - A trail that will log all events for all AWS accounts in an AWS Organization
 - Log events for management and member accounts
 - Trail with the same name will be created in every AWS account (IAM permissions)
-- Member accounts can’t remove or modify the organization trail (view only) (o-exampleorgid) (my-organization-bucket) create (111111111111) (222222222222) (333333333333) (MyOrganizationTrail) (444444444444)
+- Member accounts can’t remove or modify the organization trail (view only)
 
 ### AWS Config
 
-- Helps with auditing and recording compliance of your AWS resources
+- Helps with auditing and recording **compliance** of your AWS resources
 - Helps record configurations and changes over time
 - Questions that can be solved by AWS Config:
   - Is there unrestricted SSH access to my security groups?
   - Do my buckets have any public access?
   - How has my ALB configuration changed over time?
-  - You can receive alerts (SNS notifications) for any changes
-  - AWS Config is a per-region service
-  - Can be aggregated across regions and accounts
-  - Possibility of storing the configuration data into S3 (analyzed by Athena)
+- You can receive alerts (SNS notifications) for any changes
+- AWS Config is a per-region service
+- Can be aggregated across regions and accounts
+- Possibility of storing the configuration data into S3 (analyzed by Athena)
 
 ### Config Rules
 
 - Can use AWS managed config rules (over 75)
 - Can make custom config rules (must be defined in AWS Lambda)
-- Ex: evaluate if each EBS disk is of type gp2
-- Ex: evaluate if each EC2 instance is t2.micro
+  - Ex: evaluate if each EBS disk is of type gp2
+  - Ex: evaluate if each EC2 instance is t2.micro
 - Rules can be evaluated / triggered:
   - For each config change
   - And / or: at regular time intervals
-  - AWS Config Rules does not prevent actions from happening (no deny)
-  - Pricing: no free tier, $0.003 per configuration item recorded per region,
+- **AWS Config Rules does not prevent actions from happening (no deny)**
+  - Pricing: no free tier, $0.003 per configuration item recorded per region, $0.001 per config rule evaluation per region
 
 ### AWS Config Resource
 
@@ -3789,13 +3797,13 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 - Automate remediation of non-compliant resources using SSM Automation
 - Use AWS-Managed Automation Documents or create custom Automation
-- Tip: you can create custom Automation Documents that invokes Lambda function
-- You can set Remediation Retries if the resource is still non-compliant after autoremediation expired (NON_COMPLIANT) deactivate (SSM Document: AWSConfigRemediationRevokeUnusedIAMUserCredentials)
+  - Tip: you can create custom Automation Documents that invokes Lambda function
+- You can set **Remediation Retries** if the resource is still non-compliant after autoremediation expired (NON_COMPLIANT) deactivate (SSM Document: AWSConfigRemediationRevokeUnusedIAMUserCredentials)
 
 ### Config Rules – Notifications
 
 - Use EventBridge to trigger notifications when AWS resources are noncompliant
-- Ability to send configuration changes and compliance state notifications to SNS (all events – use SNS Filtering or filter at client-side) notification (configuration changes, compliance state…)
+- Ability to send configuration changes and compliance state notifications to SNS (all events – use SNS Filtering or filter at client-side)
 
 ### AWS Config – Aggregators
 
@@ -3807,21 +3815,22 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 ### AWS Config – Remediation Examples
 
+Image
 
 ### CloudWatch vs CloudTrail vs Config
 
 - CloudWatch
-- Performance monitoring (metrics, CPU, network, etc…) & dashboards
-- Events & Alerting
-- Log Aggregation & Analysis
+  - Performance monitoring (metrics, CPU, network, etc…) & dashboards
+  - Events & Alerting
+  - Log Aggregation & Analysis
 - CloudTrail
-- Record API calls made within your Account by everyone
-- Can define trails for specific resources
-- Global Service
+  - Record API calls made within your Account by everyone
+  - Can define trails for specific resources
+  - Global Service
 - Config
-- Record configuration changes
-- Evaluate resources against compliance rules
-- Get timeline of changes and compliance
+  - Record configuration changes
+  - Evaluate resources against compliance rules
+  - Get timeline of changes and compliance
 
 ### For an Elastic Load Balancer
 
@@ -3853,10 +3862,10 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 ### AWS Health Dashboard – Your Account
 
 - Previously called AWS Personal Health Dashboard (PHD)
-- AWS Account Health Dashboard provides alerts and remediation guidance when AWS is experiencing events that may impact you.
-- While the Service Health Dashboard displays the general status of AWS services, Account Health Dashboard gives you a personalized view into the performance and availability of the AWS services underlying your AWS resources.
-- The dashboard displays relevant and timely information to help you manage events in progress and provides proactive notification to help you plan for scheduled activities.
-- Can aggregate data from an entire AWS Organization
+- AWS Account Health Dashboard provides **alerts and remediation guidance** when AWS is experiencing **events that may impact you**.
+- While the Service Health Dashboard displays the general status of AWS services, Account Health Dashboard gives you a **personalized view** into **the performance and availability of the AWS services underlying your AWS resources**.
+- The dashboard displays **relevant and timely information** to help you manage events in progress and provides **proactive notification** to help you plan for **scheduled activities**.
+- **Can aggregate data from an entire AWS Organization**
 
 ### AWS Health Dashboard – Your Account
 
@@ -3873,6 +3882,7 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 ### AWS Health Dashboard – Examples
 
+Diagram
 
 ### AWS Organizations
 
@@ -3883,58 +3893,61 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 - Member accounts can only be part of one organization
 - Consolidated Billing across all accounts - single payment method
 - Pricing benefits from aggregated usage (volume discount for EC2, S3…)
-- Shared reserved instances and Savings Plans discounts across accounts
+- **Shared reserved instances and Savings Plans discounts across accounts**
 - API is available to automate AWS account creation
 
 ### AWS Organizations
 
+Diagram
 
 ### Organizational Units (OU) - Examples
 
+Diagram
 
 ### AWS Organizations
 
-- Advantages
-- Multi Account vs One Account Multi VPC
-- Use tagging standards for billing purposes
-- Enable CloudTrail on all accounts, send logs to central S3 account
-- Send CloudWatch Logs to central logging account
-- Establish Cross Account Roles for Admin purposes
-- Security: Service Control Policies (SCP)
-- IAM policies applied to OU or Accounts to restrict Users and Roles
-- They do not apply to the management account (full admin power)
-- Must have an explicit allow from the root through each OU in the direct path to the target account (does not allow anything by default – like IAM)
+- **Advantages**
+  - Multi Account vs One Account Multi VPC
+  - Use tagging standards for billing purposes
+  - Enable CloudTrail on all accounts, send logs to central S3 account
+  - Send CloudWatch Logs to central logging account
+  - Establish Cross Account Roles for Admin purposes
+- **Security: Service Control Policies (SCP)**
+  - IAM policies applied to OU or Accounts to restrict Users and Roles
+  - They do not apply to the management account (full admin power)
+  - Must have an explicit allow from the root through each OU in the direct path to the target account (does not allow anything by default – like IAM)
 
 ### SCP Hierarchy
 
-- Management Account
-- Can do anything (no SCP apply) Deny Athena
-- Account A Management Account FullAWSAccess FullAWSAccess + Deny S3
-- Account B & C OU (Test) Account D FullAWSAccess
-- Can do anything
-- EXCEPT S3 (explicit Deny from Sandbox OU)
-- EXCEPT EC2 (explicit Deny)
-- Can do anything
-- EXCEPT S3 (explicit Deny from Sandbox OU)
-- Account D
-- Can access EC2
-- Prod OU & Account E & F
-- Can do anything
+• **Management Account**
+  • Can do anything (no SCP apply)
+• **Account A**
+  • Can do anything 
+  • EXCEPT S3 (explicit Deny from Sandbox OU)
+  • EXCEPT EC2 (explicit Deny)
+• **Account B & C**
+  • Can do anything 
+  • EXCEPT S3 (explicit Deny from Sandbox OU)
+• **Account D**
+  • Can access EC2
+• **Prod OU & Account E & F**
+  • Can do anything
 
 ### Blocklist and Allowlist strategies
 
+Image
 
 ### AWS Organizations – Reserved Instances
 
 - For billing purposes, the consolidated billing feature of AWS Organizations treats all the accounts in the organization as one account.
-- This means that all accounts in the organization can receive the hourly cost benefit of Reserved Instances that are purchased by any other account.
-- The payer account (master account) of an organization can turn off Reserved that organization, including the payer account
+- This means that **all accounts** in the organization can receive the hourly cost benefit of Reserved Instances that are purchased by any other account.
+- **The payer account (master account) of an organization** can turn off Reserved that organization, including the payer account
 - This means that RIs and Savings Plans discounts aren't shared between any accounts that have sharing turned off.
 - To share an RI or Savings Plans discount with an account, both accounts must have sharing turned on.
 
 ### AWS Organizations – IAM Policies
 
-- Use aws:PrincipalOrgID condition key in your resource-based policies to restrict access to IAM principals from accounts in an AWS Organization (o-exampleorgid) (111111111111) (financial-data-2021) (Olivia) (stephane) (222222222222) (123456789012)
+- Use **aws:PrincipalOrgID** condition key in your resource-based policies to restrict access to IAM principals from accounts in an AWS Organization
 
 ### AWS Organizations – Tag Policies
 
@@ -3956,19 +3969,19 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 > **🎯 Exam Tip:** Landing Zone setup. **Preventive** guardrails = SCPs. **Detective** guardrails = Config rules.
 
-- Easy way to set up and govern a secure and compliant multi-account
+- Easy way to **set up and govern a secure and compliant multi-account AWS environment** based on best practices
 - Benefits:
   - Automate the set up of your environment in a few clicks
   - Automate ongoing policy management using guardrails
   - Detect policy violations and remediate them
   - Monitor compliance through an interactive dashboard
 - AWS Control Tower runs on top of AWS Organizations:
-  - It automatically sets up AWS Organizations to organize accounts and implement
+  - It automatically sets up AWS Organizations to organize accounts and implement SCPs (Service Control Policies)
 
 ### AWS Service Catalog
 
 - Users that are new to AWS have too many options, and may create stacks that are not compliant / in line with the rest of the organization
-- Some users just want a quick self-service portal to launch a set of authorized products pre-defined by admins
+- Some users just want a quick **self-service portal** to launch a set of **authorized products** pre-defined **by admins**
 - Includes: virtual machines, databases, storage options, etc…
 - Enter AWS Service Catalog!
 
@@ -3981,22 +3994,22 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 - Sharing options:
   - Share a reference of the portfolio, then import the shared portfolio in the recipient account (stays in-sync with the original portfolio)
   - Deploy a copy of the portfolio into the recipient account (must re-deploy any updates)
-  - Ability to add products from the imported portfolio to the local portfolio (port-xxxxxxxxxx) (re-deploy updates) (port-yyyyyyyyyy) (in-sync) import portfolio & launch products
+- Ability to add products from the imported portfolio to the local portfolio (port-xxxxxxxxxx) (re-deploy updates) (port-yyyyyyyyyy) (in-sync) import portfolio & launch products
 
 ### AWS Service Catalog – TagOptions Library
 
 - Easily manage tags on provisioned products
-- TagOption:
+- **TagOption**:
   - Key-value pair managed in AWS Service Catalog
   - Used to create an AWS Tag
-  - Can be associated with Portfolios and Products
-  - Use cases: proper resources tagging, defined allowed tags, …
-  - Can be shared with other AWS accounts and AWS Organizations (port-xxxxxxxxxx)
+- Can be associated with Portfolios and Products
+- Use cases: proper resources tagging, defined allowed tags, …
+- Can be shared with other AWS accounts and AWS Organizations (port-xxxxxxxxxx)
 
 ### AWS Billing Alarms
 
-- Billing data metric is stored in CloudWatch us-east-1
-- Billing data are for overall worldwide AWS costs
+- **Billing data metric is stored in CloudWatch us-east-1**
+- Billing data are for overall **worldwide** AWS costs
 - It’s for actual cost, not for project costs
 - Let’s create a billing alarm together!
 
@@ -4008,8 +4021,8 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 - Create custom reports that analyze cost and usage data.
 - Analyze your data at a high level: total costs and usage across all accounts
 - Or Monthly, hourly, resource level granularity
-- Choose an optimal Savings Plan (to lower prices on your bill)
-- Forecast usage up to 18 months based on previous usage
+- Choose an optimal **Savings Plan** (to lower prices on your bill)
+- **Forecast usage up to 18 months based on previous usage**
 
 ### Cost Explorer – Monthly Cost by AWS Service
 
@@ -4025,11 +4038,11 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 ### AWS Budgets
 
-- Create budget and send alarms when costs exceeds the budget
+- Create budget and **send alarms when costs exceeds the budget**
 - 4 types of budgets: Usage, Cost, Reservation, Savings Plans
 - For Reserved Instances (RI)
-- Track utilization
-- Supports EC2, ElastiCache, RDS, Redshift
+  - Track utilization
+  - Supports EC2, ElastiCache, RDS, Redshift
 - Up to 5 SNS notifications per budget
 - Can filter by: Service, Linked Account, Tag, Purchase Option, Instance
 - Same options as AWS Cost Explorer!
@@ -4037,25 +4050,25 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 ### Cost Allocation Tags
 
-- Use cost allocation tags to track your AWS costs on a detailed level
-- AWS generated tags
-- Automatically applied to the resource you create
-- Starts with Prefix aws: (e.g. aws: createdBy)
-- User-defined tags
-- Defined by the user
-- Starts with Prefix user:
+- Use **cost allocation tags** to track your AWS costs on a detailed level
+- **AWS generated tags**
+  - Automatically applied to the resource you create
+  - Starts with Prefix aws: (e.g. aws: createdBy)
+- **User-defined tags**
+  - Defined by the user
+  - Starts with Prefix user:
 
 ### Cost and Usage Reports
 
 - Dive deeper into your AWS costs and usage
-- The AWS Cost & Usage Report contains the most comprehensive set of AWS cost and usage data available
-- Includes additional metadata about AWS services, pricing, and reservations (e.g., Amazon EC2 Reserved Instances (RIs))
+- The AWS Cost & Usage Report contains **the most comprehensive set of AWS cost and usage data available**
+- Includes additional metadata about AWS services, pricing, and reservations **(e.g., Amazon EC2 Reserved Instances (RIs))**
 - The AWS Cost & Usage Report lists AWS usage for each:
   - service category used by an account
   - in hourly or daily line items
   - any tags that you have activated for cost allocation purposes
-  - Can be configured for daily exports to S3
-  - Can be integrated with Athena, Redshift or QuickSight
+- Can be configured for daily exports to S3
+- Can be integrated with Athena, Redshift or QuickSight
 
 ### Cost and Usage Reports
 
@@ -4064,23 +4077,23 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 > **🎯 Exam Tip:** ML on 14+ days CloudWatch metrics. Right-sizes EC2, EBS, Lambda, ECS Fargate, ASG. Free.
 
-- Reduce costs and improve performance by recommending optimal AWS resources for your workloads
+- **Reduce costs** and **improve performance** by recommending optimal AWS resources for your workloads
 - Helps you choose optimal configurations and rightsize your workloads (over/under provisioned)
-- Uses Machine Learning to analyze your resources’ configurations and their utilization CloudWatch metrics
+- Uses Machine Learning to analyze your **resources’ configurations** and their **utilization CloudWatch metrics**
 - Supported resources
-- EC2 instances, EC2 Auto Scaling Groups
-- EBS volumes, Lambda functions
-- ECS on Fargate, Aurora & RDS databases
-- Commercial software licenses
+  - EC2 instances, EC2 Auto Scaling Groups
+  - EBS volumes, Lambda functions
+  - ECS on Fargate, Aurora & RDS databases
+  - Commercial software licenses
 - Lower your costs by up to 25%
 - Recommendations can be exported to S3
 
 ### AWS Compute Optimizer for CloudOps
 
-- To view AWS Compute Optimizer, users need access to the IAM AWSmanaged policy ComputeOptimizerReadOnlyAccess
-- Issue: your EC2 instance does NOT appear in Compute Optimizer
-- Your EC2 instance is new and has insufficient metrics data
-- Solution: keep the instance running for at least 30 hours to allow Compute
+- To view AWS Compute Optimizer, users need access to the IAM AWSmanaged policy **ComputeOptimizerReadOnlyAccess**
+- **Issue**: your EC2 instance does **NOT** appear in Compute Optimizer
+  - Your EC2 instance is new and has insufficient metrics data
+  - **Solution**: keep the instance running for at least 30 hours to allow Compute
 
 ### AWS Billing Conductor
 
@@ -4088,10 +4101,10 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 - Group accounts, apply markups/discounts, and generate pro forma bills
 - Does not affect your actual AWS bill — only how it’s displayed and allocated
 - Common Use Cases
-- Enterprises: split bill by department or cost center
-- MSPs: apply custom pricing per customer
-- Finance teams: build chargeback/showback models
-- Subsidiaries: create transparent internal invoices
+  - Enterprises: split bill by department or cost center
+  - MSPs: apply custom pricing per customer
+  - Finance teams: build chargeback/showback models
+  - Subsidiaries: create transparent internal invoices
 - Helpful for big organizations with big accounting needs
 
 ---
@@ -4103,23 +4116,45 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 > **🎯 Exam Tip:** Scheduled, incremental online transfer. Uses DataSync Agent for on-prem. Preserves metadata.
 
 - Move large amount of data to and from
-- On-premises / other cloud to AWS (NFS, SMB, HDFS, S3 API…) – needs agent
-- AWS to AWS (different storage services) – no agent needed
+  - On-premises / other cloud to AWS (NFS, SMB, HDFS, S3 API…) – **needs agent**
+  - AWS to AWS (different storage services) – no agent needed
 - Can synchronize to:
   - Amazon S3 (any storage classes – including Glacier)
   - Amazon EFS
   - Amazon FSx (Windows, Lustre, NetApp, OpenZFS...)
-  - Replication tasks can be scheduled hourly, daily, weekly
-  - File permissions and metadata are preserved (NFS POSIX, SMB…)
-  - One agent task can use 10 Gbps, can setup a bandwidth limit
+- Replication tasks can be scheduled hourly, daily, weekly
+- **File permissions and metadata are preserved** (NFS POSIX, SMB…)
+- One agent task can use 10 Gbps, can setup a bandwidth limit
 
 ### NFS / SMB to AWS (S3, EFS, FSx…)
 
 
-### Transfer between AWS storage services
+### AWS DataSync Transfer between AWS storage services
 
+### AWS Backup
 
-### Neptune
+• Fully managed service
+• Centrally manage and automate backups across AWS services
+• No need to create custom scripts and manual processes
+• Supported services:
+ • Amazon EC2 / Amazon EBS
+ • Amazon S3
+ • Amazon RDS (all DBs engines) / Amazon Aurora / Amazon DynamoDB
+ • Amazon DocumentDB / Amazon Neptune
+ • Amazon EFS / Amazon FSx (Lustre & Windows File Server)
+ • AWS Storage Gateway (Volume Gateway)
+• Supports cross-region backups
+• Supports cross-account backups
+
+### AWS Backup
+• Supports PITR for supported services
+• On-Demand and Scheduled backups
+• Tag-based backup policies
+• You create backup policies known as Backup Plans
+  • Backup frequency (every 12 hours, daily, weekly, monthly, cron expression)
+  • Backup window
+  • Transition to Cold Storage (Never, Days, Weeks, Months, Years)
+  • Retention Period (Always, Days, Weeks, Months, Years)
 
 
 ### AWS Backup Vault Lock
@@ -4128,7 +4163,7 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 - Additional layer of defense to protect your backups against:
   - Inadvertent or malicious delete operations
   - Updates that shorten or alter retention periods
-  - Even the root user cannot delete backups when enabled
+- Even the root user cannot delete backups when enabled
 
 ---
 
@@ -4139,38 +4174,38 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 > **🎯 Exam Tip:** **Layer 7** (HTTP/HTTPS). ALB, API Gateway, CloudFront, AppSync. SQL injection, XSS, rate limiting, geo-blocking.
 
 - Protects your web applications from common web exploits (Layer 7)
-- Layer 7 is HTTP (vs Layer 4 is TCP/UDP)
+- **Layer 7 is HTTP** (vs Layer 4 is TCP/UDP)
 - Deploy on
-- Application Load Balancer
-- API Gateway
-- CloudFront
-- AppSync GraphQL API
-- Cognito User Pool
+  - **Application Load Balancer**
+  - **API Gateway**
+  - **CloudFront**
+  - **AppSync GraphQL API**
+  - **Cognito User Pool**
 
 ### AWS WAF – Web Application Firewall
 
 > **🎯 Exam Tip:** **Layer 7** (HTTP/HTTPS). ALB, API Gateway, CloudFront, AppSync. SQL injection, XSS, rate limiting, geo-blocking.
 
 - Define Web ACL (Web Access Control List) Rules:
-  - IP Set: up to **10,000** IP addresses – use multiple Rules for more IPs
-  - HTTP headers, HTTP body, or URI strings Protects from common attack - SQL injection and Cross-Site Scripting (XSS)
-  - Size constraints, geo-match (block countries)
-  - Rate-based rules (to count occurrences of events) – for DDoS protection
-  - Web ACL are Regional except for CloudFront
-  - A rule group is a reusable set of rules that you can add to a web ACL
+  - **IP Set: up to **10,000** IP addresses** – use multiple Rules for more IPs
+  - HTTP headers, HTTP body, or URI strings Protects from common attack - **SQL injection** and **Cross-Site Scripting (XSS)**
+  - Size constraints, **geo-match (block countries)**
+  - **Rate-based rules** (to count occurrences of events) – **for DDoS protection**
+- Web ACL are Regional except for CloudFront
+- A rule group is **a reusable set of rules that you can add to a web ACL**
 
-### Balancer
+### WAF – Fixed IP while using WAF with a Load Balancer
 
 - WAF does not support the Network Load Balancer (Layer 4)
 - We can use Global Accelerator for fixed IP and WAF on the ALB us-east-1 attached
 
 ### AWS Shield: protect from DDoS attack
 
-- DDoS: Distributed Denial of Service – many requests at the same time
-- AWS Shield Standard:
+- **DDoS**: Distributed Denial of Service – many requests at the same time
+- **AWS Shield Standard**:
   - Free service that is activated for every AWS customer
   - Provides protection from attacks such as SYN/UDP Floods, Reflection attacks and other layer 3/layer 4 attacks
-- AWS Shield Advanced:
+- **AWS Shield Advanced**:
   - Optional DDoS mitigation service ($3,000 per month per organization)
   - Protect against more sophisticated attack on Amazon EC2, Elastic Load Balancing (ELB),
   - 24/7 access to AWS DDoS response team (DRP)
@@ -4179,19 +4214,19 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 ### AWS Firewall Manager
 
-- Manage rules in all accounts of an AWS Organization
+- **Manage rules in all accounts of an AWS Organization**
 - Security policy: common set of security rules
-- WAF rules (Application Load Balancer, API Gateways, CloudFront)
-- AWS Shield Advanced (ALB, CLB, NLB, Elastic IP, CloudFront)
-- Security Groups for EC2, Application Load BAlancer and ENI resources in VPC
-- AWS Network Firewall (VPC Level)
-- Amazon Route 53 Resolver DNS Firewall
-- Policies are created at the region level
-- Rules are applied to new resources as they are created (good for compliance) across all and future accounts in your Organization
+  - WAF rules (Application Load Balancer, API Gateways, CloudFront)
+  - AWS Shield Advanced (ALB, CLB, NLB, Elastic IP, CloudFront)
+  - Security Groups for EC2, Application Load BAlancer and ENI resources in VPC
+  - AWS Network Firewall (VPC Level)
+  - Amazon Route 53 Resolver DNS Firewall
+  - Policies are created at the region level
+- **Rules are applied to new resources as they are created (good for compliance) across all and future accounts in your Organization**
 
 ### WAF vs. Firewall Manager vs. Shield
 
-- WAF, Shield and Firewall Manager are used together for comprehensive protection
+- **WAF, Shield and Firewall Manager are used together for comprehensive protection**
 - Define your Web ACL rules in WAF
 - For granular protection of your resources, WAF alone is the correct choice
 - If you want to use AWS WAF across accounts, accelerate WAF configuration, automate the protection of new resources, use Firewall Manager with AWS WAF
@@ -4201,21 +4236,21 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 ### Amazon Inspector
 
 - Automated Security Assessments Lambda Function
-- For EC2 instances
-- Leveraging the AWS System Manager (SSM) agent
-- Analyze against unintended network accessibility
-- Analyze the running OS against known vulnerabilities
-- For Container Images push to Amazon ECR
-- Assessment of Container Images as they are pushed
-- For Lambda Functions
-- Identifies software vulnerabilities in function code and package dependencies
-- Assessment of functions as they are deployed assessment run state
+- **For EC2 instances**
+  - Leveraging the AWS System Manager (SSM) agent
+  - Analyze against unintended network accessibility
+  - Analyze the running OS against known vulnerabilities
+- **For Container Images push to Amazon ECR**
+  - Assessment of Container Images as they are pushed
+- **For Lambda Functions**
+  - Identifies software vulnerabilities in function code and package dependencies
+  - Assessment of functions as they are deployed assessment run state
 - Reporting & integration with AWS Security Hub
 - Send findings to Amazon Event Bridge Security Hub
 
 ### What does Amazon Inspector evaluate?
 
-- Remember: only for EC2 instances, Container Images & Lambda functions
+- **Remember: only for EC2 instances, Container Images & Lambda functions**
 - Continuous scanning of the infrastructure, only when needed
 - Package vulnerabilities (EC2, ECR & Lambda) – database of CVE
 - Network reachability (EC2)
@@ -4224,11 +4259,19 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 ### Logging in AWS for security and compliance
 
 - To help compliance requirements, AWS provides many service-specific security and audit logs
-- Service Logs include:
-  - Logs can be analyzed using AWS Athena if they’re stored in S3
-  - You should encrypt logs in S3, control access using IAM & Bucket Policies, MFA
-  - Move Logs to Glacier for cost savings
-- Read whitepaper if interested at:
+Service Logs include:
+  • CloudTrail trails - trace all API calls
+  • Config Rules - for config & compliance over time
+  • CloudWatch Logs - for full data retention
+  • VPC Flow Logs - IP traffic within your VPC
+  • ELB Access Logs - metadata of requests made to your load balancers
+  • CloudFront Logs - web distribution access logs
+  • WAF Logs - full logging of all requests analyzed by the service 
+- **Logs can be analyzed using AWS Athena if they’re stored in S3**
+- **You should encrypt logs in S3, control access using IAM & Bucket Policies, MFA**
+- **Move Logs to Glacier for cost savings**
+- Read whitepaper if interested at: 
+https://d0.awsstatic.com/whitepapers/compliance/AWS_Security_at_Scale_Logging_in_AWS_Whitepaper.pdf
 
 ### Amazon GuardDuty
 
@@ -4238,15 +4281,15 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 - Uses Machine Learning algorithms, anomaly detection, 3rd party data
 - One click to enable (30 days trial), no need to install software
 - Input data includes:
-  - CloudTrail Events Logs – unusual API calls, unauthorized deployments
-  - CloudTrail Management Events – create VPC subnet, create trail, …
-  - CloudTrail S3 Data Events – get object, list objects, delete object, …
-  - VPC Flow Logs – unusual internal traffic, unusual IP address
-  - DNS Logs – compromised EC2 instances sending encoded data within DNS queries
-  - Optional Feature – EKS Audit Logs, RDS & Aurora, EBS, Lambda, S3 Data Events…
-  - Can setup EventBridge rules to be notified in case of findings
-  - EventBridge rules can target AWS Lambda or SNS
-  - Can protect against CryptoCurrency attacks (has a dedicated “finding” for it)
+  - **CloudTrail Events Logs** – unusual API calls, unauthorized deployments
+    - **CloudTrail Management Events** – create VPC subnet, create trail, …
+    - **CloudTrail S3 Data Events** – get object, list objects, delete object, …
+  - **VPC Flow Logs** – unusual internal traffic, unusual IP address
+  - **DNS Logs** – compromised EC2 instances sending encoded data within DNS queries
+  - **Optional Feature** – EKS Audit Logs, RDS & Aurora, EBS, Lambda, S3 Data Events…
+- Can setup **EventBridge rules** to be notified in case of findings
+- EventBridge rules can target AWS Lambda or SNS
+- **Can protect against CryptoCurrency attacks (has a dedicated “finding” for it)**
 
 ### Amazon GuardDuty
 
@@ -4255,8 +4298,8 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 ### AWS Macie
 
-- Amazon Macie is a fully managed data security and data privacy service that uses machine learning and pattern matching to discover and protect your sensitive data in AWS.
-- Macie helps identify and alert you to sensitive data, such as personally identifiable information (PII) analyze notify integrations
+- Amazon Macie is a fully managed data security and data privacy service that uses **machine learning and pattern matching to discover and protect your sensitive data in AWS**.
+- Macie helps identify and alert you to **sensitive data, such as personally identifiable information (PII) analyze notify integrations**
 
 ### Trusted Advisor
 
@@ -4268,10 +4311,10 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
   - Fault tolerance
   - Service limits
   - Operational Excellence
-  - Business & Enterprise Support plan
+- **Business & Enterprise Support plan**
   - Full Set of Checks
   - Programmatic Access using AWS Support API
-  - Integrated with Security Hub, Config, Compute Optimizer
+- Integrated with Security Hub, Config, Compute Optimizer
 
 ### Trusted Advisor – Automate Notifications
 
@@ -4280,22 +4323,22 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 - You can view all Trusted Advisor checks across all accounts in an AWS Organization
 - Organization must have all Features enabled and have Business, Enterprise OnRamp, or Enterprise Support Plan
-- In Trusted Advisor, enable Trusted Access with AWS Organization in the Management account (or Delegated
+- In Trusted Advisor, enable **Trusted Access with AWS Organization** in the Management account (or Delegated Administrator account)
 
 ### AWS Security Hub
 
-- Central security tool to manage security across several AWS accounts and automate security checks
+- **Central security tool** to manage security **across several AWS accounts and automate security checks**
 - Integrated dashboards showing current security and compliance status to quickly take actions
 - Automatically aggregates alerts in predefined or personal findings formats from various
-- Config
-- GuardDuty
-- Inspector
-- Macie
-- IAM Access Analyzer
-- AWS Systems Manager
-- AWS Firewall Manager
-- AWS Health
-- AWS Partner Network Solutions
+  - Config
+  - GuardDuty
+  - Inspector
+  - Macie
+  - IAM Access Analyzer
+  - AWS Systems Manager
+  - AWS Firewall Manager
+  - AWS Health
+  - AWS Partner Network Solutions
 - Must first enable the AWS Config Service
 
 ### AWS Security Hub
@@ -4307,7 +4350,7 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 - You can manage Security Hub in all your member accounts from an Administrator Account
 - You designate a Security Hub Delegated Administrator & Security Hub is automatically enabled
 - Manage Security Hub with centralized config
-- Example: run CIS AWS Benchmark to scan all accounts and monitor from a central Security Hub findings
+- Example: run CIS AWS Benchmark to scan all accounts and monitor from a central Security Hub
 
 ### AWS Audit Manager
 
@@ -4319,7 +4362,7 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
   - Health Insurance Portability and Accountability Act (HIPAA)
   - Payment Card Industry Data Security Standard (PCI DSS) v3.2.1
   - Service Organization Control 2 (SOC 2)
-  - Generates reports of compliance alongside evidence folders
+- Generates reports of compliance alongside evidence folders
 
 ### AWS Audit Manager
 
@@ -4334,22 +4377,22 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 - Easy way to control access to your data
 - Able to audit KMS Key usage using CloudTrail
 - Seamlessly integrated into most AWS services (EBS, S3, RDS, SSM…)
-- Never ever store your secrets in plaintext, especially in your code!
-- KMS Key Encryption also available through API calls (SDK, CLI)
-- Encrypted secrets can be stored in the code / environment variables
+- **Never ever store your secrets in plaintext, especially in your code**!
+  - KMS Key Encryption also available through API calls (SDK, CLI)
+  - Encrypted secrets can be stored in the code / environment variables
 
 ### KMS Keys Types
 
-- KMS Keys is the new name of KMS Customer Master Key
-- Symmetric (AES-256 keys)
-- Single encryption key that is used to Encrypt and Decrypt
-- AWS services that are integrated with KMS use Symmetric CMKs
-- You never get access to the KMS Key unencrypted (must call KMS API to use)
-- Asymmetric (RSA & ECC key pairs)
-- Public (Encrypt) and Private Key (Decrypt) pair
-- Used for Encrypt/Decrypt, or Sign/Verify operations
-- The public key is downloadable, but you can’t access the Private Key unencrypted
-- Use case: encryption outside of AWS by users who can’t call the KMS API
+- **KMS Keys is the new name of KMS Customer Master Key**
+- **Symmetric (AES-256 keys)**
+  - Single encryption key that is used to Encrypt and Decrypt
+  - AWS services that are integrated with KMS use Symmetric CMKs
+  - You never get access to the KMS Key unencrypted (must call KMS API to use)
+- **Asymmetric (RSA & ECC key pairs)**
+  - Public (Encrypt) and Private Key (Decrypt) pair
+  - Used for Encrypt/Decrypt, or Sign/Verify operations
+  - The public key is downloadable, but you can’t access the Private Key unencrypted
+  - Use case: encryption outside of AWS by users who can’t call the KMS API
 
 ### AWS KMS (Key Management Service)
 
@@ -4373,36 +4416,47 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 - Control access to KMS keys, “similar” to S3 bucket policies
 - Difference: you cannot control access without them
-- Default KMS Key Policy:
+- **Default KMS Key Policy:**
   - Created if you don’t provide a specific KMS Key Policy
   - Complete access to the key to the root user = entire AWS account
-- Custom KMS Key Policy:
+- **Custom KMS Key Policy:**
   - Define users, roles that can access the KMS key
   - Define who can administer the key
   - Useful for cross-account access of your KMS key
 
 ### Copying Snapshots across accounts
 
+1. Create a Snapshot, encrypted with 
+your own KMS Key (Customer 
+Managed Key)
+2. **Attach a KMS Key Policy to 
+authorize cross-account access**
+3. Share the encrypted snapshot
+4. (in target) Create a copy of the 
+Snapshot, encrypt it with a CMK in 
+your account
+5. Create a volume from the snapshot
+
 
 ### KMS Automatic Key Rotation
 
-- AWS-managed KMS Keys: automatically rotated every 1 year
-- For Customer-Managed Symmetric KMS Key
-- Automatic key rotation is optionally enabled
-- Customize Rotation Period between 90 and 2560 days (default: 365 days)
-- Previous key is kept active so you can decrypt old data
-- New Key has the same KMS Key ID (only the backing key is changed)
+- **AWS-managed KMS Keys: automatically rotated every 1 year**
+- **For Customer-Managed Symmetric KMS Key**
+  - Automatic key rotation is optionally enabled
+  - Customize Rotation Period between 90 and 2560 days (default: 365 days)
+  - Previous key is kept active so you can decrypt old data
+  - New Key has the same KMS Key ID (only the backing key is changed)
 
 ### KMS On-Demand Key Rotation
 
-- For Customer-Managed Symmetric KMS Key (not AWS managed CMK)
+- **For Customer-Managed Symmetric KMS Key (not AWS managed CMK)**
 - Does NOT require Automatic Key Rotation to be enabled
 - Does NOT change existing Automatic Rotation schedules
 - Limit to how many times you can trigger an on-demand key rotation
 
 ### (Customer-Managed Symmetric KMS Key & Imports)
 
-- When you want to rotate key (example: every month)
+- **When you want to rotate key (example: every month)**
 - New Key has a different KMS Key ID
 - Keep the previous key active so you can decrypt old data
 - Better to use aliases in this case (to hide the change of key for the application)
@@ -4412,28 +4466,28 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 - Better to use aliases in this case (to hide the change of key for the application)
 
-### Volume
+### Changing The KMS Key For An Encrypted EBS Volume
 
 - You can’t change the encryption keys used by an EBS volume
 - Create an EBS snapshot and create a new EBS volume and specify the new KMS key create snapshot create volume (encrypted) (encrypted) (encrypted)
 
 ### Sharing KMS Encrypted RDS DB Snapshots
 
-- You can share RDS DB snapshots encrypted with KMS CMK with other accounts, but must first share the KMS CMK with the target account using Key Policy us-east-1 us-east-1 (encrypted) access through CMK Key Policy (Snapshot: mydbsnapshot)
+- You can share RDS DB snapshots encrypted with KMS CMK with other accounts, **but must first share the KMS CMK with the target account using Key Policy**
 
 ### KMS Key Deletion Considerations
 
 - Schedule CMK for deletion with a waiting period of 7 to 30 days
-- CMK’s status is “Pending deletion” during the waiting period
+ - CMK’s status is **“Pending deletion”** during the waiting period
 - During the CMK’s deletion waiting period:
-  - The CMK can’t be used for cryptographic operations (e.g., can’t decrypt KMSencrypted objects in S3 – SSE-KMS)
+  - **The CMK can’t be used for cryptographic operations** (e.g., can’t decrypt KMSencrypted objects in S3 – SSE-KMS)
   - The key is not rotated even if planned
-  - You can cancel the key deletion during the waiting period
-  - Consider disabling your key instead of deleting it if you’re not sure!
+- You can cancel the key deletion during the waiting period
+- Consider disabling your key instead of deleting it if you’re not sure!
 
 ### KMS Key Deletion – CloudWatch Alarm
 
-- Use CloudTrail, CloudWatch Logs, CloudWatch Alarms and SNS to be notified when someone tries to use a CMK that’s ”Pending deletion” in a cryptographic operation (Encrypt, Decrypt, …) cryptographic operation (Pending deletion) log (DENIED) logs
+- Use CloudTrail, CloudWatch Logs, CloudWatch Alarms and SNS to be notified when someone tries to use a CMK that’s **”Pending deletion”** in a cryptographic operation (Encrypt, Decrypt, …) cryptographic operation (Pending deletion) log (DENIED) logs
 
 ### KMS Multi-Region Keys
 
@@ -4449,66 +4503,70 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 - Encrypt in one Region and decrypt in other Regions
 - No need to re-encrypt or making cross-Region API calls
 - KMS Multi-Region are NOT global (Primary + Replicas)
-- Each Multi-Region key is managed independently
-- Use cases: global client-side encryption, encryption on Global DynamoDB, Global Aurora
+- Each Multi-Region key is managed **independently**
+- **Use cases**: global client-side encryption, encryption on Global DynamoDB, Global Aurora
 
 ### AWS Certificate Manager (ACM)
 
-- Easily provision, manage, and deploy TLS Certificates
+- Easily provision, manage, and deploy **TLS Certificates**
 - Provide in-flight encryption for websites (HTTPS)
 - Supports both public and private TLS certificates provision and
 - Free of charge for public TLS certificates maintain TLS certs
 - Automatic TLS certificate renewal AWS Certificate Manager
 - Integrations with (load TLS certificates on)
-- Elastic Load Balancers (CLB, ALB, NLB)
-- CloudFront Distributions
-- APIs on API Gateway
-- Cannot use ACM with EC2 (can’t be extracted) Auto Scaling group
+  - Elastic Load Balancers (CLB, ALB, NLB)
+  - CloudFront Distributions
+  - APIs on API Gateway
+- Cannot use ACM with EC2 (can’t be extracted)
 
 ### ACM – Requesting Public Certificates
 
-- Fully Qualified Domain Name (FQDN): corp.example.com
-- Wildcard Domain: *.example.com 2.
-- DNS Validation is preferred for automation purposes
-- Email validation will send emails to contact addresses in the WHOIS database
-- DNS Validation will leverage a CNAME record to DNS config (ex: Route 53)
-- ACM automatically renews ACM-generated certificates **60 days** before expiry
+1. List domain names to be included in the certificate
+    - Fully Qualified Domain Name (FQDN): corp.example.com
+    - Wildcard Domain: *.example.com 
+2. Select Validation Method: DNS Validation or Email validation
+   - DNS Validation is preferred for automation purposes
+   - Email validation will send emails to contact addresses in the WHOIS database
+   - DNS Validation will leverage a CNAME record to DNS config (ex: Route 53)
+3. It will take a few hours to get verified
+4. The Public Certificate will be enrolled for automatic renewal
+   - ACM automatically renews ACM-generated certificates **60 days** before expiry
 
 ### ACM – Importing Public Certificates
 
 - Option to generate the certificate outside of ACM and then import it
-- No automatic renewal, must import a new certificate before expiry
-- ACM sends daily expiration events starting 45 days prior to expiration
+- **No automatic renewal**, must import a new certificate before expiry
+- **ACM sends daily expiration events** starting 45 days prior to expiration
 - The # of days can be configured
 - Events are appearing in EventBridge
-- AWS Config has a managed rule named acm-certificate-expiration-check to check for expiring certificates (configurable number of days)
+- **AWS Config** has a managed rule named acm-certificate-expiration-check to check for expiring certificates (configurable number of days)
 
 ### ACM – Integration with ALB
 
 
 ### API Gateway - Endpoint Types
 
-- Edge-Optimized (default): For global clients
-- Requests are routed through the CloudFront Edge locations (improves latency)
-- The API Gateway still lives in only one region
-- Regional:
+- **Edge-Optimized (default)**: For global clients
+  - Requests are routed through the CloudFront Edge locations (improves latency)
+  - The API Gateway still lives in only one region
+- **Regional**:
   - For clients within the same region
   - Could manually combine with CloudFront (more control over the caching strategies and the distribution)
-- Private:
+- **Private**:
   - Can only be accessed from your VPC using an interface VPC endpoint (ENI)
   - Use a resource policy to define access
 
 ### ACM – Integration with API Gateway
 
-- Create a Custom Domain Name in API Gateway us-east-1
-- Edge-Optimized (default): For global clients
-- Requests are routed through the CloudFront Edge locations (improves latency)
-- The API Gateway still lives in only one region
-- The TLS Certificate must be in the same region as
-- Then setup CNAME or (better) A-Alias record in Route 53 linked certificate
-- Regional:
+- Create a **Custom Domain Name** in API Gateway us-east-1
+- **Edge-Optimized (default)**: For global clients
+  - Requests are routed through the CloudFront Edge locations (improves latency)
+  - The API Gateway still lives in only one region
+  - **The TLS Certificate must be in the same region as CloudFront, in us-east-1**
+  - Then setup CNAME or (better) A-Alias record in Route 53 linked certificate
+- **Regional**:
   - For clients within the same region
-  - The TLS Certificate must be imported on API Gateway, in the same region as the API Stage
+  - **The TLS Certificate must be imported on API Gateway, in the same region as the API Stage**
   - Then setup CNAME or (better) A-Alias record in Route 53 ap-southeast-2 linked certificate
 
 ### AWS Secrets Manager
@@ -4516,9 +4574,9 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 > **🎯 Exam Tip:** **Auto-rotation** via Lambda. $0.40/secret/month. vs SSM Parameter Store = cheaper, no auto-rotation.
 
 - Newer service, meant for storing secrets
-- Capability to force rotation of secrets every X days
+- Capability to force **rotation of secrets** every X days
 - Automate generation of secrets on rotation (uses Lambda)
-- Integration with Amazon RDS (MySQL, PostgreSQL, Aurora)
+- Integration with** Amazon RDS** (MySQL, PostgreSQL, Aurora)
 - Secrets are encrypted using KMS
 - Mostly meant for RDS integration
 
@@ -4531,33 +4589,33 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 ### SSM Parameter Store vs Secrets Manager
 
-- Secrets Manager ($$$):
+- **Secrets Manager ($$$)**:
   - Automatic rotation of secrets with AWS Lambda
   - Lambda function is provided for RDS, Redshift, DocumentDB
   - KMS encryption is mandatory
   - Can integration with CloudFormation
-- SSM Parameter Store ($):
+- **SSM Parameter Store ($)**:
   - Simple API
   - No secret rotation (can enable rotation using Lambda triggered by EventBridge)
   - KMS encryption is optional
   - Can integration with CloudFormation
   - Can pull a Secrets Manager secret using the SSM Parameter Store API
 
-### Rotation
+### SSM Parameter Store vs. Secrets Manager Rotation
 
 
 ### Secrets Manager – Monitoring
 
 - CloudTrail captures API calls to the Secrets Manager API
 - CloudTrail captures other related events that might have a security or compliance impact on your AWS account or might help you troubleshoot operational problems.
-- CloudTrail records these events as non-API service events.
-- RotationStarted event
-- RotationSucceeded event
-- RotationFailed event
-- RotationAbandoned event – a manual change to a secret instead of automated rotation
-- StartSecretVersionDelete event
-- CancelSecretVersionDelete event
-- EndSecretVersionDelete event
+- **CloudTrail records these events as non-API service events.**
+  - RotationStarted event
+  - RotationSucceeded event
+  - RotationFailed event
+  - RotationAbandoned event – a manual change to a secret instead of automated rotation
+  - StartSecretVersionDelete event
+  - CancelSecretVersionDelete event
+  - EndSecretVersionDelete event
 - Combine with CloudWatch Logs and CloudWatch alarms for automations store
 
 ### Secrets Manager – Troubleshooting Rotation
@@ -4579,54 +4637,55 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 > **🎯 Exam Tip:** Ceiling on permissions. Applies to users and roles, **NOT groups**.
 
 - Can be used in combinations of AWS Organizations SCP
-- Delegate responsibilities to non administrators within their permission boundaries, for example create new IAM users
-- Allow developers to self-assign policies and manage their own permissions, while making sure they can’t “escalate” their privileges (= make themselves admin)
-- Useful to restrict one specific user (instead of a whole account using Organizations & SCP)
+- Use cases
+  - Delegate responsibilities to non administrators within their permission  boundaries, for example create new IAM users
+  - Allow developers to self-assign policies and manage their own permissions, while making sure they can’t “escalate” their privileges (= make themselves admin)
+  - Useful to restrict one specific user (instead of a whole account using Organizations & SCP)
 
 ### IAM Security Tools
 
-- IAM Credentials Report (account-level)
-- a report that lists all your account's users and the status of their various credentials
-- IAM Access Advisor (user-level)
-- Access advisor shows the service permissions granted to a user and when those services were last accessed.
-- You can use this information to revise your policies.
+- **IAM Credentials Report (account-level)**
+  - a report that lists all your account's users and the status of their various credentials
+- **IAM Access Advisor (user-level)**
+  - Access advisor shows the service permissions granted to a user and when those services were last accessed.
+  - You can use this information to revise your policies.
 
 ### IAM Access Analyzer
 
 - Find out which resources are shared externally
-- S3 Buckets
-- IAM Roles
-- KMS Keys
-- Lambda Functions and Layers
-- SQS queues
-- Secrets Manager Secrets
-- Define Zone of Trust = AWS Account or AWS Organization
+  - S3 Buckets
+  - IAM Roles
+  - KMS Keys
+  - Lambda Functions and Layers
+  - SQS queues
+  - Secrets Manager Secrets
+- Define **Zone of Trust** = AWS Account or AWS Organization
 - Access outside zone of trusts => findings Zone of trust
 
 ### What’s Identity Federation?
 
 - Federation lets users outside of AWS to assume temporary role for accessing AWS resources.
 - These users assume identity provided access role.
-- Federation assumes a form of 3rd party authentication
-- LDAP
-- Microsoft Active Directory (~= SAML)
-- Single Sign On
-- Open ID
-- Cognito Gives credentials Access AWS
-- Using federation, you don’t need to create IAM users (user management is outside of AWS)
+- **Federation assumes a form of 3rd party authentication**
+  - LDAP
+  - Microsoft Active Directory (~= SAML)
+  - Single Sign On
+  - Open ID
+  - Cognito Gives credentials Access AWS
+- **Using federation, you don’t need to create IAM users (user management is outside of AWS)**
 
-### For Enterprises
+### SAML Federation For Enterprises
 
 - To integrate Active Directory / ADFS with AWS (or any SAML 2.0)
 - Provides access to AWS Console or CLI (through temporary creds)
 - No need to create an IAM user for each of your employees
 
-### For Enterprises
+### Custom Identity Broker Application For Enterprises
 
 - Use only if identity provider is not compatible with SAML 2.0
-- The identity broker must determine the appropriate IAM policy common-scenarios_federated-users.html
+- The identity broker must determine the appropriate IAM policy 
 
-### Twitter
+### AWS Cognito - Federated Identity Pools For Public Applications
 
 - Goal:
   - Provide direct access to AWS Resources from the Client Side
@@ -4637,28 +4696,28 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 - Example:
   - provide (temporary) access to write to S3 bucket using Facebook Login login token verify token call temp AWS credentials
 - Note:
-  - Web Identity Federation is an alternative to using Cognito but AWS recommends against it bucket
+  - Web Identity Federation is an alternative to using Cognito but AWS recommends against it
 
 ### AWS STS – Security Token Service
 
-- Allows to grant limited and temporary access to AWS resources.
+- **Allows to grant limited and temporary access to AWS resources.**
 - Token is valid for up to one hour (must be refreshed)
-- AssumeRole
-- Within your own account: for enhanced security
-- Cross Account Access: assume role in target account to perform actions there
-- AssumeRoleWithSAML
-- return credentials for users logged with SAML
-- AssumeRoleWithWebIdentity
-- return creds for users logged with an IdP (Facebook Login, Google Login, OIDC compatible…)
-- AWS recommends against using this, and using Cognito instead
-- GetSessionToken
-- for MFA, from a user or AWS account root user
+- **AssumeRole**
+  - Within your own account: for enhanced security
+  - Cross Account Access: assume role in target account to perform actions there
+- **AssumeRoleWithSAML**
+  - return credentials for users logged with SAML
+- **AssumeRoleWithWebIdentity**
+  - return creds for users logged with an IdP (Facebook Login, Google Login, OIDC compatible…)
+  - AWS recommends against using this, and using Cognito instead
+- **GetSessionToken**
+  - for MFA, from a user or AWS account root user
 
 ### Using STS to Assume a Role
 
 - Define an IAM Role within your account or cross-account
 - Define which principals can access this IAM Role
-- Use AWS STS (Security Token Service) to retrieve credentials and impersonate the IAM Role you have access to (AssumeRole API)
+- Use AWS STS (Security Token Service) to retrieve credentials and impersonate the IAM Role you have access to **(AssumeRole API)**
 - Temporary credentials can be valid between 15 minutes to 1 hour user permissions other account) temporary security credential
 
 ### Cross-Account Access with STS
@@ -4671,7 +4730,7 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 - Allows you to test and troubleshoot IAM policies before applying them in an AWS environment
 - Helps you understand what permissions a user, group, or role has
 - Example: test if a user can perform action s3:PutObject on S3 bucket
-- Works with Identity-based Policies, Resource-based Policies, Permission
+- Works with **Identity-based Policies, Resource-based Policies, Permission Boundaries, SCPs**
 - Use Cases:
   - Test Identity-based Policies attached to IAM Users, Groups, or Roles
   - Test all policies or select one or more policies attached to a User
@@ -4687,16 +4746,21 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 - Domain Name System which translates the human friendly hostnames into the machine IP addresses
 - www.google.com => 172.217.18.36
 - DNS is the backbone of the Internet
-- DNS uses hierarchical naming structure .com example.com www.example.com api.example.com
+- DNS uses hierarchical naming structure 
+
+.com 
+example.com 
+www.example.com 
+api.example.com
 
 ### DNS Terminologies
 
-- Domain Registrar: Amazon Route 53, GoDaddy, …
-- DNS Records: A, AAAA, CNAME, NS, …
-- Zone File: contains DNS records
-- Name Server: resolves DNS queries (Authoritative or Non-Authoritative)
-- Top Level Domain (TLD): .com, .us, .in, .gov, .org, …
-- Second Level Domain (SLD): amazon.com, google.com, …
+- **Domain Registrar**: Amazon Route 53, GoDaddy, …
+- **DNS Records**: A, AAAA, CNAME, NS, …
+- **Zone File**: contains DNS records
+- **Name Server**: resolves DNS queries (Authoritative or Non-Authoritative)
+- **Top Level Domain (TLD)**: .com, .us, .in, .gov, .org, …
+- **Second Level Domain (SLD)**: amazon.com, google.com, …
 
 ### How DNS Works
 
@@ -4704,7 +4768,7 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 ### Amazon Route 53
 
 - A highly available, scalable, fully managed and Authoritative DNS
-- Authoritative = the customer (you) can update the DNS records
+  - Authoritative = the customer (you) can update the DNS records
 - Route 53 is also a Domain Registrar
 - Ability to check the health of your resources
 - The only AWS service which provides 100% availability SLA
@@ -4714,31 +4778,31 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 - How you want to route traffic for a domain
 - Each record contains:
-  - Domain/subdomain Name – e.g., example.com
-  - Record Type – e.g., A or AAAA
-  - Value – e.g., 12.34.56.78
-  - Routing Policy – how Route 53 responds to queries
-  - TTL – amount of time the record cached at DNS Resolvers
+  - **Domain/subdomain Name** – e.g., example.com
+  - **Record Type **– e.g., A or AAAA
+  - **Value **– e.g., 12.34.56.78
+  - **Routing Policy** – how Route 53 responds to queries
+  - **TTL** – amount of time the record cached at DNS Resolvers
 - Route 53 supports the following DNS record types:
   - (must know) A / AAAA / CNAME / NS
   - (advanced) CAA / DS / MX / NAPTR / PTR / SOA / TXT / SPF / SRV
 
 ### Route 53 – Record Types
 
-- A – maps a hostname to IPv4
-- AAAA – maps a hostname to IPv6
-- CNAME – maps a hostname to another hostname
-- The target is a domain name which must have an A or AAAA record
-- Can’t create a CNAME record for the top node of a DNS namespace (Zone
-- Example: you can’t create for example.com, but you can create for www.example.com
-- NS – Name Servers for the Hosted Zone
-- Control how traffic is routed for a domain
+- **A** – maps a hostname to IPv4
+- **AAAA**– maps a hostname to IPv6
+- **CNAME** – maps a hostname to another hostname
+  - The target is a domain name which must have an A or AAAA record
+  - Can’t create a CNAME record for the top node of a DNS namespace (Zone
+  - Example: you can’t create for example.com, but you can create for www.example.com
+- **NS** – Name Servers for the Hosted Zone
+  - Control how traffic is routed for a domain
 
 ### Route 53 – Hosted Zones
 
 - A container for records that define how to route traffic to a domain and its subdomains
-- Public Hosted Zones – contains records that specify how to route traffic on the Internet (public domain names) application1.mypublicdomain.com
-- Private Hosted Zones – contain records that specify how you route traffic within one or more VPCs (private domain names) application1.company.internal
+- **Public Hosted Zones** – contains records that specify how to route traffic on the Internet (public domain names) application1.mypublicdomain.com
+- **Private Hosted Zones** – contain records that specify how you route traffic within one or more VPCs (private domain names) application1.company.internal
 - You pay $0.50 per month per hosted zone
 
 ### Route 53 – Public vs. Private Hosted Zones
@@ -4746,21 +4810,38 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 ### Common DNS Record Types for Email
 
+| Record | Purpose | Example |
+|---|---|---|
+| **MX** | Mail Exchange – tells where to deliver inbound mail | `10 inbound-smtp.us-east-1.amazonaws.com` |
+| **TXT (SPF)** | Sender Policy Framework – authorizes servers allowed to send mail | `v=spf1 include:amazonses.com ~all` |
+| **TXT (DKIM)** | DomainKeys Identified Mail – cryptographic signature verifying message integrity | `abcdefg12345._domainkey.example.com` |
+| **TXT (DMARC)** | Defines handling policy for messages failing SPF/DKIM | `v=DMARC1; p=quarantine; rua=mailto:dmarc@example.com` |
+
 
 ### Amazon SES Integration Flow in Route 53
 
+1. **Verify your domain in Amazon SES**
+   - → SES provides TXT record for verification.
+2. **Set up DKIM (recommended)**
+   - → SES provides 3 CNAME records for DKIM signatures.
+3. **Update Route 53 hosted zone**
+   - → Add SES verification + DKIM + SPF records.
+4. **Optional**: Add **MX record** if receiving mail through SES.
+5. **Wait for propagation** → SES status changes to **“verified.”**
+- Use the “Create Record in Route 53” button directly from SES → auto-creates 
+verification, DKIM, and SPF records.
 
 ### Route 53 – Records TTL (Time To Live)
 
 > **🎯 Exam Tip:** High TTL = fewer queries, slow propagation. Low TTL = fast failover. **Lower TTL before planned changes**.
 
-- High TTL – e.g., 24 hr
-- Less traffic on Route 53
-- Possibly outdated records equest ?
-- Low TTL – e.g., 60 sec.
-- More traffic on Route 53 ($$)
-- Records are outdated for less time
-- Easy to change records
+- **High TTL – e.g., 24 hr**
+  - Less traffic on Route 53
+  - Possibly outdated records equest ?
+- **Low TTL – e.g., 60 sec.**
+  - More traffic on Route 53 ($$)
+  - Records are outdated for less time
+  - Easy to change records
 - Except for Alias records, TTL is mandatory for each DNS record (with T ques t spon se
 
 ### CNAME vs Alias
@@ -4769,10 +4850,10 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
   - lb1-1234.us-east-2.elb.amazonaws.com and you want myapp.mydomain.com
 - CNAME:
   - Points a hostname to any other hostname. (app.mydomain.com => blabla.anything.com)
-  - ONLY FOR NON ROOT DOMAIN (aka. something.mydomain.com)
+  - **ONLY FOR NON ROOT DOMAIN (aka. something.mydomain.com)**
 - Alias:
   - Points a hostname to an AWS Resource (app.mydomain.com => blabla.amazonaws.com)
-  - Works for ROOT DOMAIN and NON ROOT DOMAIN (aka mydomain.com)
+  - **Works for ROOT DOMAIN and NON ROOT DOMAIN (aka mydomain.com)**
   - Free of charge
   - Native health check
 
@@ -4780,9 +4861,10 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 - Maps a hostname to an AWS resource
 - An extension to DNS functionality Alias Record (Enabled)
-- Automatically recognizes changes in the Record Name Type resource’s IP addresses example.com A MyALB-123456789.useast• Unlike CNAME, it can be used for the top node of a DNS namespace (Zone Apex), e.g.:
-  - Alias Record is always of type A/AAAA for MyALB-123456789.us-east-1.elb.amazonaws.com (IP Addresses might change)
-  - You can’t set the TTL Application
+- Automatically recognizes changes in the Record Name Type resource’s IP addresses example.com
+- Unlike CNAME, it can be used for the top node of a DNS namespace (Zone Apex), e.g.:
+- Alias Record is always of type A/AAAA for MyALB-123456789.us-east-1.elb.amazonaws.com (IP Addresses might change)
+- **You can’t set the TTL**
 
 ### Route 53 – Alias Records Targets
 
@@ -4794,28 +4876,28 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 - VPC Interface Endpoints
 - Global Accelerator accelerator
 - Route 53 record in the same hosted zone Amazon
-- You cannot set an ALIAS record for an EC2 DNS name (same Hosted Zone)
+- **You cannot set an ALIAS record for an EC2 DNS name** 
 
 ### Route 53 – Routing Policies
 
 - Define how Route 53 responds to DNS queries
 - Don’t get confused by the word “Routing”
-- It’s not the same as Load balancer routing which routes the traffic
-- DNS does not route any traffic, it only responds to the DNS queries
+  - It’s not the same as Load balancer routing which routes the traffic
+  - DNS does not route any traffic, it only responds to the DNS queries
 - Route 53 Supports the following Routing Policies
-- Simple
-- Weighted
-- Failover
-- Latency based
-- Geolocation
-- Multi-Value Answer
-- Geoproximity (using Route 53 Traffic Flow feature)
+  - Simple
+  - Weighted
+  - Failover
+  - Latency based
+  - Geolocation
+  - Multi-Value Answer
+  - Geoproximity (using Route 53 Traffic Flow feature)
 
 ### Routing Policies – Simple
 
 - Typically, route traffic to a single resource
 - Can specify multiple values in the same record
-- If multiple values are returned, a random one is chosen by the client
+- **If multiple values are returned, a random one is chosen by the client**
 - When Alias enabled, specify only one AWS resource
 - Can’t be associated with Health Checks Single Value foo.example.com foo.example.com chooses a random value
 
@@ -4827,44 +4909,54 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 - Assign each record a relative weight:
   - 𝑡𝑟𝑎𝑓𝑓𝑖𝑐 (%) = Weight: 70 % 70 !"#$%& ()* + ,-".#(#. *".)*/
   - Weights don’t need to sum up to 100
-  - DNS records must have the same name and type
-  - Can be associated with Health Checks
-  - Use cases: load balancing between regions, testing new application versions…
-  - Assign a weight of 0 to a record to stop sending traffic to a resource
-  - If all records have weight of 0, then all records will be returned equally
+- DNS records must have the same name and type
+- Can be associated with Health Checks
+- Use cases: load balancing between regions, testing new application versions…
+- **Assign a weight of 0 to a record to stop sending traffic to a resource**
+- **If all records have weight of 0, then all records will be returned equally**
 
 ### Routing Policies – Latency-based
 
 - Redirect to the resource that has the least latency close to us
 - Super helpful when latency for users is a priority
-- Latency is based on traffic between users and AWS
+- **Latency is based on traffic between users and AWS**
 - Germany users may be directed to the US (if that’s the lowest latency)
 - Can be associated with Health Checks (has a failover capability) (us-east-1) (ap-southeast-1)
 
-### Auto Scaling group
+### Route 53 – Health Checks
 
-- HTTP Health Checks are only for public resources
+- HTTP Health Checks are only for **public resources**
 - Health Check => Automated DNS Failover:
-  - Health Checks are integrated with CW metrics Amazon Route 53 (latency, geoproximity, …) us-east-1 eu-west-1
+   1. Health checks that monitor an endpoint 
+(application, server, other AWS resource)
+   2. Health checks that monitor other health 
+checks (Calculated Health Checks)
+   3. Health checks that monitor CloudWatch Alarms (full control !!) – e.g. throttles of DynamoDB, alarms on RDS, custom metrics, 
+… (helpful for private resources)
+- Health Checks are integrated with CW metrics Amazon Route 53 (latency, geoproximity, …) us-east-1 eu-west-1
 
 ### Health Checks – Monitor an Endpoint
 
 > **🎯 Exam Tip:** 15+ global health check locations. 18%+ must agree. Can't check private VPC — use CloudWatch Alarm as proxy.
 
-- About 15 global health checkers will check the endpoint health (sa-east-1) st ue req to Health Checker (us-west-1) e od
-- Health Checks pass only when the endpoint responds with the 2xx and 3xx status codes
-- Health Checks can be setup to pass / fail based on the text in the first 5120 bytes of the response
-- Configure you router/firewall to allow incoming requests from Route 53 Health Checkers
-- Healthy/Unhealthy Threshold – 3 (default)
-- Interval – 30 sec (can set to 10 sec – higher cost)
-- Supported protocol: HTTP, HTTPS and TCP
-- If > 18% of health checkers report the endpoint is healthy, Route 53 considers it Healthy. Otherwise, it’s
-- Ability to choose which locations you want Route 53 to use (us-east-1) eu-west-1 requests from Route 53 address range
+- **About 15 global health checkers will check the endpoint health**
+  - Healthy/Unhealthy Threshold – 3 (default)
+  - Interval – 30 sec (can set to 10 sec – higher cost)
+  - Supported protocol: HTTP,  HTTPS and TCP
+  - If  > 18% of health checkers report the endpoint is healthy, Route 53 considers it Healthy. Otherwise, it’s Unhealthy
+  - Ability to choose which locations you want Route 53 to 
+use
+- Health Checks pass only when the endpoint 
+responds with the 2xx and 3xx status codes
+- Health Checks can be setup to pass / fail based on 
+the text in the first **5120 bytes** of the response
+- Configure you router/firewall to allow incoming 
+requests from Route 53 Health Checkers
 
 ### Route 53 – Calculated Health Checks
 
 - Combine the results of multiple Health Checks into a single Health Check
-- You can use OR, AND, or NOT
+- You can use **OR, AND, or NOT**
 - Can monitor up to 256 Child Health Checks
 - Specify how many of the health checks need to pass to make the parent pass
 - Usage: perform maintenance to your website without causing all health checks to fail (Parent) (Child) (Child) (Child)
@@ -4872,8 +4964,8 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 ### Health Checks – Private Hosted Zones
 
 - Route 53 health checkers are outside the
-- They can’t access private endpoints (private VPC or on-premises resource)
-- You can create a CloudWatch Metric and associate a CloudWatch Alarm, then create a Health Check that checks the alarm itself (us-east-1)
+- They can’t access **private** endpoints (private VPC or on-premises resource)
+- You can create a **CloudWatch Metric** and associate a **CloudWatch Alarm**, then create a Health Check that checks the alarm itself (us-east-1)
 
 ### Routing Policies – Failover (Active-Passive)
 
@@ -4881,23 +4973,23 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 ### Routing Policies – Geolocation
 
 - Different from Latency-based!
-- This routing is based on user location
+- **This routing is based on user location**
 - Specify location by Continent, Country or by US State (if there’s overlapping, most precise location selected)
-- Should create a “Default” record (in case there’s no match on location)
+- Should create a **“Default”** record (in case there’s no match on location)
 - Use cases: website localization, restrict content distribution, load balancing, …
 - Can be associated with Health Checks Default
 
 ### Routing Policies – Geoproximity
 
 - Route traffic to your resources based on the geographic location of users and resources
-- Ability to shift more traffic to resources based on the defined bias
+- Ability **to shift more traffic to resources based** on the defined **bias**
 - To change the size of the geographic region, specify bias values:
   - To expand (1 to 99) – more traffic to the resource
   - To shrink (-1 to -99) – less traffic to the resource
 - Resources can be:
   - AWS resources (specify AWS region)
   - Non-AWS resources (specify Latitude and Longitude)
-  - You must use Route 53 Traffic Flow to use this feature
+- You must use Route 53 **Traffic Flow** to use this feature
 
 ### Routing Policies – Geoproximity
 
@@ -4909,16 +5001,16 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 - Simplify the process of creating and maintaining records in large and complex configurations
 - Visual editor to manage complex routing decision trees
-- Configurations can be saved as Traffic Flow Policy
-- Can be applied to different Route 53 Hosted Zones (different domain names)
-- Supports versioning
+- Configurations can be saved as **Traffic Flow Policy**
+  - Can be applied to different Route 53 Hosted Zones (different domain names)
+  - Supports versioning
 
 ### Routing Policies – IP-based Routing
 
-- Routing is based on clients’ IP addresses
+- **Routing is based on clients’ IP addresses**
 - You provide a list of CIDRs for your clients and the corresponding endpoints/locations (user-IP-to-endpoint mappings)
 - Use cases: Optimize performance, reduce network costs…
-- Example: route end users from a particular ISP to a specific endpoint (200.5.4.100) (203.0.113.56) location-1 location-2 example.com location-1 example.com location-2 (5.6.7.8) (1.2.3.4)
+- Example: route end users from a particular ISP to a specific endpoint
 
 ### Routing Policies – Multi-Value
 
@@ -4926,7 +5018,7 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 - Route 53 return multiple values/resources
 - Can be associated with Health Checks (return only values for healthy resources)
 - Up to 8 healthy records are returned for each Multi-Value query
-- Multi-Value is not a substitute for having an ELB
+- **Multi-Value is not a substitute for having an ELB**
 
 ### Domain Registar vs. DNS Service
 
@@ -4940,17 +5032,20 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 ### 3rd Party Registrar with Amazon Route 53
 
-- If you buy your domain on a 3rd party registrar, you can still use Route
-- Domain Registrar != DNS Service
+- **If you buy your domain on a 3rd party registrar, you can still use Route 53 as the DNS Service provider**
+1. Create a Hosted Zone in Route 53
+2. Update NS Records on 3rd party website to use Route 53 **Name 
+Servers**
+- **Domain Registrar != DNS Service**
 - But every Domain Registrar usually comes with some DNS features
 
 ### S3 Bucket Static Website Hosting Enabled
 
+For acme.example.com:
 - Create an S3 bucket with the same name as the target record (acme.example.com)
 - Enable S3 website on the bucket (and enable S3 bucket public settings)
-- Create a Route 53 Alias record to the S3 website endpoint or type A – IPv4 address
-- This only works for HTTP traffic (for HTTPS, use CloudFront) acme.example.com s3-website.eu-central1.amazonaws.com (acme.example.com)
-
+- Create a Route 53 **Alias record** to the S3 website endpoint or type A – IPv4 address
+- This only works for HTTP traffic (for HTTPS, use CloudFront) 
 ### Route 53 – Hybrid DNS
 
 > **🎯 Exam Tip:** **Inbound** = on-prem → Route 53. **Outbound** = Route 53 → on-prem. Use Resolver Rules for hybrid DNS.
@@ -4959,34 +5054,34 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
   - Local domain names for EC2 instances
   - Records in Private Hosted Zones
   - Records in public Name Servers
-  - Hybrid DNS – resolving DNS queries between VPC (Route 53 Resolver) and your networks (other DNS Resolvers)
+- **Hybrid DNS** – resolving DNS queries between VPC (Route 53 Resolver) and your networks (other DNS Resolvers)
 - Networks can be:
   - VPC itself / Peered VPC
-  - On-premises Network (connected through Direct Connect or AWS VPN) (ec2-192-0-2-44.compute-1.amazonaws.com)
+  - On-premises Network (connected through Direct Connect or AWS VPN) 
 
 ### Route 53 – Resolver Endpoints
 
-- Inbound Endpoint – allows your DNS Resolvers to resolve domain names for AWS resources (e.g., EC2 instances) and records in Private Hosted Zones us-east-1 (aws.private) up look rivate?
+- **Inbound Endpoint** – allows your DNS Resolvers to resolve domain names for AWS resources (e.g., EC2 instances) and records in Private Hosted Zones 
 
 ### Route 53 – Resolver Endpoints
 
-- Outbound Endpoint
-- Route 53 Resolver forwards DNS queries to your DNS Resolvers us-east-1 uer y ivate?
+- **Outbound Endpoint**
+ - Route 53 Resolver forwards DNS queries to your DNS Resolvers us-east-1 uer y ivate?
 
 ### Route 53 – DNS Query Logging
 
 - Log information about public DNS queries Route 53 Resolver receives
-- Only for Public Hosted Zones
+- Only for **Public Hosted Zones**
 - Can send logs to CloudWatch Logs (can export to S3)
 
 ### Route 53 – Resolver Query Logging
 
 - Logs all DNS queries made by resources within a VPC
-- Private Hosted Zones
-- Resolver Inbound & Outbound Endpoints
-- Resolver DNS Firewall
+  - Private Hosted Zones
+  - Resolver Inbound & Outbound Endpoints
+  - Resolver DNS Firewall
 - Can send logs to CloudWatch Logs, S3 bucket, or Kinesis Data Firehose
-- Configurations can be shared with other AWS Accounts using AWS Resource example.com?
+- Configurations can be shared with other AWS Accounts using AWS Resource Access Manager (AWS RAM)
 
 ### Route 53 – Resolver Query Logging
 
@@ -4994,8 +5089,8 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 ### Route 53 – Resolver DNS Firewall
 
 - A managed firewall enables you to filter outbound DNS requests going out through Private Hosted Zone (awscloud.private)
-- Blacklist malicious domains or Whitelist trusted domains exa mp
-- Example: prevent a compromised application Route 53 le.c om within your VPC to send data out through Resolver (NO lock exfiltration) example.com?
+- Blacklist malicious domains or Whitelist trusted domains
+- Example: prevent a compromised application within your VPC to send data out through DNS to a malicious domain **(DNS exfiltration)**
 - Can be managed/configured from AWS Firewall Manager
 - Send logs to CloudWatch Logs and Route 53 Resolver Query Logs
 
@@ -5005,9 +5100,9 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 - Mission-critical applications needing high availability and minimal downtime
 - Multi-Region active/standby or active/active setups
 - Environments with regulatory or business continuity requirements
-- Readiness checks – continuously validate standby/replica infra is ready
-- Routing controls + DNS integration – turn “traffic switches” on/off to reroute users between AZs/Regions via DNS & health-checks
-- Zonal Shift / Region Switch – shift traffic away from impaired AZs or orchestrate full Region-level failover
+- **Readiness checks** – continuously validate standby/replica infra is ready
+- **Routing controls + DNS integration** – turn “traffic switches” on/off to reroute users between AZs/Regions via DNS & health-checks
+- **Zonal Shift / Region Switch** – shift traffic away from impaired AZs or orchestrate full Region-level failover
 
 ### Route 53 – Application Recovery Controller
 
@@ -5021,9 +5116,9 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
   - Route 53 Resolver Rules
   - Resolver DNS Firewall Rule Groups
   - VPC Interface Endpoints
-  - Route 53 Profiles can be shared across account using AWS RAM
+- Route 53 Profiles can be shared across account using AWS RAM
 
-### Zone
+### Route 53 – Cross-Account Private Hosted Zone
 
 - You can associate Private Hosted Zone with a VPC in another Account associate
 
@@ -5044,19 +5139,28 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
   - But we can define:192.168.0.0/26 =>192.168.0.0 – 192.168.0.63 (64 IP addresses)
 
 ### Understanding CIDR – IPv4
+ 
+- **Classless Inter-Domain Routing** – a method for allocating IP addresses
+- Used in **Security Groups** rules and AWS networking in general
+- They help to define an IP address range:
+  - We’ve seen WW.XX.YY.ZZ/32 => one IP
+  - We’ve seen 0.0.0.0/0=> all IPs
+  -  But we can define:192.168.0.0/26=>192.168.0.0 – 192.168.0.63 (64 IP addresses) 
+
+### Understanding CIDR – IPv4
 
 - A CIDR consists of two components
 - Base IP
-- Represents an IP contained in the range (XX.XX.XX.XX)
-- Example: 10.0.0.0, 192.168.0.0, …
+  - Represents an IP contained in the range (XX.XX.XX.XX)
+   Example: 10.0.0.0, 192.168.0.0, …
 - Subnet Mask
-- Defines how many bits can change in the IP
-- Example: /0, /24, /32
-- Can take two forms:
-  - /8 ó 255.0.0.0
-  - /16 ó 255.255.0.0
-  - /24 ó 255.255.255.0
-  - /32 ó 255.255.255.255
+  - Defines how many bits can change in the IP
+  - Example: /0, /24, /32
+  - Can take two forms:
+    - /8 ó 255.0.0.0
+    - /16 ó 255.255.0.0
+    - /24 ó 255.255.255.0
+    - /32 ó 255.255.255.255
 
 ### Understanding CIDR – Subnet Mask
 
@@ -5065,23 +5169,23 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 ### Understanding CIDR – Little Exercise
 
 - 192.168.0.0/24 = … ?
-- 192.168.0.0 – 192.168.0.255 (256 IPs)
+  - 192.168.0.0 – 192.168.0.255 (256 IPs)
 - 192.168.0.0/16 = … ?
-- 192.168.0.0 – 192.168.255.255 (65,536 IPs)
+  - 192.168.0.0 – 192.168.255.255 (65,536 IPs)
 - 134.56.78.123/32 = … ?
-- Just 134.56.78.123
+  - Just 134.56.78.123
 - 0.0.0.0/0
-- All IPs!
-- When in doubt, use this website
+  - All IPs!
+- When in doubt, use this website  https://www.ipaddressguide.com/cidr
 
 ### Public vs. Private IP (IPv4)
 
 - The Internet Assigned Numbers Authority (IANA) established certain blocks of IPv4 addresses for the use of private (LAN) and public (Internet) addresses
-- Private IP can only allow certain values:
+- **Private IP** can only allow certain values:
   - 10.0.0.0 – 10.255.255.255 (10.0.0.0/8) ç in big networks
   - 172.16.0.0 – 172.31.255.255 (172.16.0.0/12) ç AWS default VPC in that range
   - 192.168.0.0 – 192.168.255.255 (192.168.0.0/16) ç e.g., home networks
-  - All the rest of the IP addresses on the Internet are Public
+- All the rest of the IP addresses on the Internet are Public
 
 ### Default VPC Walkthrough
 
@@ -5094,16 +5198,16 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
 
 > **🎯 Exam Tip:** Default VPC = `172.31.0.0/16`. Max CIDR = `/16`. Min = `/28`. AWS reserves **5 IPs** per subnet. `/24` = **251 usable**.
 
-- VPC = Virtual Private Cloud
+- **VPC = Virtual Private Cloud**
 - You can have multiple VPCs in an AWS region (max. 5 per region – soft limit)
 - Max. CIDR per VPC is 5, for each CIDR:
-  - Min. size is /28 (16 IP addresses)
-  - Max. size is /16 (65536 IP addresses)
+  - **Min. size is /28 (16 IP addresses)**
+  - **Max. size is /16 (65536 IP addresses)**
 - Because VPC is private, only the Private IPv4 ranges are allowed:
   - 10.0.0.0 – 10.255.255.255 (10.0.0.0/8)
   - 172.16.0.0 – 172.31.255.255 (172.16.0.0/12)
   - 192.168.0.0 – 192.168.255.255 (192.168.0.0/16)
-  - Your VPC CIDR should NOT overlap with your other networks (e.g., corporate)
+- **Your VPC CIDR should NOT overlap with your other networks (e.g., corporate)**
 
 ### State of Hands-on
 
@@ -5125,24 +5229,24 @@ Restoring from Automated Backups or DB Snapshots creates a new DB Instance
   - You can’t choose a subnet of size /27 (32 IP addresses, 32 – 5 = 27 < 29)
   - You need to choose a subnet of size /26 (64 IP addresses, 64 – 5 = 59 > 29)
 
-### Subnet with larger CIDR block
+### VPC Troubleshooting
 
 - You can NOT change or modify the IPv4 CIDR block of an existing VPC
-- Remove and add a new IPv4 CIDR block
-- Add a secondary IPv4 CIDR block
-- Create a new VPC with a different IPv4 CIDR block
-- Example: if your VPC CIDR conflicts with another VPC or on-premises CIDR block
+  - Remove and add a new IPv4 CIDR block
+  - Add a secondary IPv4 CIDR block
+  - Create a new VPC with a different IPv4 CIDR block
+  - Example: if your VPC CIDR conflicts with another VPC or on-premises CIDR block
 - You can NOT change or modify the IPv4 CIDR block of an existing Subnet
-- Create a new Subnet with a new IPv4 CIDR block
-- Example: you don’t have enough IPv4 addresses in your Subnet, must create a new
+  - Create a new Subnet with a new IPv4 CIDR block
+  - Example: you don’t have enough IPv4 addresses in your Subnet, must create a new
 
 ### VPC IP Address Manager (IPAM)
 
 - Centrally plan, track, and monitor your IP address spaces
 - Single source-of-truth for all IP address information
 - Automate IP address allocations across 100s of accounts and VPCs
-- IPAM Scope – top-level container that encapsulates the IP address space (two default scopes public & private)
-- IP Pool – collection of IP address ranges (CIDRs) that can be divided into sub-pools for Regional IP Pools
+- **IPAM Scope** – top-level container that encapsulates the IP address space (two default scopes public & private)
+- **IP Pool** – collection of IP address ranges (CIDRs) that can be divided into sub-pools for Regional IP Pools
 - Monitor your IP addresses and provides alerts when it detects potential issues (e.g., overlapping IP addresses)
 - Use cases: audit public IP usage, identify unused IP addresses, monitor CIDR allocations, reclaim unused IP addresses…
 
