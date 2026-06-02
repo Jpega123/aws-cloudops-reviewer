@@ -3482,7 +3482,7 @@ Image
 
 ### CloudWatch Logs Data Protection
 
-- Detect and mask sensitive log data ingested into CloudWatch Logs (at-rest and in transit)
+- **Detect and mask sensitive log data ingested into CloudWatch Logs** (at-rest and in transit)
 - Uses ML to detect and protect sensitive log
 - **Data Protection Policy**
   - Specify the Data Identifier(s) (e.g., email address)
@@ -3548,7 +3548,7 @@ Image
 - Integration with CloudWatch Alarms
 - Scripts written in Node.js or Python
 - Programmatic access to a headless Google Chrome browser
-- Can run once or on a regular schedule Users us-east-1 update us-west-2
+- Can run once or on a regular schedule
 
 ### CloudWatch Synthetics Canary Blueprints
 
@@ -3597,9 +3597,11 @@ Image
 
 ### Amazon EventBridge (formerly CloudWatch Events)
 
-- Schedule: Cron jobs (scheduled scripts) Schedule Every hour
+- Schedule: Cron jobs (scheduled scripts) 
+  - `Schedule Every hour` -> `Trigger Script on Lambda Function`
 - Event Pattern: Event rules to react to a service doing something
-- Trigger Lambda functions, send SQS/SNS messages…
+  - `IAM Root User Sign In Event` -> `SNS Topic with Email Notification`
+- Trigger Lamda functions, send SQS/SNS messages...
 
 ### Amazon EventBridge Rules
 
@@ -3671,6 +3673,7 @@ Image
 ### Alternative: Trusted Advisor + CW Alarms
 
 - Limited number of Service Limits checks in Trusted Advisor (~50)
+  - Less complete solution
 - Trusted Advisor publishes its check results to CloudWatch
 - You can create CloudWatch Alarms on service quota usage (Service Limits)
 
@@ -3698,9 +3701,9 @@ Image
 - **Management Events**:
   - Operations that are performed on resources in your AWS account
   - Examples:
-    - Configuring security (IAM AttachRolePolicy)
-    - Configuring rules for routing data (Amazon EC2 CreateSubnet)
-    - Setting up logging (AWS CloudTrail CreateTrail)
+    - Configuring security (IAM **AttachRolePolicy**)
+    - Configuring rules for routing data (Amazon EC2 **CreateSubnet**)
+    - Setting up logging (AWS CloudTrail **CreateTrail**)
   - **By default, trails are configured to log management events**.
   - Can separate **Read Events** (that don’t modify resources) from **Write Event**s (that may modify resources)
 - **Data Events**:
@@ -3741,7 +3744,7 @@ Image
 - **Digest Files**:
   - References the log files for the last hour and contains a hash of each
   - Stored in the same S3 bucket as log files (different folder)
-- Helps you determine whether a log file was modified/deleted after CloudTrail delivered it
+- **Helps you determine whether a log file was modified/deleted after CloudTrail delivered it**
 - Hashing using SHA-256, Digital Signing using SHA256 with RSA
 - Protect the S3 bucket using bucket policy, versioning,
 - Protect CloudTrail using IAM API calls CloudTrail logs reference contains a hash of each log file
@@ -3755,12 +3758,14 @@ Image
 
 ### CloudTrail – Organizations Trails
 
-- A trail that will log all events for all AWS accounts in an AWS Organization
+- A trail that will log all events for all AWS accounts in an **AWS Organization**
 - Log events for management and member accounts
 - Trail with the same name will be created in every AWS account (IAM permissions)
 - Member accounts can’t remove or modify the organization trail (view only)
 
 ### AWS Config
+
+Exam Tip: a fully managed Amazon Web Services (AWS) service that continuously **monitors, records, and evaluates the configurations of your AWS resources**
 
 - Helps with auditing and recording **compliance** of your AWS resources
 - Helps record configurations and changes over time
@@ -3783,7 +3788,7 @@ Image
   - For each config change
   - And / or: at regular time intervals
 - **AWS Config Rules does not prevent actions from happening (no deny)**
-  - Pricing: no free tier, $0.003 per configuration item recorded per region, $0.001 per config rule evaluation per region
+- Pricing: no free tier, $0.003 per configuration item recorded per region, $0.001 per config rule evaluation per region
 
 ### AWS Config Resource
 
@@ -3795,10 +3800,10 @@ Image
 
 ### Config Rules – Remediations
 
-- Automate remediation of non-compliant resources using SSM Automation
+- Automate remediation of non-compliant resources using SSM Automation Documents
 - Use AWS-Managed Automation Documents or create custom Automation
   - Tip: you can create custom Automation Documents that invokes Lambda function
-- You can set **Remediation Retries** if the resource is still non-compliant after autoremediation expired (NON_COMPLIANT) deactivate (SSM Document: AWSConfigRemediationRevokeUnusedIAMUserCredentials)
+- You can set **Remediation Retries** if the resource is still non-compliant after autor-emediation
 
 ### Config Rules – Notifications
 
@@ -3819,16 +3824,16 @@ Image
 
 ### CloudWatch vs CloudTrail vs Config
 
-- CloudWatch
-  - Performance monitoring (metrics, CPU, network, etc…) & dashboards
+- **CloudWatch**
+  - **Performance monitoring** (metrics, CPU, network, etc…) & dashboards
   - Events & Alerting
   - Log Aggregation & Analysis
-- CloudTrail
-  - Record API calls made within your Account by everyone
+- **CloudTrail**
+  - **Record API calls** made within your Account by everyone
   - Can define trails for specific resources
   - Global Service
-- Config
-  - Record configuration changes
+- **Config**
+  - **Record configuration changes**
   - Evaluate resources against compliance rules
   - Get timeline of changes and compliance
 
@@ -3838,12 +3843,12 @@ Image
   - Monitoring Incoming connections metric
   - Visualize error codes as a % over time
   - Make a dashboard to get an idea of your load balancer performance
+- CloudTrail:
+  - Track who made any changes to the Load Balancer with API calls
 - Config:
   - Track security group rules for the Load Balancer
   - Track configuration changes for the Load Balancer
   - Ensure an SSL certificate is always assigned to the Load Balancer (compliance)
-- CloudTrail:
-  - Track who made any changes to the Load Balancer with API calls
 
 ### AWS Account Management
 
@@ -3886,8 +3891,8 @@ Diagram
 
 ### AWS Organizations
 
-- Global service
-- Allows to manage multiple AWS accounts
+- **Global service**
+- **Allows to manage multiple AWS accounts**
 - The main account is the management account
 - Other accounts are member accounts
 - Member accounts can only be part of one organization
@@ -4093,12 +4098,12 @@ Image
 - To view AWS Compute Optimizer, users need access to the IAM AWSmanaged policy **ComputeOptimizerReadOnlyAccess**
 - **Issue**: your EC2 instance does **NOT** appear in Compute Optimizer
   - Your EC2 instance is new and has insufficient metrics data
-  - **Solution**: keep the instance running for at least 30 hours to allow Compute
+  - **Solution**: keep the instance running for at least 30 hours to allow Compute Optimizer to collect enough metrics data and generate recommendations
 
 ### AWS Billing Conductor
 
 - Service for customizing and presenting AWS billing data
-- Group accounts, apply markups/discounts, and generate pro forma bills
+- Group accounts, apply markups/discounts, and generate **pro forma bills**
 - Does not affect your actual AWS bill — only how it’s displayed and allocated
 - Common Use Cases
   - Enterprises: split bill by department or cost center
@@ -4197,7 +4202,7 @@ Image
 ### WAF – Fixed IP while using WAF with a Load Balancer
 
 - WAF does not support the Network Load Balancer (Layer 4)
-- We can use Global Accelerator for fixed IP and WAF on the ALB us-east-1 attached
+- We can use **Global Accelerator** for fixed IP and WAF on the ALB us-east-1 attached
 
 ### AWS Shield: protect from DDoS attack
 
@@ -4207,7 +4212,7 @@ Image
   - Provides protection from attacks such as SYN/UDP Floods, Reflection attacks and other layer 3/layer 4 attacks
 - **AWS Shield Advanced**:
   - Optional DDoS mitigation service ($3,000 per month per organization)
-  - Protect against more sophisticated attack on Amazon EC2, Elastic Load Balancing (ELB),
+  - Protect against more sophisticated attack on Amazon EC2, Elastic Load Balancing (ELB), Amazon Cloudfront, AWS Global Accelerator, and Route 53
   - 24/7 access to AWS DDoS response team (DRP)
   - Protect against higher fees during usage spikes due to DDoS
   - Shield Advanced automatic application layer DDoS mitigation automatically creates, evaluates and deploys AWS WAF rules to mitigate layer 7 attacks
@@ -4235,7 +4240,7 @@ Image
 
 ### Amazon Inspector
 
-- Automated Security Assessments Lambda Function
+- Automated Security Assessments
 - **For EC2 instances**
   - Leveraging the AWS System Manager (SSM) agent
   - Analyze against unintended network accessibility
