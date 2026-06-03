@@ -62,7 +62,7 @@ The content below is organized by section. Each `###` heading is a topic/slide t
 - Instance Settings => Change Instance Type
 - Start Instance
 
-### (Hadoop, Cassandra, Kafka)
+### Placement Groups
 
 - Sometimes you want control over the EC2 Instance placement strategy
 - That strategy can be defined using placement groups

@@ -1,262 +1,159 @@
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
+
+// ── Highlight preprocessing ───────────────────────────────────────────────────
+// Runs BEFORE markdown parsing. Wraps numbers/limits and exam-tip keywords in
+// <mark> tags so rehype-raw can render them as styled elements.
 
 const LIMITS_REGEX = /(\d+[\s,]*(?:GB|TB|MB|ms|Gbps|instances|partitions|rules|targets|%|seconds|minutes|hours|days|months|years|KB|IOPS|vCPUs|AZ|Availability Zone)s?)/gi;
 const EXAM_TIP_REGEX = /\b(NOTE:|IMPORTANT:|EXAM TIP:?|Key fact:|Remember:)/gi;
 
-function highlightText(text) {
-  const combined = new RegExp(`(${LIMITS_REGEX.source}|${EXAM_TIP_REGEX.source})`, 'gi');
-  const parts = [];
-  let lastIndex = 0;
-  let match;
-  combined.lastIndex = 0;
-
-  while ((match = combined.exec(text)) !== null) {
-    if (match.index > lastIndex) parts.push(text.slice(lastIndex, match.index));
-    const isTip = EXAM_TIP_REGEX.test(match[0]);
-    EXAM_TIP_REGEX.lastIndex = 0;
-    parts.push(
-      <mark
-        key={match.index}
-        className={isTip
-          ? 'bg-red-100 text-red-700 font-bold px-0.5 rounded not-italic'
-          : 'bg-yellow-100 text-yellow-800 font-semibold px-0.5 rounded'}
-      >
-        {match[0]}
-      </mark>
-    );
-    lastIndex = combined.lastIndex;
-  }
-  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
-  return parts.length > 0 ? parts : text;
+function addHighlights(md) {
+  // Skip code fences and inline code so we don't highlight inside them
+  const parts = md.split(/(```[\s\S]*?```|`[^`\n]+`)/g);
+  return parts.map((part, i) => {
+    if (i % 2 === 1) return part; // inside a code block — leave as-is
+    return part
+      .replace(LIMITS_REGEX, '<mark class="hl-num">$1</mark>')
+      .replace(EXAM_TIP_REGEX, '<mark class="hl-tip">$1</mark>');
+  }).join('');
 }
 
-function renderInline(text) {
-  // Bold **text**
-  const boldSplit = text.split(/(\*\*[^*]+\*\*)/g);
-  if (boldSplit.length > 1) {
-    return boldSplit.map((part, i) => {
-      if (part.startsWith('**') && part.endsWith('**')) {
-        return <strong key={i}>{highlightText(part.slice(2, -2))}</strong>;
-      }
-      return <span key={i}>{highlightText(part)}</span>;
-    });
-  }
-  // Inline code `text`
-  const codeSplit = text.split(/(`[^`]+`)/g);
-  if (codeSplit.length > 1) {
-    return codeSplit.map((part, i) => {
-      if (part.startsWith('`') && part.endsWith('`')) {
-        return <code key={i} className="bg-gray-100 text-aws-navy text-xs px-1 py-0.5 rounded font-mono">{part.slice(1, -1)}</code>;
-      }
-      return <span key={i}>{highlightText(part)}</span>;
-    });
-  }
-  return highlightText(text);
-}
-
-// ── List parsing ──────────────────────────────────────────────────────────────
-
-function getIndent(line) {
-  const m = line.match(/^(\s*)/);
-  return m ? m[1].length : 0;
-}
-
-function isBulletLine(line) {
-  return /^[-*•]\s+/.test(line.trim()) && line.trim().length > 0;
-}
-
-function isNumberedLine(line) {
-  return /^\d+\.\s+/.test(line.trim());
-}
-
-// Recursively parse list items at a given base indent level.
-// Returns { items: [{ text, children }], nextIdx }
-function parseListAt(lines, start, baseIndent) {
-  const items = [];
-  let i = start;
-
-  while (i < lines.length) {
-    const line = lines[i];
-    const trimmed = line.trim();
-
-    if (!trimmed) { i++; continue; } // blank line inside list block – skip
-    if (!isBulletLine(line)) break;  // non-bullet line – stop
-
-    const indent = getIndent(line);
-
-    if (indent < baseIndent) break; // dedented past our level – stop
-
-    if (indent > baseIndent) {
-      // Sub-list: attach to last item's children
-      if (items.length > 0) {
-        const sub = parseListAt(lines, i, indent);
-        // Append (not overwrite) so inconsistent indentation (1-space vs 2-space)
-        // doesn't wipe out already-collected children
-        items[items.length - 1].children.push(...sub.items);
-        i = sub.nextIdx;
-      } else {
-        // Orphaned deeper item – treat as base level
-        items.push({ text: trimmed.replace(/^[-*•]\s+/, ''), children: [] });
-        i++;
-      }
-      continue;
-    }
-
-    // Same indent → sibling item
-    items.push({ text: trimmed.replace(/^[-*•]\s+/, ''), children: [] });
-    i++;
-  }
-
-  return { items, nextIdx: i };
-}
-
-function renderListItems(items, depth = 0) {
-  if (!items.length) return null;
-  return (
-    <ul className={depth === 0 ? 'space-y-1 my-1' : 'space-y-0.5 ml-4 mt-0.5'}>
-      {items.map((item, j) => (
-        <li key={j} className="flex flex-col gap-0">
-          <div className="flex gap-2 items-start">
-            <span className={`mt-0.5 shrink-0 font-bold ${depth === 0 ? 'text-aws-orange' : 'text-gray-400'}`}>
-              {depth === 0 ? '›' : '–'}
-            </span>
-            <span>{renderInline(item.text)}</span>
-          </div>
-          {item.children.length > 0 && renderListItems(item.children, depth + 1)}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-// ── Blockquote callout rendering ──────────────────────────────────────────────
-
+// ── Callout styles (blockquotes starting with an emoji) ───────────────────────
 const CALLOUT_STYLES = {
-  '📌': { bg: 'bg-orange-50', border: 'border-orange-300', text: 'text-orange-800' },
-  '⚡': { bg: 'bg-yellow-50', border: 'border-yellow-300', text: 'text-yellow-800' },
-  '💡': { bg: 'bg-blue-50',   border: 'border-blue-300',   text: 'text-blue-800'   },
+  '📌': { bg: 'bg-orange-50', border: 'border-orange-300', text: 'text-orange-900' },
+  '⚡': { bg: 'bg-yellow-50', border: 'border-yellow-300', text: 'text-yellow-900' },
+  '💡': { bg: 'bg-blue-50',   border: 'border-blue-300',   text: 'text-blue-900'   },
 };
 
-function renderCallout(lines) {
-  const text = lines.map(l => l.replace(/^>\s?/, '')).join(' ').trim();
-  const firstChar = [...text][0]; // emoji-safe first character
-  const style = CALLOUT_STYLES[firstChar] || { bg: 'bg-gray-50', border: 'border-gray-300', text: 'text-gray-700' };
-  return (
-    <div className={`flex gap-2 items-start rounded-lg border-l-4 px-3 py-2 my-1 ${style.bg} ${style.border} ${style.text}`}>
-      <span className="text-sm leading-relaxed">{renderInline(text)}</span>
-    </div>
-  );
+function extractRawText(node) {
+  if (!node) return '';
+  if (node.type === 'text') return node.value || '';
+  if (node.children) return node.children.map(extractRawText).join('');
+  return '';
 }
 
-// ── Table rendering ───────────────────────────────────────────────────────────
+// ── List context (react-markdown v10 removed ordered/index from li props) ─────
+const ListCtx = React.createContext({ ordered: false, index: 0 });
 
-function renderTable(rows) {
-  if (rows.length < 2) return null;
+function makeListChildren(children, ordered) {
+  let counter = 0;
+  return React.Children.map(children, (child) => {
+    if (!React.isValidElement(child)) return child;
+    const idx = counter++;
+    return (
+      <ListCtx.Provider key={idx} value={{ ordered, index: idx }}>
+        {child}
+      </ListCtx.Provider>
+    );
+  });
+}
 
-  const parseRow = (row) =>
-    row.split('|').map(c => c.trim()).filter((_, i, arr) => i > 0 && i < arr.length - 1 || (arr[0] !== '' || arr[arr.length - 1] !== ''));
+// ── Custom components ─────────────────────────────────────────────────────────
+const components = {
+  // Paragraphs
+  p: ({ children }) => (
+    <p className="my-0.5 leading-relaxed">{children}</p>
+  ),
 
-  const headers = parseRow(rows[0]);
-  const body = rows.slice(2); // skip separator row
+  // Unordered list
+  ul: ({ children }) => (
+    <ul className="space-y-1 my-1">{makeListChildren(children, false)}</ul>
+  ),
 
-  return (
+  // Ordered list
+  ol: ({ children }) => (
+    <ol className="space-y-1.5 my-1">{makeListChildren(children, true)}</ol>
+  ),
+
+  // List item — reads ordered + index from context (v10 removed them as props)
+  li: ({ children }) => {
+    const { ordered, index } = React.useContext(ListCtx);
+    return (
+      <li className="flex flex-col gap-0">
+        <div className="flex gap-2 items-start">
+          <span className="text-aws-orange font-bold mt-0.5 shrink-0 min-w-5 text-right">
+            {ordered ? `${index + 1}.` : '›'}
+          </span>
+          <span className="flex-1 min-w-0">{children}</span>
+        </div>
+      </li>
+    );
+  },
+
+  // Blockquote → styled callout box based on first emoji
+  blockquote: ({ children, node }) => {
+    const rawText = extractRawText(node);
+    const firstChar = [...rawText.trim()][0];
+    const style = CALLOUT_STYLES[firstChar] || {
+      bg: 'bg-gray-50', border: 'border-gray-300', text: 'text-gray-700',
+    };
+    return (
+      <div className={`rounded-lg border-l-4 px-3 py-2 my-1.5 text-sm ${style.bg} ${style.border} ${style.text} [&>p]:my-0`}>
+        {children}
+      </div>
+    );
+  },
+
+  // Tables (remark-gfm)
+  table: ({ children }) => (
     <div className="overflow-x-auto my-2 rounded-lg border border-gray-200">
-      <table className="w-full text-xs text-left">
-        <thead>
-          <tr className="bg-aws-navy text-white">
-            {headers.map((h, i) => (
-              <th key={i} className="px-3 py-2 font-semibold">{renderInline(h)}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {body.map((row, i) => {
-            const cells = parseRow(row);
-            return (
-              <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                {cells.map((cell, j) => (
-                  <td key={j} className="px-3 py-1.5 border-t border-gray-100">{renderInline(cell)}</td>
-                ))}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <table className="w-full text-xs text-left">{children}</table>
     </div>
-  );
-}
+  ),
+  thead: ({ children }) => (
+    <thead className="bg-aws-navy text-white">{children}</thead>
+  ),
+  tbody: ({ children }) => <tbody>{children}</tbody>,
+  tr: ({ children, isHeader }) => (
+    <tr className={isHeader ? '' : 'even:bg-gray-50'}>{children}</tr>
+  ),
+  th: ({ children }) => (
+    <th className="px-3 py-2 font-semibold text-left">{children}</th>
+  ),
+  td: ({ children }) => (
+    <td className="px-3 py-1.5 border-t border-gray-100">{children}</td>
+  ),
 
-// ── Main renderer ─────────────────────────────────────────────────────────────
+  // Inline code
+  code: ({ inline, children }) =>
+    inline ? (
+      <code className="bg-gray-100 text-aws-navy text-xs px-1 py-0.5 rounded font-mono">
+        {children}
+      </code>
+    ) : (
+      <code>{children}</code>
+    ),
 
+  // Highlighted mark tags injected by addHighlights()
+  mark: ({ className, children }) => (
+    <mark
+      className={
+        className === 'hl-tip'
+          ? 'bg-red-100 text-red-700 font-bold px-0.5 rounded not-italic'
+          : 'bg-yellow-100 text-yellow-800 font-semibold px-0.5 rounded'
+      }
+    >
+      {children}
+    </mark>
+  ),
+
+  // Horizontal rule — suppress (used as section dividers in .md)
+  hr: () => null,
+};
+
+// ── Public API ────────────────────────────────────────────────────────────────
 export function renderContent(content) {
   if (!content) return null;
-  const lines = content.split('\n');
-  const output = [];
-  let i = 0;
-
-  while (i < lines.length) {
-    const line = lines[i];
-    const trimmed = line.trim();
-
-    if (!trimmed) { i++; continue; }
-
-    // Blockquote callout (> ...)
-    if (trimmed.startsWith('> ') || trimmed === '>') {
-      const block = [];
-      while (i < lines.length && (lines[i].trim().startsWith('>') || lines[i].trim() === '')) {
-        if (lines[i].trim() !== '') block.push(lines[i]);
-        i++;
-      }
-      output.push(<div key={`bq-${output.length}`}>{renderCallout(block)}</div>);
-      continue;
-    }
-
-    // Markdown table (| col | col |)
-    if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
-      const tableRows = [];
-      while (i < lines.length && lines[i].trim().startsWith('|')) {
-        tableRows.push(lines[i].trim());
-        i++;
-      }
-      const rendered = renderTable(tableRows);
-      if (rendered) output.push(<div key={`tbl-${output.length}`}>{rendered}</div>);
-      continue;
-    }
-
-    // Bullet list – use indentation-aware parser
-    if (isBulletLine(line)) {
-      const baseIndent = getIndent(line);
-      const { items, nextIdx } = parseListAt(lines, i, baseIndent);
-      i = nextIdx;
-      output.push(<div key={`ul-${output.length}`}>{renderListItems(items)}</div>);
-      continue;
-    }
-
-    // Numbered list
-    if (isNumberedLine(line)) {
-      const items = [];
-      while (i < lines.length && isNumberedLine(lines[i])) {
-        items.push(lines[i].trim().replace(/^\d+\.\s+/, ''));
-        i++;
-      }
-      output.push(
-        <ol key={`ol-${output.length}`} className="space-y-1 my-1 list-decimal list-inside">
-          {items.map((item, j) => (
-            <li key={j} className="pl-1">{renderInline(item)}</li>
-          ))}
-        </ol>
-      );
-      continue;
-    }
-
-    // Plain paragraph
-    output.push(
-      <p key={`p-${output.length}`} className="my-0.5 leading-relaxed">
-        {renderInline(trimmed)}
-      </p>
-    );
-    i++;
-  }
-
-  return output;
+  return (
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
+      rehypePlugins={[rehypeRaw]}
+      components={components}
+    >
+      {addHighlights(content)}
+    </ReactMarkdown>
+  );
 }
