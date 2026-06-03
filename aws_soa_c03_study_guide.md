@@ -4240,7 +4240,7 @@ Image
 
 ### Amazon Inspector
 
-- Automated Security Assessments
+- **Automated Security Assessments**
 - **For EC2 instances**
   - Leveraging the AWS System Manager (SSM) agent
   - Analyze against unintended network accessibility
@@ -4334,7 +4334,7 @@ https://d0.awsstatic.com/whitepapers/compliance/AWS_Security_at_Scale_Logging_in
 
 - **Central security tool** to manage security **across several AWS accounts and automate security checks**
 - Integrated dashboards showing current security and compliance status to quickly take actions
-- Automatically aggregates alerts in predefined or personal findings formats from various
+- Automatically aggregates alerts in predefined or personal findings formats from various AWS services and AWS partner tools:
   - Config
   - GuardDuty
   - Inspector
@@ -4431,24 +4431,18 @@ https://d0.awsstatic.com/whitepapers/compliance/AWS_Security_at_Scale_Logging_in
 
 ### Copying Snapshots across accounts
 
-1. Create a Snapshot, encrypted with 
-your own KMS Key (Customer 
-Managed Key)
-2. **Attach a KMS Key Policy to 
-authorize cross-account access**
+1. Create a Snapshot, encrypted with your own KMS Key (Customer Managed Key)
+2. **Attach a KMS Key Policy to authorize cross-account access**
 3. Share the encrypted snapshot
-4. (in target) Create a copy of the 
-Snapshot, encrypt it with a CMK in 
-your account
+4. (in target) Create a copy of the Snapshot, encrypt it with a CMK in your account
 5. Create a volume from the snapshot
-
 
 ### KMS Automatic Key Rotation
 
 - **AWS-managed KMS Keys: automatically rotated every 1 year**
 - **For Customer-Managed Symmetric KMS Key**
   - Automatic key rotation is optionally enabled
-  - Customize Rotation Period between 90 and 2560 days (default: 365 days)
+  - **Customize Rotation Period** between 90 and 2560 days (default: 365 days)
   - Previous key is kept active so you can decrypt old data
   - New Key has the same KMS Key ID (only the backing key is changed)
 
@@ -4459,7 +4453,7 @@ your account
 - Does NOT change existing Automatic Rotation schedules
 - Limit to how many times you can trigger an on-demand key rotation
 
-### (Customer-Managed Symmetric KMS Key & Imports)
+### KMS Manual Key Rotation (Customer-Managed Symmetric KMS Key & Imports)
 
 - **When you want to rotate key (example: every month)**
 - New Key has a different KMS Key ID
@@ -4474,7 +4468,7 @@ your account
 ### Changing The KMS Key For An Encrypted EBS Volume
 
 - You can’t change the encryption keys used by an EBS volume
-- Create an EBS snapshot and create a new EBS volume and specify the new KMS key create snapshot create volume (encrypted) (encrypted) (encrypted)
+- Create an EBS snapshot and create a new EBS volume and specify the new KMS key
 
 ### Sharing KMS Encrypted RDS DB Snapshots
 
@@ -4492,7 +4486,7 @@ your account
 
 ### KMS Key Deletion – CloudWatch Alarm
 
-- Use CloudTrail, CloudWatch Logs, CloudWatch Alarms and SNS to be notified when someone tries to use a CMK that’s **”Pending deletion”** in a cryptographic operation (Encrypt, Decrypt, …) cryptographic operation (Pending deletion) log (DENIED) logs
+- Use CloudTrail, CloudWatch Logs, CloudWatch Alarms and SNS to be notified when someone tries to use a CMK that’s **”Pending deletion”** in a cryptographic operation (Encrypt, Decrypt, …)
 
 ### KMS Multi-Region Keys
 
@@ -4530,12 +4524,12 @@ your account
     - Fully Qualified Domain Name (FQDN): corp.example.com
     - Wildcard Domain: *.example.com 
 2. Select Validation Method: DNS Validation or Email validation
-   - DNS Validation is preferred for automation purposes
-   - Email validation will send emails to contact addresses in the WHOIS database
-   - DNS Validation will leverage a CNAME record to DNS config (ex: Route 53)
+    - DNS Validation is preferred for automation purposes
+    - Email validation will send emails to contact addresses in the WHOIS database
+    - DNS Validation will leverage a CNAME record to DNS config (ex: Route 53)
 3. It will take a few hours to get verified
 4. The Public Certificate will be enrolled for automatic renewal
-   - ACM automatically renews ACM-generated certificates **60 days** before expiry
+    - ACM automatically renews ACM-generated certificates **60 days** before expiry
 
 ### ACM – Importing Public Certificates
 
