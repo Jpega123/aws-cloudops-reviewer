@@ -4536,9 +4536,9 @@ https://d0.awsstatic.com/whitepapers/compliance/AWS_Security_at_Scale_Logging_in
 - Option to generate the certificate outside of ACM and then import it
 - **No automatic renewal**, must import a new certificate before expiry
 - **ACM sends daily expiration events** starting 45 days prior to expiration
-- The # of days can be configured
-- Events are appearing in EventBridge
-- **AWS Config** has a managed rule named acm-certificate-expiration-check to check for expiring certificates (configurable number of days)
+  - The # of days can be configured
+  - Events are appearing in EventBridge
+- **AWS Config** has a managed rule named *acm-certificate-expiration-check* to check for expiring certificates (configurable number of days)
 
 ### ACM – Integration with ALB
 
@@ -4566,7 +4566,7 @@ https://d0.awsstatic.com/whitepapers/compliance/AWS_Security_at_Scale_Logging_in
 - **Regional**:
   - For clients within the same region
   - **The TLS Certificate must be imported on API Gateway, in the same region as the API Stage**
-  - Then setup CNAME or (better) A-Alias record in Route 53 ap-southeast-2 linked certificate
+  - Then setup CNAME or (better) A-Alias record in Route 53
 
 ### AWS Secrets Manager
 
@@ -4575,7 +4575,7 @@ https://d0.awsstatic.com/whitepapers/compliance/AWS_Security_at_Scale_Logging_in
 - Newer service, meant for storing secrets
 - Capability to force **rotation of secrets** every X days
 - Automate generation of secrets on rotation (uses Lambda)
-- Integration with** Amazon RDS** (MySQL, PostgreSQL, Aurora)
+- Integration with **Amazon RDS** (MySQL, PostgreSQL, Aurora)
 - Secrets are encrypted using KMS
 - Mostly meant for RDS integration
 
@@ -4584,7 +4584,7 @@ https://d0.awsstatic.com/whitepapers/compliance/AWS_Security_at_Scale_Logging_in
 - Replicate Secrets across multiple AWS Regions
 - Secrets Manager keeps read replicas in sync with the primary Secret
 - Ability to promote a read replica Secret to a standalone Secret
-- Use cases: multi-region apps, disaster recovery strategies, multi-region DB… us-east-1 (Primary) replicate (primary) us-west-2 (Secondary) (replica)
+- Use cases: multi-region apps, disaster recovery strategies, multi-region DB…
 
 ### SSM Parameter Store vs Secrets Manager
 
@@ -4619,6 +4619,7 @@ https://d0.awsstatic.com/whitepapers/compliance/AWS_Security_at_Scale_Logging_in
 
 ### Secrets Manager – Troubleshooting Rotation
 
+Troubleshoot rotation -> Rotation doesn't work -> Better place to check lambda function logs
 
 ---
 
@@ -4645,13 +4646,14 @@ https://d0.awsstatic.com/whitepapers/compliance/AWS_Security_at_Scale_Logging_in
 
 - **IAM Credentials Report (account-level)**
   - a report that lists all your account's users and the status of their various credentials
+  - *provides a detailed summary of your IAM users and their security credentials, including which users do not have Multi-Factor Authentication (MFA) enabled*. 
 - **IAM Access Advisor (user-level)**
   - Access advisor shows the service permissions granted to a user and when those services were last accessed.
   - You can use this information to revise your policies.
 
 ### IAM Access Analyzer
 
-- Find out which resources are shared externally
+- **Find out which resources are shared externally**
   - S3 Buckets
   - IAM Roles
   - KMS Keys
@@ -4659,7 +4661,7 @@ https://d0.awsstatic.com/whitepapers/compliance/AWS_Security_at_Scale_Logging_in
   - SQS queues
   - Secrets Manager Secrets
 - Define **Zone of Trust** = AWS Account or AWS Organization
-- Access outside zone of trusts => findings Zone of trust
+- Access outside zone of trusts => findings
 
 ### What’s Identity Federation?
 
@@ -4676,16 +4678,17 @@ https://d0.awsstatic.com/whitepapers/compliance/AWS_Security_at_Scale_Logging_in
 ### SAML Federation For Enterprises
 
 - To integrate Active Directory / ADFS with AWS (or any SAML 2.0)
-- Provides access to AWS Console or CLI (through temporary creds)
+- Provides access to AWS Console or CLI *(through temporary creds)*
 - No need to create an IAM user for each of your employees
 
 ### Custom Identity Broker Application For Enterprises
 
 - Use only if identity provider is not compatible with SAML 2.0
-- The identity broker must determine the appropriate IAM policy 
+- **The identity broker must determine the appropriate IAM policy**
 
 ### AWS Cognito - Federated Identity Pools For Public Applications
 
+> **🎯 Exam Tip**: it allows you to securely manage user authentication and access to Amazon S3, enabling each user to access their own personal space while maintaining security and scalability. 
 - Goal:
   - Provide direct access to AWS Resources from the Client Side
 - How:
