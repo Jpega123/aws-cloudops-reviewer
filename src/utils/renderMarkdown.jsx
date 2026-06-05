@@ -53,6 +53,11 @@ function makeListChildren(children, ordered) {
 
 // ── Custom components ─────────────────────────────────────────────────────────
 const components = {
+  // Images — full width, natural height, no scroll clipping
+  img: ({ src, alt }) => (
+    <img src={src} alt={alt || ''} className="w-full h-auto block my-2 rounded" />
+  ),
+
   // Paragraphs
   p: ({ children }) => (
     <p className="my-0.5 leading-relaxed">{children}</p>

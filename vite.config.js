@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
-import { readFileSync, writeFileSync } from 'fs'
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs'
 
 const GUIDE_PATH = resolve(process.cwd(), 'aws_soa_c03_study_guide.md')
 
@@ -9,6 +9,26 @@ function mdEditorPlugin() {
   return {
     name: 'md-editor',
     configureServer(server) {
+      server.middlewares.use('/api/upload-image', (req, res) => {
+        if (req.method !== 'POST') { res.statusCode = 405; res.end(); return }
+        let body = ''
+        req.on('data', chunk => { body += chunk.toString() })
+        req.on('end', () => {
+          try {
+            const { filename, base64 } = JSON.parse(body)
+            const uploadsDir = resolve(process.cwd(), 'public/uploads')
+            if (!existsSync(uploadsDir)) mkdirSync(uploadsDir, { recursive: true })
+            writeFileSync(resolve(uploadsDir, filename), Buffer.from(base64, 'base64'))
+            res.setHeader('Content-Type', 'application/json')
+            res.end(JSON.stringify({ url: `/uploads/${filename}` }))
+          } catch (e) {
+            res.statusCode = 500
+            res.setHeader('Content-Type', 'application/json')
+            res.end(JSON.stringify({ error: e.message }))
+          }
+        })
+      })
+
       server.middlewares.use('/api/save-slide', (req, res) => {
         if (req.method !== 'POST') {
           res.statusCode = 405
@@ -103,4 +123,8 @@ function mdEditorPlugin() {
 
 export default defineConfig({
   plugins: [react(), mdEditorPlugin()],
+  server: {
+    port: 5173,
+    strictPort: true,
+  },
 })

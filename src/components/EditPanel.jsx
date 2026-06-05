@@ -1,10 +1,12 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { renderContent } from '../utils/renderMarkdown.jsx';
 
 function EditPanel({ slide, onClose }) {
   const [content, setContent] = useState(slide.content);
   const [status, setStatus] = useState('idle'); // 'idle' | 'saving' | 'saved' | 'error'
   const [errorMsg, setErrorMsg] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const textareaRef = useRef(null);
 
   const handleSave = useCallback(async () => {
     setStatus('saving');
@@ -30,6 +32,45 @@ function EditPanel({ slide, onClose }) {
       setErrorMsg(e.message);
     }
   }, [slide.title, content, onClose]);
+
+  const handlePaste = useCallback(async (e) => {
+    const items = Array.from(e.clipboardData?.items || []);
+    const imageItem = items.find(item => item.type.startsWith('image/'));
+    if (!imageItem) return;
+    e.preventDefault();
+    setUploading(true);
+    try {
+      const blob = imageItem.getAsFile();
+      const ext = imageItem.type.split('/')[1] || 'png';
+      const filename = `screenshot-${Date.now()}.${ext}`;
+      const base64 = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.readAsDataURL(blob);
+      });
+      const res = await fetch('/api/upload-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename, base64 }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      const textarea = textareaRef.current;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const md = `![screenshot](${data.url})`;
+      setContent(prev => prev.slice(0, start) + md + prev.slice(end));
+      setTimeout(() => {
+        textarea.selectionStart = textarea.selectionEnd = start + md.length;
+        textarea.focus();
+      }, 0);
+    } catch (err) {
+      setErrorMsg(`Image upload failed: ${err.message}`);
+      setStatus('error');
+    } finally {
+      setUploading(false);
+    }
+  }, []);
 
   const hasChanges = content !== slide.content;
 
@@ -66,19 +107,24 @@ function EditPanel({ slide, onClose }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
               </svg>
               <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Markdown</span>
-              {hasChanges && (
+              {uploading && (
+                <span className="ml-auto text-xs text-blue-500 font-medium animate-pulse">uploading image…</span>
+              )}
+              {!uploading && hasChanges && (
                 <span className="ml-auto text-xs text-aws-orange font-medium">● unsaved</span>
               )}
             </div>
             <textarea
+              ref={textareaRef}
               className="flex-1 p-4 font-mono text-sm text-gray-800 resize-none focus:outline-none leading-relaxed"
               value={content}
               onChange={(e) => {
                 setContent(e.target.value);
                 if (status === 'saved' || status === 'error') setStatus('idle');
               }}
+              onPaste={handlePaste}
               spellCheck={false}
-              placeholder="Enter markdown content…"
+              placeholder="Enter markdown content… (paste a screenshot to upload it)"
             />
           </div>
 

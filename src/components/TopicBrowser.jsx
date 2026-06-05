@@ -68,7 +68,7 @@ function SlideCard({ slide, studied, onToggleStudied, highlighted, onEdit }) {
 
       {/* Content */}
       <div className="px-4 pb-4">
-        <div className="text-sm text-gray-700 bg-gray-50 rounded-lg p-3 max-h-72 overflow-y-auto border border-gray-100 space-y-0.5 scrollbar-thin">
+        <div className="text-sm text-gray-700 bg-gray-50 rounded-lg p-3 max-h-128 overflow-y-auto border border-gray-100 space-y-0.5 scrollbar-thin">
           {renderContent(slide.content)}
         </div>
       </div>

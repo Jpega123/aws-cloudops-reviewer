@@ -117,7 +117,7 @@ function QuickReference({ allSlides, sections }) {
                 </div>
 
                 {/* Content */}
-                <div className="px-4 py-3 text-sm text-gray-700 bg-white max-h-56 overflow-y-auto space-y-0.5 scrollbar-thin">
+                <div className="px-4 py-3 text-sm text-gray-700 bg-white max-h-128 overflow-y-auto space-y-0.5 scrollbar-thin">
                   {renderContent(slide.content)}
                 </div>
               </div>
