@@ -5176,6 +5176,7 @@ For acme.example.com:
 ### Understanding CIDR – Subnet Mask
 
 - The Subnet Mask basically allows part of the underlying IP to get additional next values from the base IP
+![screenshot](/uploads/screenshot-1780638361864.png)
 
 ### Understanding CIDR – Little Exercise
 
@@ -5225,10 +5226,11 @@ For acme.example.com:
 
 ### Adding Subnets
 
+![screenshot](/uploads/screenshot-1780640590677.png)
 
 ### VPC – Subnet (IPv4)
 
-- AWS reserves 5 IP addresses (first 4 & last 1) in each subnet
+- AWS reserves **5 IP addresses (first 4 & last 1)** in each subnet
 - These 5 IP addresses are not available for use and can’t be assigned to an EC2 instance
 - Example: if CIDR block 10.0.0.0/24, then reserved IP addresses are:
   - 10.0.0.0 – Network Address
@@ -5253,6 +5255,8 @@ For acme.example.com:
 
 ### VPC IP Address Manager (IPAM)
 
+>Exam Tip: provides a centralized solution for managing IP addresses, allowing you to track usage, monitor for overlapping CIDR blocks, and reduce operational errors caused by manual allocations.
+
 - Centrally plan, track, and monitor your IP address spaces
 - Single source-of-truth for all IP address information
 - Automate IP address allocations across 100s of accounts and VPCs
@@ -5263,6 +5267,7 @@ For acme.example.com:
 
 ### VPC IP Address Manager (IPAM)
 
+![screenshot](/uploads/screenshot-1780641500972.png)
 
 ### Internet Gateway (IGW)
 
@@ -5275,15 +5280,17 @@ For acme.example.com:
 
 ### Adding Internet Gateway
 
+![screenshot](/uploads/screenshot-1780642892516.png)
 
 ### Editing Route Tables
 
+![screenshot](/uploads/screenshot-1780642914024.png)
 
 ### Bastion Hosts
 
 - We can use a Bastion Host to SSH into our private EC2 instances
 - The bastion is in the public subnet which is then connected to all other private subnets
-- **Bastion Host security group must allow** inbound from the internet on port 22 from restricted CIDR, for example the public
+- **Bastion Host security group must allow** inbound from the internet on port 22 from restricted CIDR, for example the public CIDR of your corporation
 - **Security Group of the EC2 Instances** must allow the Security Group of the Bastion (Bastion Host)
 
 ### NAT Instance (outdated, but still at the exam)
@@ -5293,10 +5300,11 @@ For acme.example.com:
 - Must be launched in a public subnet
 - Must disable EC2 setting: **Source / destination Check**
 - Must have Elastic IP attached to it
-- Route Tables must be configured to route traffic from private subnets to the NAT (IP: 50.60.4.10) (IP: 12.34.56.78)
+- Route Tables must be configured to route traffic from private subnets to the NAT Instance
 
 ### NAT Instance
 
+![screenshot](/uploads/screenshot-1780644711484.png)
 
 ### NAT Instance – Comments
 
@@ -5337,12 +5345,14 @@ For acme.example.com:
 
 ### NAT Gateway vs. NAT Instance
 
+![screenshot](/uploads/screenshot-1780645970301.png)
 
 ### DNS Resolution in VPC
 
 - **DNS Resolution (enableDnsSupport)**
   - Decides if DNS resolution from Route 53 Resolver server is supported for the VPC
-  - True (default): it queries the Amazon Provider DNS Server at 169.254.169.253 or the reserved IP address at the base of the VPC IPv4 network range plus two (.2) www.google.com?
+  - True (default): it queries the Amazon Provider DNS Server at 169.254.169.253 or the reserved IP address at the base of the VPC IPv4 network range plus two (.2)
+![screenshot](/uploads/screenshot-1780647372660.png)
 
 ### DNS Resolution in VPC
 
@@ -5352,19 +5362,21 @@ For acme.example.com:
     - False => newly created VPCs
   - Won’t do anything unless enableDnsSupport=true
   - If True, assigns public hostname to EC2 instance if it has a public IPv4
+![screenshot](/uploads/screenshot-1780647425835.png)
 
 ### DNS Resolution in VPC
 
 - If you use custom DNS domain names in a Private Hosted Zone in Route 53, you must set both these attributes (enableDnsSupport & enableDnsHostname) to true
+![screenshot](/uploads/screenshot-1780647476577.png)
 
 ### Security Groups & NACLs
 
 > **🎯 Exam Tip:** SGs = **stateful**, ENI-level. NACLs = **stateless**, subnet-level, lowest-number-first, can DENY. Open **ephemeral ports 1024–65535** for return traffic.
-
+![screenshot](/uploads/screenshot-1780647974700.png)
 
 ### Network Access Control List (NACL)
 
-- NACL are like a firewall which control traffic from and to subnets
+- NACL are like a firewall which control traffic from and to **subnets**
 - **One NACL per subnet**, new subnets are assigned the **Default NACL**
 - You define **NACL Rules**:
   - Rules have a number (1-32766), higher precedence with a lower number
@@ -5377,22 +5389,26 @@ For acme.example.com:
 
 ### NACLs
 
+![screenshot](/uploads/screenshot-1780648054485.png)
 
 ### Default NACL
 
 - Accepts everything inbound/outbound with the subnets it’s associated with
 - Do NOT modify the Default NACL, instead create custom NACLs
+![screenshot](/uploads/screenshot-1780648087374.png)
 
 ### Ephemeral Ports
 
 - For any two endpoints to establish a connection, they must use ports
-- Clients connect to a defined port, and expect a response on an **ephemeral port**
+- Clients connect to a **defined port**, and expect a response on an **ephemeral port**
 - Different Operating Systems use different port ranges, examples:
-  - IANA & MS Windows 10 è 49152 – 65535
-  - Many Linux Kernels è 32768 – 60999 Request Client
+  - IANA & MS Windows 10 ➡️ 49152 – 65535
+  - Many Linux Kernels ➡️ 32768 – 60999 Request Client
+![screenshot](/uploads/screenshot-1780648219539.png)
 
 ### NACL with Ephemeral Ports
 
+![screenshot](/uploads/screenshot-1780648315738.png)
 
 ### target subnets CIDR
 
@@ -5414,6 +5430,7 @@ NACL Examples: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls
 - A set of one or more CIDR blocks
 - Makes it easier to configure and maintain Security Groups and Route Tables
 - **Customer-Managed Prefix List**
+  - >Exam Tip: allows you to centralize and manage CIDR definitions across multiple Security Groups efficiently, making it easier to update all associated rules whenever there are changes, thereby improving consistency and reducing manual workload.
   - Set of CIDRs that you define and managed by you
   - Can be shared with other AWS accounts or AWS Organization
   - Modify to update many Security Groups at once
@@ -5434,7 +5451,7 @@ ensure network configuration is as intended, …
 
 ### VPC Block Public Access (BPA)
 
-- Centrally block ingress/egress Internet access to VPCs & Subnets
+- Centrally block *ingress/egress* Internet access to VPCs & Subnets
 - Helps you ensure compliance and security requirements
 - Two Modes:
   - **Bidirectional** – block all Internet traffic to/from VPCs
@@ -5459,11 +5476,13 @@ Gateways and Egress-only Internet Gateways**
 - You can create VPC Peering connection between VPCs in **different AWS accounts/regions**
 - You can reference a security group in a peered VPC (works cross accounts – same region)
 
-### Availability Zone
+### VPC Peering
 
+![screenshot](/uploads/screenshot-1780726618431.png)
 
-### Endpoint
+### VPC Endpoints
 
+![screenshot](/uploads/screenshot-1780726647336.png)
 
 ### VPC Endpoints (AWS PrivateLink)
 
@@ -5486,7 +5505,7 @@ Gateways and Egress-only Internet Gateways**
 - **Gateway Endpoints**
   - Provisions a gateway and must be used as a target in a route table (does not use security groups)
   - Supports both S3 and DynamoDB
-  - Free Private Subnet (Gateway) Amazon
+  - Free
 
 ### Gateway or Interface Endpoint for S3?
 
@@ -5515,6 +5534,7 @@ Gateways and Egress-only Internet Gateways**
 
 ### VPC Flow Logs
 
+![screenshot](/uploads/screenshot-1780727389770.png)
 
 ### VPC Flow Logs Syntax
 
@@ -5541,35 +5561,38 @@ NACL
 
 ### VPC Flow Logs – Architectures
 
+![screenshot](/uploads/screenshot-1780727583321.png)
 
 ### VPC Flow Logs – CloudWatch Permissions
 
 - IAM Service Role associated with VPC Flow Logs must have the required permissions to publish logs to CloudWatch Logs
-- logs:CreateLogGroup, logs:CreateLogStream, or logs:PutLogEvents logs
+- logs:CreateLogGroup, logs:CreateLogStream, or logs:PutLogEvents
+![screenshot](/uploads/screenshot-1780727660528.png)
 
 ### AWS Site-to-Site VPN
 
+![screenshot](/uploads/screenshot-1780728212120.png)
 
 ### AWS Site-to-Site VPN
 
-- Virtual Private Gateway (VGW)
+- **Virtual Private Gateway (VGW)**
   - VPN concentrator on the AWS side of the VPN connection
   - VGW is created and attached to the VPC from which you want to create the Site-to-Site VPN connection
   - Possibility to customize the ASN (Autonomous System Number)
-- Customer Gateway (CGW)
+- **Customer Gateway (CGW)**
   - Software application or physical device on customer side of the VPN connection
-  - https://docs.aws.amazon.com/vpn/latest/s2svpn/your-cgw.html
+  - https://docs.aws.amazon.com/vpn/latest/s2svpn/your-cgw.html#DevicesTested
 
 ### Site-to-Site VPN Connections
 
-> **🎯 Exam Tip:** Encrypted tunnel over **public internet**. VGW on AWS, CGW on-prem. ≈ **1.25 Gbps** max.
+> **🎯 Exam Tip:** Encrypted tunnel over **public internet**. VGW on AWS, CGW on-prem. ≈ **1.25 Gbps** max. If you need to establish connection between on-premises and AWS first create Customer Gateway then Virtual Private Gateways on AWS then connect the 2
 
-- Customer Gateway Device (On-premises) Security Group
-  - What IP address to use?
+- **Customer Gateway Device (On-premises) Security Group**
+  - **What IP address to use?**
     - Public Internet-routable IP address for your Customer
     - If it’s behind a NAT device that’s enabled for NAT traversal (NAT-T), use the public IP address of the NAT device
 - *Important step*: enable **Route Propagation** for the Virtual Private Gateway in the route table that is associated with your subnets
-- If you need to ping your EC2 instances from on-premises, make sure you add the ICMP protocol on the inbound of your security groups (Public IP) (Public IP) (Private IP)
+- If you need to ping your EC2 instances from on-premises, make sure you add the ICMP protocol on the inbound of your security groups
 
 ### AWS VPN CloudHub
 
@@ -5582,7 +5605,8 @@ NACL
 
 - Connect from your computer using OpenVPN to your private network in AWS and on-premises
 - Allow you to connect to your EC2 instances over a private IP (just as if you were in the private VPC network)
-- Goes over **public Internet** 
+- Goes over **public Internet**
+![screenshot](/uploads/screenshot-1780728815180.png)
 
 ### Direct Connect (DX)
 
@@ -5618,16 +5642,18 @@ NACL
 
 ### Direct Connect – Encryption
 
-- Data in transit is not encrypted but is private
+- Data in transit is **not encrypted** but is private
 - AWS Direct Connect + VPN provides an IPsec-encrypted private connection
-- Good for an extra level of security, but slightly more complex to put in place (us-east-1) (us-east-1a) (us-east-1b) router/firewall data center
+- Good for an extra level of security, but slightly more complex to put in place
 
 ### Direct Connect - Resiliency
 
+![screenshot](/uploads/screenshot-1780729276337.png)
 
 ### Site-to-Site VPN connection as a backup
 
 - In case Direct Connect fails, you can set up a backup Direct Connect connection (expensive), or a Site-to-Site VPN connection
+![screenshot](/uploads/screenshot-1780729357646.png)
 
 ### Exposing services in your VPC to other VPC
 
@@ -5648,6 +5674,7 @@ NACL
 
 ### AWS Private Link & ECS
 
+![screenshot](/uploads/screenshot-1780729561864.png)
 
 ### EC2-Classic & AWS ClassicLink (deprecated)
 
@@ -5661,6 +5688,7 @@ NACL
 
 ### Network topologies can become complicated
 
+![screenshot](/uploads/screenshot-1780729730281.png)
 
 ### Transit Gateway
 
@@ -5682,17 +5710,20 @@ NACL
 
 ### Transit Gateway: throughput with ECMP
 
+![screenshot](/uploads/screenshot-1780730135505.png)
 
-### Transit Gateway – Share Direct Connect
+### Transit Gateway – Share Direct Connect between multiple accounts
 
+![screenshot](/uploads/screenshot-1780730164415.png)
 
 ### Transit Gateway – Inter-Region Communication
 
+![screenshot](/uploads/screenshot-1780730182938.png)
 
 ### Transit Gateway – Security Group Referencing
 
 - You can reference a Security Group in another VPC connected using Transit Gateway
-- Must enable the setting **Security Group Referencing Support** when creating the Transit Gateway Attachment sg-prod-instance (sg-prod-dbinstance) (sg-prod-instance)
+- Must enable the setting **Security Group Referencing Support** when creating the Transit Gateway Attachment
 
 ### VPC – Traffic Mirroring
 
@@ -5725,7 +5756,8 @@ NACL
 - **IPv4 cannot be disabled for your VPC and subnets**
 - You can enable IPv6 (they’re public IP addresses) to operate in dual-stack mode
 - Your EC2 instances will get at least a private internal IPv4 and a public IPv6
-- They can communicate using either IPv4 or IPv6 to the internet through an Internet Gateway (Private IP: 10.0.0.5) (IPv6: 2001:db8::ff00:42:8329)
+- They can communicate using either IPv4 or IPv6 to the internet through an Internet Gateway 
+![screenshot](/uploads/screenshot-1780730540323.png)
 
 ### IPv4 Troubleshooting
 
@@ -5744,6 +5776,7 @@ NACL
 
 ### IPv6 Routing
 
+![screenshot](/uploads/screenshot-1780730973046.png)
 
 ### Network Protection on AWS
 
