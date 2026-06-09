@@ -4133,34 +4133,37 @@ Image
 
 ### NFS / SMB to AWS (S3, EFS, FSx…)
 
+![screenshot](/uploads/screenshot-1780992023814.png)
 
 ### AWS DataSync Transfer between AWS storage services
 
-### AWS Backup
-
-• Fully managed service
-• Centrally manage and automate backups across AWS services
-• No need to create custom scripts and manual processes
-• Supported services:
- • Amazon EC2 / Amazon EBS
- • Amazon S3
- • Amazon RDS (all DBs engines) / Amazon Aurora / Amazon DynamoDB
- • Amazon DocumentDB / Amazon Neptune
- • Amazon EFS / Amazon FSx (Lustre & Windows File Server)
- • AWS Storage Gateway (Volume Gateway)
-• Supports cross-region backups
-• Supports cross-account backups
+![screenshot](/uploads/screenshot-1780992035571.png)
 
 ### AWS Backup
-• Supports PITR for supported services
-• On-Demand and Scheduled backups
-• Tag-based backup policies
-• You create backup policies known as Backup Plans
-  • Backup frequency (every 12 hours, daily, weekly, monthly, cron expression)
-  • Backup window
-  • Transition to Cold Storage (Never, Days, Weeks, Months, Years)
-  • Retention Period (Always, Days, Weeks, Months, Years)
 
+- Fully managed service
+- Centrally manage and automate backups across AWS services
+- No need to create custom scripts and manual processes
+- Supported services:
+  - Amazon EC2 / Amazon EBS
+  - Amazon S3
+  - Amazon RDS (all DBs engines) / Amazon Aurora / Amazon DynamoDB
+  - Amazon DocumentDB / Amazon Neptune
+  - Amazon EFS / Amazon FSx (Lustre & Windows File Server)
+  - AWS Storage Gateway (Volume Gateway)
+- Supports cross-region backups
+- Supports cross-account backups
+
+### AWS Backup
+
+- Supports PITR for supported services
+- On-Demand and Scheduled backups
+- Tag-based backup policies
+- You create backup policies known as Backup Plans
+  - Backup frequency (every 12 hours, daily, weekly, monthly, cron expression)
+  - Backup window
+  - Transition to Cold Storage (Never, Days, Weeks, Months, Years)
+  - Retention Period (Always, Days, Weeks, Months, Years)
 
 ### AWS Backup Vault Lock
 
@@ -5817,6 +5820,7 @@ NACL
 
 ### What’s a queue?
 
+![screenshot](/uploads/screenshot-1780962482253.png)
 
 ### Amazon SQS – Standard Queue
 
@@ -5860,9 +5864,11 @@ NACL
 
 ### SQS with Auto Scaling Group (ASG)
 
+![screenshot](/uploads/screenshot-1780969971557.png)
 
 ### SQS to decouple between application tiers
 
+![screenshot](/uploads/screenshot-1780970031731.png)
 
 ### Amazon SQS - Security
 
@@ -5884,9 +5890,12 @@ NACL
 
 ### SQS – Prioritization Pattern
 
+![screenshot](/uploads/screenshot-1780970769052.png)
+
 ### Amazon SNS
 
 - What if you want to send one message to many receivers?
+![screenshot](/uploads/screenshot-1780970786050.png)
 
 ### Amazon SNS
 - The “event producer” only sends message to one SNS topic
@@ -5945,7 +5954,7 @@ NACL
 ### Amazon SNS – Cross-Region Subscriber
 
 - SNS can deliver notifications to subscribers in different regions (SQS Queues
-- Subscribers must have the required permissions to get notifications from SNS us-east-1 eu-west-2 notification (my-topic) (my-queue)
+- Subscribers must have the required permissions to get notifications from SNS
 
 ### Amazon ECS - EC2 Launch Type
 
@@ -5973,7 +5982,7 @@ NACL
   - Makes API calls to ECS service
   - Send container logs to CloudWatch Logs
   - Pull Docker image from ECR
-  - Reference sensitive data in Secrets Manager or
+  - Reference sensitive data in Secrets Manager or SSN Parameter Store
 - **ECS Task Role**:
   - Allows each task to have a specific role
   - Use different roles for the different ECS Services you run
@@ -6021,22 +6030,27 @@ NACL
 
 ### ECS Scaling – Service CPU Usage Example
 
+![screenshot](/uploads/screenshot-1780977649196.png)
 
 ### ECS Rolling Updates
 
-- When updating from v1 to v2, we can control how many tasks can be started and stopped, and in which order 
+- When updating from v1 to v2, we can control how many tasks can be started and stopped, and in which order
+![screenshot](/uploads/screenshot-1780977739527.png)
 
 ### ECS Rolling Update – Min 50%, Max 100%
 
-- Starting number of tasks: 4 
+- Starting number of tasks: 4
+![screenshot](/uploads/screenshot-1780977698241.png)
 
 ### ECS Rolling Update – Min 100%, Max 150%
 
-- Starting number of tasks: 4 
+- Starting number of tasks: 4
+![screenshot](/uploads/screenshot-1780977714958.png)
 
 ### Amazon ECS for CloudOps
 
-- **Ephemeral Storage for Fargate Tasks**
+- **Ephemeral Storage for Fargate Tasks** (Note: *Ephemeral means that if the task is over, the storage disappear*)
+
   - Fargate Tasks has ephemeral storage that can be shared among other Tasks
   - Configurable from 20 GB to max. of 200 GB
   - Encrypted using AES-256 encryption
@@ -6150,12 +6164,15 @@ occur while upgrading
 
 ### ECS + X-Ray integration options
 
+![screenshot](/uploads/screenshot-1780981450509.png)
 
 ### ECS + X-Ray: Example Task Definition
 
+![screenshot](/uploads/screenshot-1780981486455.png)
 
 ### Amazon Managed Service for Grafana
 
+![screenshot](/uploads/screenshot-1780981503169.png)
 
 ### Amazon Managed Service for Grafana
 
@@ -6164,6 +6181,7 @@ occur while upgrading
 - AWS handles provisioning, scaling, and maintenance
 - Integrates with CloudWatch, Amazon Managed Service for Prometheus, X-Ray, OpenSearch…
 - Supports many third-party and open-source data sources (e.g., Prometheus, Datadog…)
+![screenshot](/uploads/screenshot-1780981789400.png)
 
 ### Amazon Managed Service for Prometheus
 
@@ -6177,13 +6195,14 @@ occur while upgrading
 
 ### Amazon Managed Service for Prometheus
 
+![screenshot](/uploads/screenshot-1780981520312.png)
 
 ### AWS Resource Access Manager (RAM)
 
 - Share AWS resources that you own with other AWS accounts
 - Share with any account or within your Organization
 - Avoid resource duplication!
-- VPC Subnets:
+- **VPC Subnets**:
   - allow to have all the resources launched in the same subnets
   - must be from the same AWS Organizations.
   - Cannot share security groups and default VPC
@@ -6195,16 +6214,13 @@ occur while upgrading
 
 ### Resource Access Manager – VPC example
 
-- Each account… AWS Cloud – VPC Owner
+- Each account… 
   - is responsible for its own resources
   - cannot view, modify or delete other resources in other accounts
-- Network is shared so… Account 2 Account 1 s
+- Network is shared so…
   - Anything deployed in the VPC can talk to other resources in the VPC
   - Applications are accessed easily across accounts, using private IP!
   - Security groups from other accounts can be referenced for maximum security
-
-### Exam Review & Tips
-
 
 ---
 
@@ -6214,6 +6230,9 @@ occur while upgrading
 
 - Let’s look how far we’ve gone on our learning journey
 - https://aws.amazon.com/certification/certified-sysops-admin-associate/
+
+**EXAM GUIDE PDF**
+- https://d1.awsstatic.com/training-and-certification/docs-sysops-associate/AWS-Certified-SysOps-Administrator-Associate_Exam-Guide.pdf
 
 ### AWS Certified SysOps Exam Labs
 
